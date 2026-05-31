@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 class MoradorController {
     
     // Exibe a página inicial de moradores (Listagem)
@@ -20,3 +21,6 @@ class MoradorController {
 }
 
 module.exports = new MoradorController();
+=======
+// Morador Controller
+>>>>>>> 83c14efa9074a2257b4cb8a491b1c0877386e9ed

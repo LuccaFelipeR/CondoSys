@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* src/public/css/style.css */
 :root {
     --dark-blue: #1c253c; 
@@ -63,3 +64,6 @@ body {
 .btn-primary-custom:hover { background-color: #121929; color: white; }
 .action-link { color: var(--dark-blue); text-decoration: none; font-size: 0.85rem; font-weight: 500; }
 .action-link:hover { color: var(--accent-purple); }
+=======
+/* CSS Stylesheet */
+>>>>>>> 83c14efa9074a2257b4cb8a491b1c0877386e9ed

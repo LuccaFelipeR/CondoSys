@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 function authMiddleware(req, res, next){
     // verificar se a sessão e se o usuário esta logado
 
@@ -9,3 +10,6 @@ function authMiddleware(req, res, next){
     next();
 }
 module.exports = authMiddleware;
+=======
+// Auth Middleware
+>>>>>>> 83c14efa9074a2257b4cb8a491b1c0877386e9ed
