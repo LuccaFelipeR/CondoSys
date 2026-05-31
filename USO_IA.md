@@ -1,309 +1,278 @@
-# Uso de Inteligência Artificial no Projeto
+# Uso de Inteligência Artificial no Projeto CondoSys
 
-## 1. Identificação
+Este arquivo registra como a Inteligência Artificial foi utilizada como apoio durante o desenvolvimento do CondoSys.
 
-**Projeto:** CondoSys - Sistema de Gestão Condominial  
-**Disciplina:** Tópicos Especiais  
-**Curso:** Análise e Desenvolvimento de Sistemas  
-**Equipe:** Lucca Felipe, Matheus Albertini, Abel Piassa, Emanulle Silva e Adrian Felipe  
+A IA foi usada como ferramenta auxiliar para organização, revisão, explicação de erros e apoio técnico. As decisões finais, alterações no código e validações foram feitas pela equipe.
 
 ---
 
-## 2. Ferramenta utilizada
+## Ferramenta utilizada
 
-Durante o desenvolvimento do projeto, a equipe utilizou o **ChatGPT** como ferramenta de apoio acadêmico e técnico.
-
-A ferramenta foi utilizada para auxiliar na organização de ideias, revisão de documentação, esclarecimento de conceitos, apoio ao planejamento do sistema, correção de erros iniciais, organização do repositório e preparação para a defesa técnica.
-
-As decisões finais, adaptações e validações foram realizadas pelos integrantes da equipe. A IA foi usada como apoio, não como substituição da autoria ou da compreensão técnica dos alunos.
+A ferramenta utilizada foi o **ChatGPT**.
 
 ---
 
-## 3. Finalidades de uso
+## Finalidades de uso
 
-A Inteligência Artificial foi utilizada como apoio nas seguintes atividades:
+A IA foi utilizada para apoiar:
 
-- interpretação dos critérios do projeto acadêmico;
-- organização da documentação inicial;
-- estruturação e atualização do `README.md`;
-- criação e atualização do `USO_IA.md`;
-- apoio na definição do escopo do sistema;
-- apoio na organização dos requisitos funcionais e não funcionais;
-- revisão das entidades e relacionamentos do MER/DER;
-- apoio na elaboração da matriz de responsabilidades;
-- organização inicial do backlog;
-- esclarecimento de conceitos relacionados à arquitetura MVC;
-- orientação sobre Node.js, Express, EJS e estrutura de pastas;
-- apoio na criação inicial da rota, controller e view do módulo de Funcionários;
-- interpretação e correção de erros no terminal;
-- orientação sobre uso do Git, commits, `.gitignore` e organização do repositório;
-- apoio na preparação da equipe para a defesa técnica.
+- organização inicial do projeto;
+- interpretação dos requisitos técnicos;
+- estruturação do README.md;
+- criação e atualização deste arquivo USO_IA.md;
+- explicação da arquitetura MVC;
+- revisão do fluxo entre `app.js`, rotas, controllers e views;
+- análise de erros no terminal;
+- organização dos commits;
+- padronização de telas;
+- apoio no módulo de Funcionários;
+- apoio na correção de rotas;
+- apoio na documentação do estado atual do sistema.
 
 ---
 
-## 4. Exemplos de prompts utilizados
+## Principais apoios durante o desenvolvimento
 
-A equipe selecionou alguns prompts representativos utilizados durante as etapas de planejamento e estruturação inicial do projeto.
+### Organização do app.js
 
-| Etapa | Prompt utilizado | Resumo da resposta obtida | Decisão da equipe |
-|---|---|---|---|
-| Planejamento inicial | "Professor Charly, vamos começar o projeto de Gestão Condominial. Antes de criar qualquer código, me conduza pela etapa de planejamento da N1." | A IA orientou quais informações deveriam ser levantadas antes da implementação, como equipe, CRUDs, banco de dados, requisitos, DER, protótipos e backlog. | A equipe utilizou a orientação para organizar a sequência inicial de trabalho. |
-| Organização da documentação | "Como posso começar a documentação?" | A IA sugeriu uma estrutura inicial para o README.md, incluindo visão geral, objetivo, tecnologias, arquitetura, entidades e responsabilidades. | A equipe adaptou a estrutura para o projeto CondoSys. |
-| Entrega 2 | "Baseado nesse HTML que montamos, consegue me orientar com os códigos?" | A IA orientou a iniciar pela estrutura MVC, separando rotas, controllers e views, sem criar o projeto inteiro de uma vez. | A equipe aplicou a orientação principalmente no módulo de Funcionários. |
-| Correção de rota | "Cannot GET /funcionarios" | A IA explicou que o erro indicava rota não encontrada no Express, antes de chegar na view. | A equipe revisou `app.js`, `funcionarioRoutes.js` e `funcionarioController.js`. |
-| Correção de dependência | "Cannot find module 'ejs'" | A IA explicou que o Express estava tentando renderizar uma view EJS, mas o pacote não estava instalado. | Foi instalado o EJS com `npm install ejs`. |
-| Organização do repositório | "Quero subir toda essa pasta para o GitHub do jeito correto." | A IA orientou a manter `app.js`, `package.json`, `README.md`, `USO_IA.md` e `src/` diretamente na raiz do repositório. | A equipe reorganizou o repositório para evitar pasta duplicada. |
-| Gitignore | "Preciso de ajuda para fazer o gitignore." | A IA explicou que `.gitignore` é arquivo, não comando, e orientou a ignorar `node_modules/` e `.env`. | Foi criado `.gitignore` com os itens necessários. |
-| Commits seletivos | "Existe forma de dar commit somente nos arquivos que eu mexi?" | A IA explicou como usar `git add caminho/do/arquivo` em vez de `git add .`. | A equipe adotou a prática de commits mais específicos. |
-| Atualização documental | "Preciso atualizar todo README e todo USO_IA com base no que aplicamos." | A IA organizou os registros do que foi aceito, adaptado e recusado durante a etapa inicial. | A documentação foi atualizada para refletir o uso real da IA. |
+A IA ajudou a identificar que existiam dois arquivos `app.js`: um na raiz do projeto e outro dentro de `src`.
 
----
+O projeto foi padronizado para usar apenas o `app.js` da raiz, com o `package.json` apontando para:
 
-## 5. Contribuições aproveitadas
+```json
+"start": "node app.js",
+"dev": "nodemon app.js"
+```
 
-Algumas contribuições da IA foram aproveitadas pela equipe após análise e adaptação, como:
-
-- organização inicial da documentação do projeto;
-- estruturação das seções do README.md;
-- melhoria na descrição do objetivo e do problema do sistema;
-- organização dos requisitos funcionais por módulo;
-- separação entre funcionalidades do MVP e melhorias futuras;
-- revisão textual da documentação;
-- apoio na explicação dos relacionamentos entre entidades;
-- sugestão de uma estrutura mais clara para a matriz de papéis e responsabilidades;
-- explicação do padrão MVC aplicado ao projeto;
-- orientação para criar a estrutura inicial do módulo de Funcionários;
-- explicação do fluxo entre `app.js`, rotas, controllers e views;
-- criação de uma seção de execução local no README;
-- registro de erros comuns e soluções no README;
-- orientação sobre `.gitignore`;
-- orientação sobre commits e organização do GitHub.
-
-Essas contribuições foram utilizadas como base de apoio, não como substituição do trabalho da equipe.
+Também foi ajustada a rota inicial para redirecionar o usuário para `/login`.
 
 ---
 
-## 6. Adaptações realizadas pela equipe
+### Correção do fluxo de login
 
-As sugestões recebidas foram ajustadas conforme o contexto real do projeto, a capacidade técnica da equipe e os critérios definidos para a disciplina.
+A IA ajudou a revisar o fluxo:
 
-Entre as principais adaptações realizadas, destacam-se:
+```txt
+GET /login
+↓
+authRoutes.js
+↓
+authController.loginPage
+↓
+views/auth/login.ejs
+```
 
-- atualização do nome do projeto para **CondoSys**;
-- escolha do **PostgreSQL** como banco de dados;
-- manutenção do projeto como um MVP acadêmico;
-- ajuste dos papéis dos integrantes para contemplar um CRUD principal por aluno;
-- adequação das entidades ao tema Gestão Condominial;
-- revisão dos requisitos conforme o escopo possível dentro do prazo;
-- adaptação da documentação para refletir as decisões tomadas pelo grupo;
-- simplificação de algumas funcionalidades para evitar aumento excessivo de complexidade;
-- padronização das rotas no plural, como `/funcionarios`;
-- reorganização do repositório para manter os arquivos principais diretamente na raiz;
-- escolha por iniciar o módulo de Funcionários primeiro com rota, controller e view simples antes de integrar o banco.
+Também foi revisado o login temporário usando sessão com `express-session`.
+
+Credenciais temporárias usadas no desenvolvimento:
+
+```txt
+admin@condosys.com
+12345
+```
 
 ---
 
-## 7. Correções realizadas com apoio da IA
+### Correção da rota de Moradores
 
-Durante a estrutura inicial do projeto, a IA auxiliou na interpretação de erros reais encontrados durante a execução local.
+Durante os testes, a rota `/moradores` apresentou erro.
 
-### Erro: `requiere is not defined`
-
-O erro ocorreu porque foi escrito `requiere` em vez de `require`.
-
-**Correção aplicada:**
+A IA ajudou a identificar que o controller usava o método:
 
 ```js
-const funcionarioController = require('../controllers/funcionarioController');
+moradorController.index
 ```
 
-### Erro: `app is not defined`
-
-O erro ocorreu porque `app.use()` foi chamado antes da criação da aplicação Express.
-
-**Correção aplicada:**
+Então a rota correta deveria ser:
 
 ```js
-const express = require('express');
-const app = express();
+router.get('/', moradorController.index);
 ```
 
-Depois disso, as rotas foram registradas.
-
-### Erro: `Cannot GET /funcionarios`
-
-O erro indicou que a rota `/funcionarios` não estava sendo encontrada pelo Express.
-
-**Correção aplicada:**
-
-```js
-app.use('/funcionarios', funcionarioRoutes);
-```
-
-E no arquivo de rotas:
-
-```js
-router.get('/', funcionarioController.listar);
-```
-
-### Erro: `Cannot find module 'ejs'`
-
-O erro indicou que o projeto estava configurado para usar EJS, mas a dependência ainda não estava instalada.
-
-**Correção aplicada:**
-
-```bash
-npm install ejs
-```
-
-### Erro: `fatal: not a git repository`
-
-O erro ocorreu porque o comando Git foi executado em uma pasta que não estava vinculada ao repositório.
-
-**Correção aplicada:**
-
-A equipe passou a trabalhar na pasta clonada/vinculada ao GitHub.
-
-### Erro: `Author identity unknown`
-
-O erro ocorreu porque o Git ainda não possuía nome e e-mail configurados no computador.
-
-**Correção aplicada:**
-
-```bash
-git config --global user.name "Lucca Felipe"
-git config --global user.email "email_utilizado_no_github"
-```
+Também foi corrigida a estrutura visual da view de moradores para seguir o mesmo padrão de layout usado no sistema.
 
 ---
 
-## 8. Sugestões não utilizadas
+### Módulo de Funcionários
 
-Algumas ideias foram avaliadas, mas não foram incluídas no escopo inicial por aumentarem a complexidade do projeto.
+A IA apoiou a construção do fluxo inicial de Funcionários.
 
-Entre elas:
-
-- recuperação de senha por e-mail, SMS ou WhatsApp;
-- envio automático de notificações;
-- cadastro completo de visitantes;
-- controle detalhado de encomendas;
-- módulo financeiro com cobranças ou boletos;
-- relatórios avançados;
-- integrações externas;
-- regras complexas de permissão logo na primeira versão;
-- criação de dashboards avançados;
-- criação de telas complexas antes da estrutura básica funcionar;
-- implementação completa do CRUD antes da rota, controller e view estarem testados;
-- envio de `node_modules/` para o GitHub;
-- envio do arquivo `.env` com dados reais para o GitHub.
-
-Essas funcionalidades e práticas foram deixadas de fora para manter o projeto simples, funcional, seguro e adequado ao prazo acadêmico.
-
----
-
-## 9. Cuidados adotados
-
-Para garantir o uso responsável da ferramenta, a equipe adotou os seguintes cuidados:
-
-- revisão de todo conteúdo antes de inserir na documentação;
-- adaptação das sugestões à realidade do projeto;
-- discussão das decisões entre os integrantes;
-- manutenção da autoria da equipe sobre as decisões finais;
-- estudo dos conceitos utilizados no projeto;
-- organização das responsabilidades individuais;
-- uso do GitHub para registrar a evolução do trabalho;
-- criação do `.gitignore` para evitar envio de arquivos indevidos;
-- não envio de `node_modules/` para o repositório;
-- não envio do `.env` com dados sensíveis;
-- preparação dos integrantes para explicar suas partes na defesa técnica;
-- registro dos erros encontrados e das correções realizadas.
-
-Cada integrante será responsável por compreender e defender o CRUD e as atividades sob sua responsabilidade.
-
----
-
-## 10. Responsabilidades da equipe
-
-| Integrante | Papel no grupo | CRUD principal |
-|---|---|---|
-| Lucca Felipe | Documentação | Funcionários |
-| Matheus Albertini | Banco de Dados | Unidades |
-| Abel Piassa | Autenticação | Moradores |
-| Emanulle Silva | Front-End | Reservas |
-| Adrian Felipe | Back-End | Ocorrências |
-
-A ferramenta de IA poderá apoiar diferentes etapas do projeto, mas cada integrante deverá compreender a estrutura, a lógica e as decisões técnicas relacionadas à sua parte.
-
----
-
-## 11. Registro específico do módulo de Funcionários
-
-O módulo de Funcionários ficou sob responsabilidade do integrante **Lucca Felipe**.
-
-A IA apoiou a criação e entendimento da estrutura inicial do módulo, envolvendo:
+Arquivos envolvidos:
 
 ```txt
 src/routes/funcionarioRoutes.js
 src/controllers/funcionarioController.js
-src/models/funcionarioModel.js
 src/views/funcionarios/index.ejs
+src/models/funcionarioModel.js
 ```
 
-O foco inicial foi fazer a rota `/funcionarios` abrir corretamente no navegador, passando pelo fluxo:
+Funcionalidades desenvolvidas com apoio da IA:
+
+- listagem de funcionários;
+- cadastro por modal;
+- edição por modal;
+- preenchimento automático do modal de edição usando atributos `data-*`;
+- inativação de funcionário;
+- organização das rotas;
+- limpeza do controller, removendo funções duplicadas;
+- retirada da tela separada `form.ejs`, pois o cadastro passou a ser feito por modal.
+
+No momento, os dados de Funcionários ainda ficam em memória no controller. Isso foi mantido de forma temporária para validar o funcionamento das rotas e views antes da integração com PostgreSQL.
+
+---
+
+### Correção de erro no dashboard
+
+A IA ajudou a corrigir o erro causado pelo uso de:
+
+```ejs
+<%= usuario.nome %>
+```
+
+quando `usuario` ainda não existia na sessão.
+
+A solução foi enviar um usuário padrão pela rota do dashboard ou validar a existência do objeto antes de acessar `usuario.nome`.
+
+---
+
+### Organização visual
+
+A IA apoiou a padronização das telas com:
 
 ```txt
-app.js
-   ↓
-funcionarioRoutes.js
-   ↓
-funcionarioController.js
-   ↓
-views/funcionarios/index.ejs
+app-layout
+sidebar/navbar
+main-content
+topbar
+content-area
+table-card
 ```
 
-Essa etapa foi validada com o projeto rodando em:
+Também ajudou a identificar conflitos entre partials antigos e o novo layout, principalmente nas telas de Moradores e Funcionários.
+
+---
+
+### Git e versionamento
+
+A IA foi usada para orientar comandos de Git, como:
+
+```bash
+git status
+git add -A
+git diff --cached --name-status
+git commit -m "mensagem"
+git pull --rebase origin main
+git push origin main
+```
+
+Também ajudou a interpretar avisos como:
 
 ```txt
-http://localhost:3000/funcionarios
+LF will be replaced by CRLF
+```
+
+e a recuperar arquivos removidos por engano, como README.md e USO_IA.md.
+
+---
+
+## Exemplos de prompts utilizados
+
+| Situação | Prompt aproximado | Resultado |
+|---|---|---|
+| Erro de rota | "Está dando Cannot GET /moradores, vamos verificar?" | Revisão de `app.js`, rota e controller de moradores |
+| Dois app.js | "Está abrindo direto em funcionários mesmo com app.js certo" | Identificação de dois arquivos `app.js` no projeto |
+| Modal de funcionários | "Preciso fazer o cadastro de funcionário igual o de moradores, por popup" | Criação do fluxo de cadastro por modal |
+| Edição criando novo registro | "Quando clico em editar ele cadastra outro funcionário" | Separação entre modal de cadastro e modal de edição |
+| Documentação | "Preciso atualizar README e USO_IA com tudo que fizemos" | Organização do estado atual do projeto |
+
+---
+
+## O que foi aceito
+
+A equipe aproveitou as seguintes orientações:
+
+- uso do `app.js` principal na raiz;
+- redirecionamento inicial para `/login`;
+- organização das rotas principais;
+- correção da rota de moradores;
+- padronização das telas com o mesmo layout;
+- cadastro e edição de funcionários por modal;
+- inativação em vez de exclusão física;
+- uso de dados em memória enquanto o banco ainda não está integrado;
+- atualização do README.md e USO_IA.md conforme o andamento real do projeto.
+
+---
+
+## O que foi adaptado
+
+Algumas sugestões foram adaptadas para manter o projeto mais simples:
+
+- O cadastro de Funcionários inicialmente seria em uma tela separada, mas foi alterado para modal para seguir o padrão de Moradores;
+- A exclusão de funcionário foi tratada como inativação;
+- Os dados do módulo de Funcionários ficaram temporariamente em memória antes da criação do model com banco;
+- O dashboard foi mantido simples;
+- As rotas de Unidades, Reservas e Ocorrências foram mantidas em preparação até os responsáveis finalizarem seus módulos.
+
+---
+
+## O que foi recusado ou deixado para depois
+
+Algumas ideias foram deixadas para versões futuras:
+
+- recuperação de senha;
+- envio de notificações;
+- dashboard com gráficos avançados;
+- permissões complexas por perfil;
+- exclusão física definitiva de funcionários;
+- integração completa com banco antes de validar as telas;
+- módulos extras fora do escopo principal.
+
+---
+
+## Cuidados adotados
+
+Durante o uso da IA, foram tomados os seguintes cuidados:
+
+- revisar o código antes de aplicar;
+- não substituir a compreensão da equipe;
+- testar as alterações localmente;
+- evitar comandos Git perigosos;
+- não usar `git push --force`;
+- não enviar `node_modules`;
+- não enviar `.env`;
+- manter o código simples;
+- registrar as decisões tomadas;
+- adaptar as respostas ao contexto real do projeto.
+
+---
+
+## Estado atual registrado
+
+No momento desta atualização:
+
+```txt
+[x] Login funciona com sessão temporária
+[x] Dashboard abre
+[x] Moradores abre com listagem visual
+[x] Funcionários lista, cadastra, edita e inativa em memória
+[x] Layout base foi padronizado
+[x] Middleware de autenticação foi criado
+[x] Models existem como base
+[ ] Funcionários ainda não usa PostgreSQL
+[ ] Models ainda não possuem consultas ao banco
+[ ] Unidades, Reservas e Ocorrências ainda precisam ser implementados completamente
 ```
 
 ---
 
-## 12. Registro sobre GitHub e repositório
+## Reflexão da equipe
 
-A IA também foi utilizada para orientar a organização do repositório no GitHub.
+A IA ajudou principalmente na organização, na explicação de erros e na revisão do fluxo técnico. Em vários momentos, as respostas precisaram ser adaptadas porque o projeto tinha arquivos já existentes feitos por integrantes diferentes.
 
-Foram aplicadas as seguintes decisões:
-
-- manter o projeto diretamente na raiz do repositório;
-- evitar uma pasta `CondoSys` duplicada dentro do próprio repositório;
-- criar `.gitignore`;
-- ignorar `node_modules/`;
-- ignorar `.env`;
-- configurar nome e e-mail do Git;
-- realizar commit com mensagem clara;
-- orientar o uso de commits seletivos para arquivos alterados por cada integrante.
-
-Essas orientações ajudaram a tornar o repositório mais organizado para o trabalho em equipe.
+O uso da ferramenta foi útil para destravar problemas, mas a equipe precisou testar, revisar e decidir o que realmente fazia sentido aplicar. O objetivo foi usar a IA como apoio, não como substituição do desenvolvimento e da compreensão do código.
 
 ---
 
-## 13. Reflexão crítica
+## Manutenção deste arquivo
 
-O uso da Inteligência Artificial contribuiu principalmente para organizar melhor as ideias da equipe, revisar a documentação, esclarecer dúvidas técnicas e interpretar erros durante a configuração inicial do projeto.
-
-A equipe entende que a ferramenta pode acelerar algumas atividades, mas também reconhece que seu uso exige análise crítica. Nem toda sugestão gerada foi aceita automaticamente. Algumas foram adaptadas, outras simplificadas e outras deixadas para versões futuras.
-
-O principal cuidado adotado foi evitar que a ferramenta substituísse o aprendizado dos integrantes. Por isso, as decisões finais, a modelagem, a implementação, os testes e a defesa técnica permanecem sob responsabilidade da equipe.
-
----
-
-## 14. Conclusão
-
-A Inteligência Artificial foi utilizada como apoio no planejamento, documentação, revisão e estruturação inicial do projeto **CondoSys**.
-
-Seu uso contribuiu para melhorar a organização do trabalho, corrigir erros iniciais, padronizar a documentação e apoiar o entendimento do fluxo MVC.
-
-A construção do sistema, a validação das decisões e a compreensão técnica continuam sendo responsabilidades dos integrantes da equipe.
-
-O grupo manterá este documento atualizado conforme o projeto evoluir.
+Este documento deve ser atualizado sempre que a IA for usada para uma nova parte importante do projeto.
