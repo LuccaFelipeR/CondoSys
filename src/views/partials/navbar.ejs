@@ -1,0 +1,31 @@
+<aside class="sidebar">
+        <div class="brand">CondoSys</div>
+        <div class="mt-4">
+            <a href="/dashboard" class="nav-item"><i class="bi bi-house-door"></i> Home</a>
+            <a href="/moradores" class="nav-item"><i class="bi bi-people"></i> Moradores</a>
+            <a href="#" class="nav-item"><i class="bi bi-building"></i> Unidades</a>
+            <a href="#" class="nav-item"><i class="bi bi-calendar-event"></i> Reservas</a>
+            <a href="#" class="nav-item"><i class="bi bi-exclamation-triangle"></i> Ocorrências</a>
+            <a href="#" class="nav-item"><i class="bi bi-person-badge"></i> Funcionários</a>
+            <a href="#" class="nav-item"><i class="bi bi-person-gear"></i> Usuários</a>
+        </div>
+        <a href="/logout" class="nav-item logout-btn"><i class="bi bi-box-arrow-right"></i> Sair</a>
+    </aside>
+
+    <div class="main-content">
+        <header class="top-header">
+            <h4 class="m-0" style="color: var(--dark-blue); font-weight: 600;">Painel de Controle</h4>
+            <div class="d-flex align-items-center gap-4">
+                <div>
+                    <i class="bi bi-search position-absolute mt-2 ms-3 text-muted"></i>
+                    <input type="text" class="search-bar-top ps-5" placeholder="Pesquisar...">
+                </div>
+                <i class="bi bi-bell text-warning fs-5"></i>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                        <%= usuario && usuario.nome ? usuario.nome.charAt(0).toUpperCase() : 'U' %>
+                    </div>
+                    <span class="text-muted small">Admin</span>
+                </div>
+            </div>
+        </header>
