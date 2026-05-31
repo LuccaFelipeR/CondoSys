@@ -1,31 +1,49 @@
 <aside class="sidebar">
-        <div class="brand">CondoSys</div>
-        <div class="mt-4">
-            <a href="/dashboard" class="nav-item"><i class="bi bi-house-door"></i> Home</a>
-            <a href="/moradores" class="nav-item"><i class="bi bi-people"></i> Moradores</a>
-            <a href="#" class="nav-item"><i class="bi bi-building"></i> Unidades</a>
-            <a href="#" class="nav-item"><i class="bi bi-calendar-event"></i> Reservas</a>
-            <a href="#" class="nav-item"><i class="bi bi-exclamation-triangle"></i> Ocorrências</a>
-            <a href="#" class="nav-item"><i class="bi bi-person-badge"></i> Funcionários</a>
-            <a href="#" class="nav-item"><i class="bi bi-person-gear"></i> Usuários</a>
-        </div>
-        <a href="/logout" class="nav-item logout-btn"><i class="bi bi-box-arrow-right"></i> Sair</a>
-    </aside>
+  <div>
+    <div class="sidebar-logo">CondoSys</div>
 
-    <div class="main-content">
-        <header class="top-header">
-            <h4 class="m-0" style="color: var(--dark-blue); font-weight: 600;">Painel de Controle</h4>
-            <div class="d-flex align-items-center gap-4">
-                <div>
-                    <i class="bi bi-search position-absolute mt-2 ms-3 text-muted"></i>
-                    <input type="text" class="search-bar-top ps-5" placeholder="Pesquisar...">
-                </div>
-                <i class="bi bi-bell text-warning fs-5"></i>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
-                        <%= usuario && usuario.nome ? usuario.nome.charAt(0).toUpperCase() : 'U' %>
-                    </div>
-                    <span class="text-muted small">Admin</span>
-                </div>
-            </div>
-        </header>
+    <nav class="sidebar-menu">
+      <a href="/dashboard" class="<%= typeof paginaAtiva !== 'undefined' && paginaAtiva === 'dashboard' ? 'active' : '' %>">
+        <i class="bi bi-house-door"></i>
+        <span>Home</span>
+      </a>
+
+      <a href="/moradores" class="<%= typeof paginaAtiva !== 'undefined' && paginaAtiva === 'moradores' ? 'active' : '' %>">
+        <i class="bi bi-people"></i>
+        <span>Moradores</span>
+      </a>
+
+      <a href="/unidades" class="<%= typeof paginaAtiva !== 'undefined' && paginaAtiva === 'unidades' ? 'active' : '' %>">
+        <i class="bi bi-building"></i>
+        <span>Unidades</span>
+      </a>
+
+      <a href="/reservas" class="<%= typeof paginaAtiva !== 'undefined' && paginaAtiva === 'reservas' ? 'active' : '' %>">
+        <i class="bi bi-calendar-event"></i>
+        <span>Reservas</span>
+      </a>
+
+      <a href="/ocorrencias" class="<%= typeof paginaAtiva !== 'undefined' && paginaAtiva === 'ocorrencias' ? 'active' : '' %>">
+        <i class="bi bi-exclamation-triangle"></i>
+        <span>Ocorrências</span>
+      </a>
+
+      <a href="/funcionarios" class="<%= typeof paginaAtiva !== 'undefined' && paginaAtiva === 'funcionarios' ? 'active' : '' %>">
+        <i class="bi bi-person-badge"></i>
+        <span>Funcionários</span>
+      </a>
+
+      <a href="/usuarios" class="<%= typeof paginaAtiva !== 'undefined' && paginaAtiva === 'usuarios' ? 'active' : '' %>">
+        <i class="bi bi-person-gear"></i>
+        <span>Usuários</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="sidebar-footer">
+    <a href="/logout">
+      <i class="bi bi-box-arrow-left"></i>
+      <span>Sair</span>
+    </a>
+  </div>
+</aside>

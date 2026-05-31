@@ -15,7 +15,7 @@ class AuthController{
     
 
         // Validação simples (temporária)
-        if(email === "admin@condsys.com" && password ==="12345"){
+        if(email === "admin@condosys.com" && password ==="12345"){
 
                 // cria uma sessão para manter o usuario logado
             req.session.usuario = {
@@ -45,11 +45,5 @@ class AuthController{
 }
         
 }
-
-    
-            
-
-
-
 
 module.exports = new AuthController();

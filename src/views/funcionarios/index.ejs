@@ -1,132 +1,80 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Funcionários - CondoSys</title>
+<%- include('../partials/header') %>
 
-  <link rel="stylesheet" href="/css/style.css">
-  <link 
-  rel="stylesheet" 
-  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
->
-</head>
-<body>
+<div class="app-layout">
 
-  <div class="app-layout">
+  <%- include('../partials/navbar', { paginaAtiva: 'funcionarios' }) %>
 
-    <aside class="sidebar">
-  <div>
-    <div class="sidebar-logo">
-      CondoSys
-    </div>
+  <main class="main-content">
 
-    <nav class="sidebar-menu">
-      <a href="/dashboard">
-        <i class="bi bi-house-door"></i>
-        <span>Home</span>
-      </a>
+    <header class="topbar">
+      <h1><%= titulo || 'Funcionários' %></h1>
 
-      <a href="/moradores">
-        <i class="bi bi-people"></i>
-        <span>Moradores</span>
-      </a>
+      <div class="topbar-actions">
+        <input type="text" placeholder="Pesquisar..." disabled>
 
-      <a href="/unidades">
-        <i class="bi bi-building"></i>
-        <span>Unidades</span>
-      </a>
+        <span class="notification-icon">
+          <i class="bi bi-bell-fill"></i>
+        </span>
 
-      <a href="/reservas">
-        <i class="bi bi-calendar-event"></i>
-        <span>Reservas</span>
-      </a>
-
-      <a href="/ocorrencias">
-        <i class="bi bi-exclamation-triangle"></i>
-        <span>Ocorrências</span>
-      </a>
-
-      <a href="/funcionarios" class="active">
-        <i class="bi bi-person-badge"></i>
-        <span>Funcionários</span>
-      </a>
-
-      <a href="/usuarios">
-        <i class="bi bi-person-gear"></i>
-        <span>Usuários</span>
-      </a>
-    </nav>
-  </div>
-
-  <div class="sidebar-footer">
-    <a href="/logout">
-      <i class="bi bi-box-arrow-left"></i>
-      <span>Sair</span>
-    </a>
-  </div>
-</aside>
-
-    <main class="main-content">
-
-      <header class="topbar">
-        <h1><%= titulo %></h1>
-
-        <div class="topbar-actions">
-          <input type="text" placeholder="Pesquisar..." disabled>
-          <span class="notification">♧</span>
-
-          <div class="user-area">
-            <div class="avatar">A</div>
-            <span>Admin</span>
+        <div class="user-info">
+          <div class="user-avatar">
+            <%= usuario && usuario.nome ? usuario.nome.charAt(0).toUpperCase() : 'A' %>
           </div>
+          <span><%= usuario && usuario.nome ? usuario.nome : 'Admin' %></span>
         </div>
-      </header>
+      </div>
+    </header>
 
-      <section class="content-area">
-        <h2>Funcionários Cadastrados</h2>
+    <section class="content-area">
+      <h2>Funcionários Cadastrados</h2>
 
-        <div class="table-card">
+      <div class="table-card">
 
-          <div class="table-toolbar">
-            <div class="search-group">
-              <span>⌕</span>
-              <input 
-                type="text" 
-                placeholder="Buscar por nome, CPF ou cargo..."
-                disabled
-              >
-            </div>
-
-            <button class="filter-button" disabled>Filtros</button>
-
-            <a href="/funcionarios/novo" class="primary-button">
-              + Novo Funcionário
-            </a>
+        <div class="table-toolbar">
+          <div class="search-group">
+            <i class="bi bi-search"></i>
+            <input 
+              type="text" 
+              placeholder="Buscar por nome, CPF ou cargo..."
+              disabled
+            >
           </div>
 
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>CPF</th>
-                  <th>Cargo</th>
-                  <th>Telefone</th>
-                  <th>Data de Admissão</th>
-                  <th>Status</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
+          <button class="filter-button" disabled>Filtros</button>
 
-              <tbody>
-                <% if (funcionarios.length === 0) { %>
-                  <tr>
-                    <td colspan="7" class="empty-message">
-                      Nenhum funcionário cadastrado.
-                    </td>
-                  </tr>
-                <% } %>
+          <button 
+            type="button" 
+            class="primary-button border-0" 
+            data-bs-toggle="modal" 
+            data-bs-target="#modalCadastrarFuncionario"
+          >
+            <i class="bi bi-plus-lg"></i>
+            Novo Funcionário
+          </button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Cargo</th>
+                <th>Telefone</th>
+                <th>Data de Admissão</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (!funcionarios || funcionarios.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-message">
+                    Nenhum funcionário cadastrado.
+                  </td>
+                </tr>
+              <% } else { %>
 
                 <% funcionarios.forEach(funcionario => { %>
                   <tr>
@@ -143,34 +91,380 @@
                       <% } %>
                     </td>
                     <td>
-                      <a href="/funcionarios/<%= funcionario.id %>/editar" class="edit-link">
-                        ✎ Editar
-                      </a>
+                      <button 
+                        type="button"
+                        class="edit-link border-0 bg-transparent p-0"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalEditarFuncionario"
+                        data-id="<%= funcionario.id %>"
+                        data-nome="<%= funcionario.nome %>"
+                        data-cpf="<%= funcionario.cpf %>"
+                        data-cargo="<%= funcionario.cargo %>"
+                        data-telefone="<%= funcionario.telefone %>"
+                        data-admissao="<%= funcionario.dataAdmissao %>"
+                        data-status="<%= funcionario.status %>"
+                      >
+                        <i class="bi bi-pencil-fill"></i>
+                        Editar
+                      </button>
+
+                      <form 
+                        action="/funcionarios/<%= funcionario.id %>/inativar" 
+                        method="POST" 
+                        style="display: inline;"
+                      >
+                        <button 
+                          type="submit" 
+                          class="edit-link border-0 bg-transparent p-0 ms-2 text-danger"
+                          onclick="return confirm('Deseja realmente inativar este funcionário?')"
+                        >
+                          <i class="bi bi-trash-fill"></i>
+                          Inativar
+                        </button>
+                      </form>
                     </td>
                   </tr>
                 <% }) %>
-              </tbody>
-            </table>
+
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <span>
+            Exibindo <%= funcionarios ? funcionarios.length : 0 %> funcionários
+          </span>
+
+          <div class="pagination">
+            <button disabled>&laquo;</button>
+            <button class="active-page">1</button>
+            <button disabled>&raquo;</button>
           </div>
+        </div>
 
-          <div class="table-footer">
-            <span>Exibindo 1-5 de <%= funcionarios.length %> funcionários</span>
+      </div>
+    </section>
 
-            <div class="pagination">
-              <button disabled>‹</button>
-              <button class="active-page">1</button>
-              <button disabled>2</button>
-              <button disabled>3</button>
-              <button disabled>›</button>
+  </main>
+
+</div>
+
+<!-- MODAL DE CADASTRO -->
+<div class="modal fade" id="modalCadastrarFuncionario" tabindex="-1" aria-labelledby="modalCadastrarFuncionarioLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+
+      <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
+        <h4 class="modal-title fw-bold" id="modalCadastrarFuncionarioLabel">
+          Cadastrar Funcionário
+        </h4>
+
+        <button 
+          type="button" 
+          class="btn-close me-3" 
+          data-bs-dismiss="modal" 
+          aria-label="Fechar"
+        ></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <form action="/funcionarios" method="POST">
+
+          <h6 class="fw-bold mb-3">
+            <i class="bi bi-person-badge-fill text-primary me-2"></i>
+            Dados do Funcionário
+          </h6>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Nome Completo <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                name="nome"
+                class="form-control bg-light border-0" 
+                placeholder="Carlos Henrique" 
+                required
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                CPF <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                name="cpf"
+                class="form-control bg-light border-0" 
+                placeholder="123.456.789-00" 
+                required
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Cargo <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                name="cargo"
+                class="form-control bg-light border-0" 
+                placeholder="Porteiro, Zelador, Manutenção..." 
+                required
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Telefone <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                name="telefone"
+                class="form-control bg-light border-0" 
+                placeholder="(43) 9 9999-0001" 
+                required
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Data de Admissão <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="date" 
+                name="dataAdmissao"
+                class="form-control bg-light border-0" 
+                required
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Status <span class="text-danger">*</span>
+              </label>
+              <select 
+                name="status" 
+                class="form-control bg-light border-0" 
+                required
+              >
+                <option value="Ativo">Ativo</option>
+                <option value="Inativo">Inativo</option>
+              </select>
             </div>
           </div>
 
-        </div>
-      </section>
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <button 
+              type="button" 
+              class="btn btn-outline-secondary px-4 py-2 rounded-3" 
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
 
-    </main>
+            <div class="d-flex align-items-center gap-3">
+              <span class="text-muted small">* Campos obrigatórios</span>
 
+              <button 
+                type="submit" 
+                class="btn text-white px-4 py-2 rounded-3" 
+                style="background-color: #172033; font-weight: 500;"
+              >
+                Salvar Funcionário
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
   </div>
+</div>
 
-</body>
-</html>
+<!-- MODAL DE EDIÇÃO -->
+<div class="modal fade" id="modalEditarFuncionario" tabindex="-1" aria-labelledby="modalEditarFuncionarioLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+
+      <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
+        <h4 class="modal-title fw-bold" id="modalEditarFuncionarioLabel">
+          Editar Funcionário
+        </h4>
+
+        <button 
+          type="button" 
+          class="btn-close me-3" 
+          data-bs-dismiss="modal" 
+          aria-label="Fechar"
+        ></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <form id="formEditarFuncionario" action="#" method="POST">
+
+          <h6 class="fw-bold mb-3">
+            <i class="bi bi-person-badge-fill text-primary me-2"></i>
+            Dados do Funcionário
+          </h6>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Nome Completo <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="editNome" 
+                name="nome" 
+                class="form-control bg-light border-0" 
+                required
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                CPF <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="editCpf" 
+                name="cpf" 
+                class="form-control bg-light border-0" 
+                required
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Cargo <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="editCargo" 
+                name="cargo" 
+                class="form-control bg-light border-0" 
+                required
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Telefone <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="editTelefone" 
+                name="telefone" 
+                class="form-control bg-light border-0" 
+                required
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Data de Admissão <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="date" 
+                id="editDataAdmissao" 
+                name="dataAdmissao" 
+                class="form-control bg-light border-0" 
+                required
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Status <span class="text-danger">*</span>
+              </label>
+              <select 
+                id="editStatus" 
+                name="status" 
+                class="form-control bg-light border-0" 
+                required
+              >
+                <option value="Ativo">Ativo</option>
+                <option value="Inativo">Inativo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <button 
+              type="button" 
+              class="btn btn-outline-secondary px-4 py-2 rounded-3" 
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+
+            <button 
+              type="submit" 
+              class="btn text-white px-4 py-2 rounded-3" 
+              style="background-color: #172033; font-weight: 500;"
+            >
+              Salvar Alterações
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function converterDataParaInput(data) {
+    if (!data) {
+      return '';
+    }
+
+    if (data.includes('-')) {
+      return data;
+    }
+
+    const partes = data.split('/');
+
+    if (partes.length !== 3) {
+      return '';
+    }
+
+    const dia = partes[0];
+    const mes = partes[1];
+    const ano = partes[2];
+
+    return `${ano}-${mes}-${dia}`;
+  }
+
+  const modalEditarFuncionario = document.getElementById('modalEditarFuncionario');
+
+  if (modalEditarFuncionario) {
+    modalEditarFuncionario.addEventListener('show.bs.modal', function (event) {
+      const botao = event.relatedTarget;
+
+      const id = botao.getAttribute('data-id');
+      const nome = botao.getAttribute('data-nome');
+      const cpf = botao.getAttribute('data-cpf');
+      const cargo = botao.getAttribute('data-cargo');
+      const telefone = botao.getAttribute('data-telefone');
+      const dataAdmissao = botao.getAttribute('data-admissao');
+      const status = botao.getAttribute('data-status');
+
+      document.getElementById('formEditarFuncionario').action = `/funcionarios/${id}/editar`;
+
+      document.getElementById('editNome').value = nome;
+      document.getElementById('editCpf').value = cpf;
+      document.getElementById('editCargo').value = cargo;
+      document.getElementById('editTelefone').value = telefone;
+      document.getElementById('editDataAdmissao').value = converterDataParaInput(dataAdmissao);
+      document.getElementById('editStatus').value = status;
+    });
+  }
+</script>
+
+<%- include('../partials/footer') %>

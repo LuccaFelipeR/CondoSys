@@ -1,19 +1,5 @@
-function listar(req, res) {
-    res.render('funcionarios/index', {
-        titulo: 'Funcionários',
-    });
-    }
-
-
-module.exports = {
-    listar,
-};
-
-//por enquanto nao tem banco ainda. entao é proposital, to testando se a rota, o controller e a view conversam entre si. depois a gente implementa o banco e a logica de negocio. por isso tem so um render, sem nada de logica.
-
-function listar(req, res) {
-    const funcionarios = [
-    {
+const funcionarios = [
+  {
     id: 1,
     nome: 'Carlos Henrique',
     cpf: '123.456.789-00',
@@ -21,8 +7,8 @@ function listar(req, res) {
     telefone: '(43) 9 9999-1001',
     dataAdmissao: '10/03/2024',
     status: 'Ativo'
-    },
-    {
+  },
+  {
     id: 2,
     nome: 'Marina Souza',
     cpf: '234.567.890-11',
@@ -30,8 +16,8 @@ function listar(req, res) {
     telefone: '(43) 9 9999-1002',
     dataAdmissao: '15/08/2023',
     status: 'Ativo'
-    },
-    {
+  },
+  {
     id: 3,
     nome: 'Roberto Lima',
     cpf: '345.678.901-22',
@@ -39,33 +25,81 @@ function listar(req, res) {
     telefone: '(43) 9 9999-1003',
     dataAdmissao: '20/11/2022',
     status: 'Inativo'
-    },
-    {
-    id: 4,
-    nome: 'Fernanda Alves',
-    cpf: '456.789.012-33',
-    cargo: 'Síndica',
-    telefone: '(43) 9 9999-1004',
-    dataAdmissao: '05/01/2024',
-    status: 'Ativo'
-    },
-    {
-    id: 5,
-    nome: 'João Pereira',
-    cpf: '567.890.123-44',
-    cargo: 'Vigia',
-    telefone: '(43) 9 9999-1005',
-    dataAdmissao: '18/06/2023',
-    status: 'Ativo'
-    }
+  }
 ];
 
-res.render('funcionarios/index', {
-    titulo: 'Painel de Controle',
-    funcionarios
-    });
+function listar(req, res) {
+  res.render('funcionarios/index', {
+    titulo: 'Funcionários',
+    funcionarios,
+    usuario: req.session.usuario
+  });
+}
+
+function cadastrar(req, res) {
+  const novoFuncionario = {
+    id: funcionarios.length + 1,
+    nome: req.body.nome,
+    cpf: req.body.cpf,
+    cargo: req.body.cargo,
+    telefone: req.body.telefone,
+    dataAdmissao: formatarDataParaTabela(req.body.dataAdmissao),
+    status: req.body.status || 'Ativo'
+  };
+
+  funcionarios.push(novoFuncionario);
+
+  res.redirect('/funcionarios');
+}
+
+function editar(req, res) {
+  const id = Number(req.params.id);
+
+  const funcionario = funcionarios.find(item => item.id === id);
+
+  if (!funcionario) {
+    return res.status(404).send('Funcionário não encontrado.');
+  }
+
+  funcionario.nome = req.body.nome;
+  funcionario.cpf = req.body.cpf;
+  funcionario.cargo = req.body.cargo;
+  funcionario.telefone = req.body.telefone;
+  funcionario.dataAdmissao = formatarDataParaTabela(req.body.dataAdmissao);
+  funcionario.status = req.body.status || 'Ativo';
+
+  res.redirect('/funcionarios');
+}
+
+function inativar(req, res) {
+  const id = Number(req.params.id);
+
+  const funcionario = funcionarios.find(item => item.id === id);
+
+  if (!funcionario) {
+    return res.status(404).send('Funcionário não encontrado.');
+  }
+
+  funcionario.status = 'Inativo';
+
+  res.redirect('/funcionarios');
+}
+
+function formatarDataParaTabela(data) {
+  if (!data) return '';
+
+  if (data.includes('/')) return data;
+
+  const partes = data.split('-');
+
+  if (partes.length !== 3) return data;
+
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
 module.exports = {
-    listar,
+  listar,
+  cadastrar,
+  editar,
+  inativar
 };

@@ -1,149 +1,322 @@
 <%- include('../partials/header') %>
-<%- include('../partials/navbar') %>
 
-<main class="content-area">
-    <h5 class="mb-4" style="color: var(--dark-blue); font-weight: 600;">Moradores Cadastrados</h5>
-    
-    <div class="card-custom">
-        <div class="d-flex justify-content-between mb-4">
-            <div class="d-flex gap-3 w-50">
-                <div class="position-relative w-75">
-                    <i class="bi bi-search position-absolute mt-2 ms-3 text-muted"></i>
-                    <input type="text" class="form-control ps-5" placeholder="Buscar por nome, CPF ou unidade...">
-                </div>
-                <button class="btn btn-outline-secondary dropdown-toggle">Filtros</button>
-            </div>
-            <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalMorador">
-    <i class="bi bi-plus-lg me-1"></i> Novo Morador
-</button>
+<div class="app-layout">
+
+  <%- include('../partials/navbar', { paginaAtiva: 'moradores' }) %>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <h1>Moradores</h1>
+
+      <div class="topbar-actions">
+        <input type="text" placeholder="Pesquisar..." disabled>
+
+        <span class="notification-icon">
+          <i class="bi bi-bell-fill"></i>
+        </span>
+
+        <div class="user-info">
+          <div class="user-avatar">
+            <%= usuario && usuario.nome ? usuario.nome.charAt(0).toUpperCase() : 'A' %>
+          </div>
+          <span><%= usuario && usuario.nome ? usuario.nome : 'Admin' %></span>
+        </div>
+      </div>
+    </header>
+
+    <section class="content-area">
+      <h2>Moradores Cadastrados</h2>
+
+      <div class="table-card">
+
+        <div class="table-toolbar">
+          <div class="search-group">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Buscar por nome, CPF ou unidade...">
+          </div>
+
+          <button class="filter-button" disabled>Filtros</button>
+
+          <button 
+            type="button" 
+            class="primary-button" 
+            data-bs-toggle="modal" 
+            data-bs-target="#modalMorador"
+          >
+            <i class="bi bi-plus-lg"></i>
+            Novo Morador
+          </button>
         </div>
 
-        <table class="table table-hover table-borderless align-middle">
+        <div class="table-wrapper">
+          <table>
             <thead>
-                <tr>
-                    <th class="table-header-dark rounded-start">Nome</th>
-                    <th class="table-header-dark">CPF</th>
-                    <th class="table-header-dark">Unidade</th>
-                    <th class="table-header-dark">Telefone</th>
-                    <th class="table-header-dark">E-mail</th>
-                    <th class="table-header-dark">Status</th>
-                    <th class="table-header-dark rounded-end">Ações</th>
-                </tr>
+              <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Unidade</th>
+                <th>Telefone</th>
+                <th>E-mail</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
             </thead>
+
             <tbody>
+              <% if (moradores && moradores.length > 0) { %>
+
                 <% moradores.forEach(morador => { %>
-                    <tr style="border-bottom: 1px solid #f1f5f9;">
-                        <td><%= morador.nome %></td>
-                        <td><%= morador.cpf %></td>
-                        <td><%= morador.unidade %></td>
-                        <td><%= morador.telefone %></td>
-                        <td><%= morador.email %></td>
-                        <td>
-                            <% if(morador.status === 'Ativo') { %>
-                                <span class="badge-ativo">Ativo</span>
-                            <% } else { %>
-                                <span class="badge-inativo">Inativo</span>
-                            <% } %>
-                        </td>
-                        <td>
-                            <a href="#" class="action-link"><i class="bi bi-pencil-fill me-1 text-warning"></i> Editar</a>
-                        </td>
-                    </tr>
+                  <tr>
+                    <td><%= morador.nome %></td>
+                    <td><%= morador.cpf %></td>
+                    <td><%= morador.unidade %></td>
+                    <td><%= morador.telefone %></td>
+                    <td><%= morador.email %></td>
+                    <td>
+                      <% if (morador.status === 'Ativo') { %>
+                        <span class="badge badge-active">Ativo</span>
+                      <% } else { %>
+                        <span class="badge badge-inactive">Inativo</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <a href="#" class="edit-link">
+                        <i class="bi bi-pencil-fill"></i>
+                        Editar
+                      </a>
+                    </td>
+                  </tr>
                 <% }) %>
+
+              <% } else { %>
+
+                <tr>
+                  <td colspan="7" class="empty-message">
+                    Nenhum morador cadastrado.
+                  </td>
+                </tr>
+
+              <% } %>
             </tbody>
-        </table>
-        
-        <div class="d-flex justify-content-between align-items-center mt-4">
-            <span class="text-muted small">Exibindo 1-5 de 48 moradores</span>
-            <nav>
-                <ul class="pagination pagination-sm m-0">
-                    <li class="page-item"><a class="page-link text-muted" href="#">&laquo;</a></li>
-                    <li class="page-item active"><a class="page-link bg-dark text-white border-dark" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link text-muted" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link text-muted" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link text-muted" href="#">&raquo;</a></li>
-                </ul>
-            </nav>
+          </table>
         </div>
-    </div>
-</main>
+
+        <div class="table-footer">
+          <span>
+            Exibindo <%= moradores ? moradores.length : 0 %> moradores
+          </span>
+
+          <div class="pagination">
+            <button disabled>&laquo;</button>
+            <button class="active-page">1</button>
+            <button disabled>&raquo;</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+</div>
 
 <div class="modal fade" id="modalMorador" tabindex="-1" aria-labelledby="modalMoradorLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
-            
-            <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
-                <h4 class="modal-title fw-bold" id="modalMoradorLabel" style="color: var(--dark-blue);">Cadastrar / Editar Morador</h4>
-                <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+
+      <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
+        <h4 class="modal-title fw-bold" id="modalMoradorLabel">
+          Cadastrar / Editar Morador
+        </h4>
+
+        <button 
+          type="button" 
+          class="btn-close me-3" 
+          data-bs-dismiss="modal" 
+          aria-label="Fechar"
+        ></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <form action="#" method="POST">
+
+          <h6 class="fw-bold mb-3">
+            <i class="bi bi-person-fill text-primary me-2"></i>
+            Dados Pessoais
+          </h6>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold text-muted">
+                Nome Completo <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                name="nome"
+                class="form-control bg-light border-0" 
+                placeholder="Ana Lima" 
+                required
+              >
             </div>
-            
-            <div class="modal-body p-4">
-                <form action="#" method="POST">
-                    
-                    <h6 class="fw-bold mb-3" style="color: var(--dark-blue);"><i class="bi bi-person-fill text-primary me-2"></i> Dados Pessoais</h6>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <label class="form-label small fw-semibold text-muted">Nome Completo <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control bg-light border-0" placeholder="Ana Lima" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small fw-semibold text-muted">CPF <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control bg-light border-0" placeholder="123.456.789-00" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small fw-semibold text-muted">Data de Nascimento</label>
-                            <input type="date" class="form-control bg-light border-0">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small fw-semibold text-muted">E-mail <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control bg-light border-0" placeholder="ana@email.com" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small fw-semibold text-muted">Telefone</label>
-                            <input type="text" class="form-control bg-light border-0" placeholder="(43) 9 9999-0001">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small fw-semibold text-muted">Unidade Vinculada <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control bg-light border-0" placeholder="Apto 101 — Bloco A" required>
-                        </div>
-                    </div>
 
-                    <h6 class="fw-bold mb-3" style="color: var(--dark-blue);"><i class="bi bi-car-front-fill text-danger me-2"></i> Veículo</h6>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <label class="form-label small fw-semibold text-muted">Modelo</label>
-                            <input type="text" class="form-control bg-light border-0" placeholder="Toyota Corolla">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small fw-semibold text-muted">Placa</label>
-                            <input type="text" class="form-control bg-light border-0" placeholder="ABC-1D23">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small fw-semibold text-muted">Cor</label>
-                            <input type="text" class="form-control bg-light border-0" placeholder="Prata">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small fw-semibold text-muted">Vaga nº</label>
-                            <input type="text" class="form-control bg-light border-0" placeholder="12">
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label small fw-semibold text-muted">Observações</label>
-                        <textarea class="form-control bg-light border-0" rows="2" placeholder="Morador com acesso à área comum até 22h..."></textarea>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center mt-4">
-                        <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-3" data-bs-dismiss="modal">Cancelar</button>
-                        <div class="d-flex align-items-center gap-3">
-                            <span class="text-muted small">* Campos obrigatórios</span>
-                            <button type="submit" class="btn text-white px-4 py-2 rounded-3" style="background-color: var(--dark-blue); font-weight: 500;">Salvar Morador</button>
-                        </div>
-                    </div>
-                    
-                </form>
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold text-muted">
+                CPF <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                name="cpf"
+                class="form-control bg-light border-0" 
+                placeholder="123.456.789-00" 
+                required
+              >
             </div>
-        </div>
+
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold text-muted">
+                Data de Nascimento
+              </label>
+              <input 
+                type="date" 
+                name="dataNascimento"
+                class="form-control bg-light border-0"
+              >
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold text-muted">
+                E-mail <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="email" 
+                name="email"
+                class="form-control bg-light border-0" 
+                placeholder="ana@email.com" 
+                required
+              >
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold text-muted">
+                Telefone
+              </label>
+              <input 
+                type="text" 
+                name="telefone"
+                class="form-control bg-light border-0" 
+                placeholder="(43) 9 9999-0001"
+              >
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold text-muted">
+                Unidade Vinculada <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                name="unidade"
+                class="form-control bg-light border-0" 
+                placeholder="Apto 101 — Bloco A" 
+                required
+              >
+            </div>
+          </div>
+
+          <h6 class="fw-bold mb-3">
+            <i class="bi bi-car-front-fill text-danger me-2"></i>
+            Veículo
+          </h6>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold text-muted">
+                Modelo
+              </label>
+              <input 
+                type="text" 
+                name="modeloVeiculo"
+                class="form-control bg-light border-0" 
+                placeholder="Toyota Corolla"
+              >
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold text-muted">
+                Placa
+              </label>
+              <input 
+                type="text" 
+                name="placa"
+                class="form-control bg-light border-0" 
+                placeholder="ABC-1D23"
+              >
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold text-muted">
+                Cor
+              </label>
+              <input 
+                type="text" 
+                name="cor"
+                class="form-control bg-light border-0" 
+                placeholder="Prata"
+              >
+            </div>
+
+            <div class="col-md-2">
+              <label class="form-label small fw-semibold text-muted">
+                Vaga nº
+              </label>
+              <input 
+                type="text" 
+                name="vaga"
+                class="form-control bg-light border-0" 
+                placeholder="12"
+              >
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label small fw-semibold text-muted">
+              Observações
+            </label>
+            <textarea 
+              name="observacoes"
+              class="form-control bg-light border-0" 
+              rows="2" 
+              placeholder="Morador com acesso à área comum até 22h..."
+            ></textarea>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <button 
+              type="button" 
+              class="btn btn-outline-secondary px-4 py-2 rounded-3" 
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+
+            <div class="d-flex align-items-center gap-3">
+              <span class="text-muted small">* Campos obrigatórios</span>
+
+              <button 
+                type="submit" 
+                class="btn text-white px-4 py-2 rounded-3" 
+                style="background-color: #172033; font-weight: 500;"
+              >
+                Salvar Morador
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
     </div>
+  </div>
 </div>
+
 <%- include('../partials/footer') %>

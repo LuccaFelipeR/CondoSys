@@ -1,7 +1,6 @@
-
-
 <h1>Dash Board CondoSys</h1>
 <p>Usuario autentificado!!!</p>
 
-<p>Bem-vindo, <%= usuario.nome %></p>
+<p>Bem-vindo, <%= usuario && usuario.nome ? usuario.nome : 'Admin' %></p>
 <a href="/moradores">morador</a>
+<a href="/funcionarios">funcionário</a>
