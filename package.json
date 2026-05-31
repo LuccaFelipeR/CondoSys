@@ -1,38 +1,32 @@
 {
   "name": "condosys",
   "version": "1.0.0",
-<<<<<<< HEAD
-  "description": "sistema de gestao de condominio",
-  "author": "",
-  "main": "src/app.js",
+  "description": "Sistema de gestão de condomínio",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "node",
+    "express",
+    "ejs",
+    "postgresql",
+    "mvc",
+    "condominio"
+  ],
+  "author": "Equipe CondoSys",
+  "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "dotenv": "^17.4.2",
-    "ejs": "^6.0.1",
+    "ejs": "^3.1.10",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "pg": "^8.21.0"
   },
   "devDependencies": {
-=======
-  "description": "Sistema de gerenciamento de condomínio",
-  "main": "app.js",
-  "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "ejs": "^6.0.1",
-    "express": "^5.2.1",
->>>>>>> 83c14efa9074a2257b4cb8a491b1c0877386e9ed
     "nodemon": "^3.1.14"
   }
-}
+}git add package.json package-lock.json
