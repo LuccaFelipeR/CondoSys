@@ -35,6 +35,7 @@ app.use('/', authRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/moradores', moradorRoutes);
 app.use('/funcionarios', funcionarioRoutes);
+app.use('/reservas', reservaRoutes);
 
 app.use((req, res) => {
   res.status(404).send('Página não encontrada.');
@@ -45,3 +46,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
+
