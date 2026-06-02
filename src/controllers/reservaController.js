@@ -1,5 +1,3 @@
-
-
 exports.listarReservas = (req, res) => {
     res.send("Lista de Reservas");
 };
@@ -14,18 +12,15 @@ exports.salvarReserva = (req, res) => {
 
 exports.formEditarReserva = (req, res) => {
     const id = req.params.id;
-
     res.send(`Editar reserva ${id}`);
 };
 
 exports.atualizarReserva = (req, res) => {
     const id = req.params.id;
-
     res.send(`Reserva ${id} atualizada`);
 };
 
 exports.excluirReserva = (req, res) => {
     const id = req.params.id;
-
     res.send(`Reserva ${id} excluída`);
 };
