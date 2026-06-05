@@ -1,6 +1,4 @@
-class MoradorController {
-  index(req, res) {
-    const moradoresFake = [
+const moradoresFake = [
       {
         id: 1,
         nome: 'Ana Lima',
@@ -48,11 +46,45 @@ class MoradorController {
       }
     ];
 
+
+
+class MoradorController {
+  index(req, res) {
+    
+
+    
+
     res.render('moradores/index', {
       titulo: 'Moradores',
       moradores: moradoresFake,
       usuario: req.session.usuario
     });
+  }
+
+  store(req, res){
+    moradoresFake.push({
+    id: moradoresFake.length + 1,
+    nome: req.body.nome,
+    cpf: req.body.cpf,
+    unidade: req.body.unidade,
+    telefone: req.body.telefone,
+    email: req.body.email,
+    status: 'Ativo'
+  });
+
+    res.redirect('/moradores');
+  }
+
+  delete(req, res){
+    const id = Number(req.params.id);
+    const indice = moradoresFake.findIndex(
+    morador =>morador.id === id
+    );
+
+    if(indice !== -1){
+      moradoresFake.splice(indice, 1);
+    }
+    res.redirect('/moradores');
   }
 }
 
