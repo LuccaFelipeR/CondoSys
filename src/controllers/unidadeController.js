@@ -1,41 +1,60 @@
-exports.listarUnidades = (req, res) => {
-    const unidades = [];
+const UnidadeModel = require('../models/unidadeModel');
 
-    res.render("unidades/index", {
+exports.listarUnidades = (req, res) => {
+    const unidades = UnidadeModel.listarTodos();
+
+    res.render('unidades/index', {
+        titulo: 'Unidades',
+        usuario: {
+            nome: 'Admin'
+        },
         unidades
     });
 };
 
-exports.formNovaUnidade = (req, res) => {
-    res.render("unidades/nova");
-};
-
 exports.salvarUnidade = (req, res) => {
-    console.log(req.body);
+    const novaUnidade = {
+        bloco: req.body.bloco,
+        numero: req.body.numero,
+        andar: Number(req.body.andar),
+        status: req.body.status || 'Ativa'
+    };
 
-    res.redirect("/unidades");
-};
+    UnidadeModel.cadastrar(novaUnidade);
 
-exports.formEditarUnidade = (req, res) => {
-    const { id } = req.params;
-
-    res.render("unidades/editar", {
-        id
-    });
+    res.redirect('/unidades');
 };
 
 exports.atualizarUnidade = (req, res) => {
-    const { id } = req.params;
+    const id = Number(req.params.id);
 
-    console.log("Atualizando:", id);
+    const unidadeAtualizada = {
+        bloco: req.body.bloco,
+        numero: req.body.numero,
+        andar: Number(req.body.andar),
+        status: req.body.status
+    };
 
-    res.redirect("/unidades");
+    const unidade = UnidadeModel.atualizar(
+        id,
+        unidadeAtualizada
+    );
+
+    if (!unidade) {
+        return res.status(404).send('Unidade não encontrada.');
+    }
+
+    res.redirect('/unidades');
 };
 
 exports.excluirUnidade = (req, res) => {
-    const { id } = req.params;
+    const id = Number(req.params.id);
 
-    console.log("Excluindo:", id);
+    const unidade = UnidadeModel.inativar(id);
 
-    res.redirect("/unidades");
+    if (!unidade) {
+        return res.status(404).send('Unidade não encontrada.');
+    }
+
+    res.redirect('/unidades');
 };
