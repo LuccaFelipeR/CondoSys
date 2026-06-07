@@ -1,34 +1,8 @@
-const funcionarios = [
-  {
-    id: 1,
-    nome: 'Carlos Henrique',
-    cpf: '123.456.789-00',
-    cargo: 'Porteiro',
-    telefone: '(43) 9 9999-1001',
-    dataAdmissao: '10/03/2024',
-    status: 'Ativo'
-  },
-  {
-    id: 2,
-    nome: 'Marina Souza',
-    cpf: '234.567.890-11',
-    cargo: 'Zeladora',
-    telefone: '(43) 9 9999-1002',
-    dataAdmissao: '15/08/2023',
-    status: 'Ativo'
-  },
-  {
-    id: 3,
-    nome: 'Roberto Lima',
-    cpf: '345.678.901-22',
-    cargo: 'Manutenção',
-    telefone: '(43) 9 9999-1003',
-    dataAdmissao: '20/11/2022',
-    status: 'Inativo'
-  }
-];
+const FuncionarioModel = require('../models/funcionarioModel');
 
 function listar(req, res) {
+  const funcionarios = FuncionarioModel.listarTodos();
+
   res.render('funcionarios/index', {
     titulo: 'Funcionários',
     funcionarios,
@@ -38,16 +12,15 @@ function listar(req, res) {
 
 function cadastrar(req, res) {
   const novoFuncionario = {
-    id: funcionarios.length + 1,
     nome: req.body.nome,
-    cpf: req.body.cpf,
+    cpf: formatarCPF(req.body.cpf),
     cargo: req.body.cargo,
-    telefone: req.body.telefone,
+    telefone: formatarTelefone(req.body.telefone),
     dataAdmissao: formatarDataParaTabela(req.body.dataAdmissao),
     status: req.body.status || 'Ativo'
   };
 
-  funcionarios.push(novoFuncionario);
+  FuncionarioModel.cadastrar(novoFuncionario);
 
   res.redirect('/funcionarios');
 }
@@ -55,18 +28,20 @@ function cadastrar(req, res) {
 function editar(req, res) {
   const id = Number(req.params.id);
 
-  const funcionario = funcionarios.find(item => item.id === id);
+  const funcionarioAtualizado = {
+    nome: req.body.nome,
+    cpf: formatarCPF(req.body.cpf),
+    cargo: req.body.cargo,
+    telefone: formatarTelefone(req.body.telefone),
+    dataAdmissao: formatarDataParaTabela(req.body.dataAdmissao),
+    status: req.body.status || 'Ativo'
+  };
+
+  const funcionario = FuncionarioModel.atualizar(id, funcionarioAtualizado);
 
   if (!funcionario) {
     return res.status(404).send('Funcionário não encontrado.');
   }
-
-  funcionario.nome = req.body.nome;
-  funcionario.cpf = req.body.cpf;
-  funcionario.cargo = req.body.cargo;
-  funcionario.telefone = req.body.telefone;
-  funcionario.dataAdmissao = formatarDataParaTabela(req.body.dataAdmissao);
-  funcionario.status = req.body.status || 'Ativo';
 
   res.redirect('/funcionarios');
 }
@@ -74,13 +49,11 @@ function editar(req, res) {
 function inativar(req, res) {
   const id = Number(req.params.id);
 
-  const funcionario = funcionarios.find(item => item.id === id);
+  const funcionario = FuncionarioModel.inativar(id);
 
   if (!funcionario) {
     return res.status(404).send('Funcionário não encontrado.');
   }
-
-  funcionario.status = 'Inativo';
 
   res.redirect('/funcionarios');
 }
@@ -103,3 +76,41 @@ module.exports = {
   editar,
   inativar
 };
+
+function limparNumeros(valor) {
+  if (!valor) return '';
+  return valor.replace(/\D/g, '');
+}
+
+function formatarCPF(cpf) {
+  const cpfLimpo = limparNumeros(cpf);
+
+  if (cpfLimpo.length !== 11) {
+    return cpf;
+  }
+
+  return cpfLimpo.replace(
+    /(\d{3})(\d{3})(\d{3})(\d{2})/,
+    '$1.$2.$3-$4'
+  );
+}
+
+function formatarTelefone(telefone) {
+  const telefoneLimpo = limparNumeros(telefone);
+
+  if (telefoneLimpo.length === 11) {
+    return telefoneLimpo.replace(
+      /(\d{2})(\d{1})(\d{4})(\d{4})/,
+      '($1) $2 $3-$4'
+    );
+  }
+
+  if (telefoneLimpo.length === 10) {
+    return telefoneLimpo.replace(
+      /(\d{2})(\d{4})(\d{4})/,
+      '($1) $2-$3'
+    );
+  }
+
+  return telefone;
+}

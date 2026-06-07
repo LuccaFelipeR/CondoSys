@@ -83,6 +83,7 @@
                     <td><%= funcionario.cargo %></td>
                     <td><%= funcionario.telefone %></td>
                     <td><%= funcionario.dataAdmissao %></td>
+
                     <td>
                       <% if (funcionario.status === 'Ativo') { %>
                         <span class="badge badge-active">Ativo</span>
@@ -90,6 +91,7 @@
                         <span class="badge badge-inactive">Inativo</span>
                       <% } %>
                     </td>
+
                     <td>
                       <button 
                         type="button"
@@ -151,7 +153,13 @@
 </div>
 
 <!-- MODAL DE CADASTRO -->
-<div class="modal fade" id="modalCadastrarFuncionario" tabindex="-1" aria-labelledby="modalCadastrarFuncionarioLabel" aria-hidden="true">
+<div 
+  class="modal fade" 
+  id="modalCadastrarFuncionario" 
+  tabindex="-1" 
+  aria-labelledby="modalCadastrarFuncionarioLabel" 
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
 
@@ -177,10 +185,12 @@
           </h6>
 
           <div class="row g-3 mb-4">
+
             <div class="col-md-6">
               <label class="form-label small fw-semibold text-muted">
                 Nome Completo <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
                 name="nome"
@@ -194,11 +204,15 @@
               <label class="form-label small fw-semibold text-muted">
                 CPF <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
+                id="cpfCadastro"
                 name="cpf"
                 class="form-control bg-light border-0" 
-                placeholder="123.456.789-00" 
+                placeholder="123.456.789-00"
+                maxlength="14"
+                inputmode="numeric"
                 required
               >
             </div>
@@ -207,6 +221,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Cargo <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
                 name="cargo"
@@ -220,11 +235,15 @@
               <label class="form-label small fw-semibold text-muted">
                 Telefone <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
+                id="telefoneCadastro"
                 name="telefone"
                 class="form-control bg-light border-0" 
-                placeholder="(43) 9 9999-0001" 
+                placeholder="(43) 9 9999-0001"
+                maxlength="16"
+                inputmode="numeric"
                 required
               >
             </div>
@@ -233,6 +252,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Data de Admissão <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="date" 
                 name="dataAdmissao"
@@ -245,6 +265,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Status <span class="text-danger">*</span>
               </label>
+
               <select 
                 name="status" 
                 class="form-control bg-light border-0" 
@@ -254,6 +275,7 @@
                 <option value="Inativo">Inativo</option>
               </select>
             </div>
+
           </div>
 
           <div class="d-flex justify-content-between align-items-center mt-4">
@@ -286,7 +308,13 @@
 </div>
 
 <!-- MODAL DE EDIÇÃO -->
-<div class="modal fade" id="modalEditarFuncionario" tabindex="-1" aria-labelledby="modalEditarFuncionarioLabel" aria-hidden="true">
+<div 
+  class="modal fade" 
+  id="modalEditarFuncionario" 
+  tabindex="-1" 
+  aria-labelledby="modalEditarFuncionarioLabel" 
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
 
@@ -312,10 +340,12 @@
           </h6>
 
           <div class="row g-3 mb-4">
+
             <div class="col-md-6">
               <label class="form-label small fw-semibold text-muted">
                 Nome Completo <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
                 id="editNome" 
@@ -329,11 +359,14 @@
               <label class="form-label small fw-semibold text-muted">
                 CPF <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
                 id="editCpf" 
                 name="cpf" 
-                class="form-control bg-light border-0" 
+                class="form-control bg-light border-0"
+                maxlength="14"
+                inputmode="numeric"
                 required
               >
             </div>
@@ -342,6 +375,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Cargo <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
                 id="editCargo" 
@@ -355,11 +389,14 @@
               <label class="form-label small fw-semibold text-muted">
                 Telefone <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
                 id="editTelefone" 
                 name="telefone" 
-                class="form-control bg-light border-0" 
+                class="form-control bg-light border-0"
+                maxlength="16"
+                inputmode="numeric"
                 required
               >
             </div>
@@ -368,6 +405,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Data de Admissão <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="date" 
                 id="editDataAdmissao" 
@@ -381,6 +419,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Status <span class="text-danger">*</span>
               </label>
+
               <select 
                 id="editStatus" 
                 name="status" 
@@ -391,6 +430,7 @@
                 <option value="Inativo">Inativo</option>
               </select>
             </div>
+
           </div>
 
           <div class="d-flex justify-content-between align-items-center mt-4">
@@ -419,6 +459,39 @@
 </div>
 
 <script>
+  function somenteNumeros(valor) {
+    return valor.replace(/\D/g, '');
+  }
+
+  function aplicarMascaraCPF(valor) {
+    let cpf = somenteNumeros(valor);
+
+    cpf = cpf.substring(0, 11);
+
+    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+    cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+
+    return cpf;
+  }
+
+  function aplicarMascaraTelefone(valor) {
+    let telefone = somenteNumeros(valor);
+
+    telefone = telefone.substring(0, 11);
+
+    if (telefone.length <= 10) {
+      telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
+      telefone = telefone.replace(/(\d{4})(\d)/, '$1-$2');
+      return telefone;
+    }
+
+    telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
+    telefone = telefone.replace(/(\d{1})(\d{4})(\d)/, '$1 $2-$3');
+
+    return telefone;
+  }
+
   function converterDataParaInput(data) {
     if (!data) {
       return '';
@@ -441,6 +514,36 @@
     return `${ano}-${mes}-${dia}`;
   }
 
+  function ativarMascaraCPF(idCampo) {
+    const campo = document.getElementById(idCampo);
+
+    if (!campo) {
+      return;
+    }
+
+    campo.addEventListener('input', function () {
+      campo.value = aplicarMascaraCPF(campo.value);
+    });
+  }
+
+  function ativarMascaraTelefone(idCampo) {
+    const campo = document.getElementById(idCampo);
+
+    if (!campo) {
+      return;
+    }
+
+    campo.addEventListener('input', function () {
+      campo.value = aplicarMascaraTelefone(campo.value);
+    });
+  }
+
+  ativarMascaraCPF('cpfCadastro');
+  ativarMascaraCPF('editCpf');
+
+  ativarMascaraTelefone('telefoneCadastro');
+  ativarMascaraTelefone('editTelefone');
+
   const modalEditarFuncionario = document.getElementById('modalEditarFuncionario');
 
   if (modalEditarFuncionario) {
@@ -458,9 +561,9 @@
       document.getElementById('formEditarFuncionario').action = `/funcionarios/${id}/editar`;
 
       document.getElementById('editNome').value = nome;
-      document.getElementById('editCpf').value = cpf;
+      document.getElementById('editCpf').value = aplicarMascaraCPF(cpf);
       document.getElementById('editCargo').value = cargo;
-      document.getElementById('editTelefone').value = telefone;
+      document.getElementById('editTelefone').value = aplicarMascaraTelefone(telefone);
       document.getElementById('editDataAdmissao').value = converterDataParaInput(dataAdmissao);
       document.getElementById('editStatus').value = status;
     });
