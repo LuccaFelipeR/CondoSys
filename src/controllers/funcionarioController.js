@@ -70,13 +70,6 @@ function formatarDataParaTabela(data) {
   return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
-module.exports = {
-  listar,
-  cadastrar,
-  editar,
-  inativar
-};
-
 function limparNumeros(valor) {
   if (!valor) return '';
   return valor.replace(/\D/g, '');
@@ -114,3 +107,10 @@ function formatarTelefone(telefone) {
 
   return telefone;
 }
+
+module.exports = {
+  listar,
+  cadastrar,
+  editar,
+  inativar
+};
