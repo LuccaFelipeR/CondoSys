@@ -1,21 +1,127 @@
 <%- include('../partials/header') %>
-<h1>Dash Board CondoSys</h1>
-<p>Usuario autenticado!!!</p>
 
-<p>Bem-vindo, <%= usuario && usuario.nome ? usuario.nome : 'Admin' %></p>
-<button>
-<a href="/moradores">Moradores</a>
-</button>
+<div class="app-layout">
 
-<button>
-<a href="/funcionarios">Funcionário</a>
-</button>
+  <%- include('../partials/navbar', { paginaAtiva: 'dashboard' }) %>
 
-<button>
-<a href="/reservas">Reservas</a>
-</button>
+  <main class="main-content">
 
+    <header class="topbar">
+      <h1><%= titulo || 'Dashboard' %></h1>
 
-<button>
-<a href="/unidades"> Unidades</a>
-</button>
+      <div class="topbar-actions">
+        <input type="text" placeholder="Pesquisar..." disabled>
+
+        <span class="notification-icon">
+          <i class="bi bi-bell-fill"></i>
+        </span>
+
+        <div class="user-info">
+          <div class="user-avatar">
+            <%= usuario && usuario.nome ? usuario.nome.charAt(0).toUpperCase() : 'A' %>
+          </div>
+          <span><%= usuario && usuario.nome ? usuario.nome : 'Admin' %></span>
+        </div>
+      </div>
+    </header>
+
+    <section class="content-area">
+
+      <div class="mb-4">
+        <h2>Resumo do Condomínio</h2>
+        <p class="text-muted">
+          Acompanhe os principais indicadores do sistema CondoSys.
+        </p>
+      </div>
+
+      <div class="row g-4">
+
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm rounded-4 p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-muted mb-1">Moradores</p>
+                <h3 class="fw-bold mb-0"><%= totais.moradores %></h3>
+              </div>
+              <div class="fs-2 text-primary">
+                <i class="bi bi-people-fill"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm rounded-4 p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-muted mb-1">Unidades</p>
+                <h3 class="fw-bold mb-0"><%= totais.unidades %></h3>
+              </div>
+              <div class="fs-2 text-primary">
+                <i class="bi bi-building-fill"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm rounded-4 p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-muted mb-1">Reservas</p>
+                <h3 class="fw-bold mb-0"><%= totais.reservas %></h3>
+              </div>
+              <div class="fs-2 text-primary">
+                <i class="bi bi-calendar-check-fill"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm rounded-4 p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-muted mb-1">Ocorrências</p>
+                <h3 class="fw-bold mb-0"><%= totais.ocorrencias %></h3>
+              </div>
+              <div class="fs-2 text-primary">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm rounded-4 p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-muted mb-1">Funcionários</p>
+                <h3 class="fw-bold mb-0"><%= totais.funcionarios %></h3>
+              </div>
+              <div class="fs-2 text-primary">
+                <i class="bi bi-person-badge-fill"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="table-card mt-5">
+        <h4 class="fw-bold mb-3">Visão Geral</h4>
+
+        <p class="text-muted mb-0">
+          Este dashboard apresenta indicadores básicos do condomínio.
+          Nesta primeira versão, os números são preparados pelo controller.
+          Depois, eles serão integrados aos models e ao banco de dados.
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<%- include('../partials/footer') %>
