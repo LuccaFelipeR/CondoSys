@@ -5,6 +5,7 @@ const moradorController = require('../controllers/moradorController');
 
 router.get('/', moradorController.index);
 router.post('/novo', moradorController.store);
-router.get('/excluir/:id', moradorController.delete);
+router.post('/:id/editar', moradorController.edit);
+router.post('/:id/inativar', moradorController.inativar)
 
 module.exports = router;

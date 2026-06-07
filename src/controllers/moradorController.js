@@ -1,91 +1,91 @@
-const moradoresFake = [
-      {
-        id: 1,
-        nome: 'Ana Lima',
-        cpf: '123.456.789-00',
-        unidade: 'Apto 101',
-        telefone: '(43) 9 9999-0001',
-        email: 'ana@email.com',
-        status: 'Ativo'
-      },
-      {
-        id: 2,
-        nome: 'Carlos Mendes',
-        cpf: '234.567.890-11',
-        unidade: 'Apto 202',
-        telefone: '(43) 9 9999-0002',
-        email: 'carlos@email.com',
-        status: 'Ativo'
-      },
-      {
-        id: 3,
-        nome: 'Beatriz Souza',
-        cpf: '345.678.901-22',
-        unidade: 'Apto 303',
-        telefone: '(43) 9 9999-0003',
-        email: 'bea@email.com',
-        status: 'Inativo'
-      },
-      {
-        id: 4,
-        nome: 'Daniel Costa',
-        cpf: '456.789.012-33',
-        unidade: 'Apto 104',
-        telefone: '(43) 9 9999-0004',
-        email: 'daniel@email.com',
-        status: 'Ativo'
-      },
-      {
-        id: 5,
-        nome: 'Elaine Ferreira',
-        cpf: '567.890.123-44',
-        unidade: 'Apto 205',
-        telefone: '(43) 9 9999-0005',
-        email: 'elaine@email.com',
-        status: 'Ativo'
-      }
-    ];
-
-
+const moradorModel =
+  require('../models/moradorModel');
 
 class MoradorController {
-  index(req, res) {
-    
 
-    
+  index(req, res) {
 
     res.render('moradores/index', {
       titulo: 'Moradores',
-      moradores: moradoresFake,
+      moradores: moradorModel.listarTodos(),
       usuario: req.session.usuario
     });
+
   }
 
-  store(req, res){
-    moradoresFake.push({
-    id: moradoresFake.length + 1,
-    nome: req.body.nome,
-    cpf: req.body.cpf,
-    unidade: req.body.unidade,
-    telefone: req.body.telefone,
-    email: req.body.email,
-    status: 'Ativo'
-  });
+  async store(req, res) {
+        try {
+            const { nome } = req.body;
+
+            // Trava de segurança: Regex exata que permite apenas letras e espaços
+            const regexNomeValido = /^[a-zA-ZÀ-ÿ\s]+$/;
+
+            if (!regexNomeValido.test(nome)) {
+                // Se falhar na validação, bloqueia a gravação imediatamente
+                console.warn("Tentativa de gravação com caracteres inválidos bloqueada.");
+                return res.status(400).send("Erro de Validação: O nome inserido contém caracteres não permitidos.");
+            }
+
+            // Se passar na validação, segue com a gravação normal
+            await moradorModel.criar(req.body);
+            res.redirect('/moradores');
+        } catch (error) {
+            console.error("Erro ao salvar morador:", error);
+            res.status(500).send("Erro ao cadastrar morador no banco de dados.");
+        }
+    }
+
+  store(req, res) {
+
+    moradorModel.criar({
+      nome: req.body.nome,
+      cpf: req.body.cpf,
+      email: req.body.email,
+      telefone: req.body.telefone,
+      unidade: req.body.unidade,
+      dataNascimento: req.body.dataNascimento,
+      modeloVeiculo: req.body.modeloVeiculo,
+      placa: req.body.placa,
+      cor: req.body.cor,
+      vaga: req.body.vaga,
+      observacoes: req.body.observacoes
+    });
 
     res.redirect('/moradores');
   }
 
-  delete(req, res){
-    const id = Number(req.params.id);
-    const indice = moradoresFake.findIndex(
-    morador =>morador.id === id
+  edit(req, res) {
+
+    moradorModel.atualizar(
+      req.params.id,
+      {
+        nome: req.body.nome,
+        cpf: req.body.cpf,
+        email: req.body.email,
+        telefone: req.body.telefone,
+        unidade: req.body.unidade,
+        dataNascimento: req.body.dataNascimento,
+        modeloVeiculo: req.body.modeloVeiculo,
+        placa: req.body.placa,
+        cor: req.body.cor,
+        vaga: req.body.vaga,
+        observacoes: req.body.observacoes
+      }
     );
 
-    if(indice !== -1){
-      moradoresFake.splice(indice, 1);
-    }
     res.redirect('/moradores');
   }
+
+  inativar(req, res) {
+
+    moradorModel.inativar(
+      req.params.id
+    );
+
+    res.redirect('/moradores');
+  }
+
 }
 
-module.exports = new MoradorController();
+module.exports =
+  new MoradorController();

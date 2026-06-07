@@ -81,11 +81,36 @@
                       <% } %>
                     </td>
                     <td>
-                      <a href="/moradores/excluir/<%= morador.id%>" class="edit-link"
-                        onclick="return confirm('Deseja excluir este morador?')">
-                        <i class="bi bi-pencil-fill"></i>
-                        excluir
-                      </a>
+                      <button
+    type="button"
+    class="edit-link border-0 bg-transparent p-0"
+    onclick="abrirEdicao(
+    '<%= morador.id %>',
+    '<%= morador.nome %>',
+    '<%= morador.cpf %>',
+    '<%= morador.unidade %>',
+    '<%= morador.telefone %>',
+    '<%= morador.email %>'
+)"
+  >
+    <i class="bi bi-pencil-fill"></i>
+    Editar
+  </button>
+
+  <form
+    action="/moradores/<%= morador.id %>/inativar"
+    method="POST"
+    style="display:inline;"
+  >
+    <button
+      type="submit"
+      class="edit-link border-0 bg-transparent p-0 ms-2 text-danger"
+      onclick="return confirm('Deseja inativar este morador?')"
+    >
+      <i class="bi bi-trash-fill"></i>
+      Inativar
+    </button>
+  </form>
                     </td>
                   </tr>
                 <% }) %>
@@ -141,7 +166,7 @@
       </div>
 
       <div class="modal-body p-4">
-        <form action="/moradores/novo" method="POST">
+        <form id= "formMorador" action="/moradores/novo" method="POST">
 
           <h6 class="fw-bold mb-3">
             <i class="bi bi-person-fill text-primary me-2"></i>
@@ -156,8 +181,11 @@
               <input 
                 type="text" 
                 name="nome"
+                id="nome"
                 class="form-control bg-light border-0" 
                 placeholder="Ana Lima" 
+                pattern="[a-zA-ZÀ-ÿ\s]+" 
+                title="O nome deve conter apenas letras e espaços."
                 required
               >
             </div>
@@ -169,6 +197,7 @@
               <input 
                 type="text" 
                 name="cpf"
+                id="cpf"
                 class="form-control bg-light border-0" 
                 placeholder="123.456.789-00" 
                 required
@@ -182,6 +211,7 @@
               <input 
                 type="date" 
                 name="dataNascimento"
+                id="dataNascimento"
                 class="form-control bg-light border-0"
               >
             </div>
@@ -193,6 +223,7 @@
               <input 
                 type="email" 
                 name="email"
+                id="email"
                 class="form-control bg-light border-0" 
                 placeholder="ana@email.com" 
                 required
@@ -206,6 +237,7 @@
               <input 
                 type="text" 
                 name="telefone"
+                id="telefone"
                 class="form-control bg-light border-0" 
                 placeholder="(43) 9 9999-0001"
               >
@@ -218,6 +250,7 @@
               <input 
                 type="text" 
                 name="unidade"
+                id="unidade"
                 class="form-control bg-light border-0" 
                 placeholder="Apto 101 — Bloco A" 
                 required
@@ -238,6 +271,7 @@
               <input 
                 type="text" 
                 name="modeloVeiculo"
+                id="modeloVeiculo"
                 class="form-control bg-light border-0" 
                 placeholder="Toyota Corolla"
               >
@@ -250,6 +284,7 @@
               <input 
                 type="text" 
                 name="placa"
+                id="placa"
                 class="form-control bg-light border-0" 
                 placeholder="ABC-1D23"
               >
@@ -262,6 +297,7 @@
               <input 
                 type="text" 
                 name="cor"
+                id="cor"
                 class="form-control bg-light border-0" 
                 placeholder="Prata"
               >
@@ -274,6 +310,7 @@
               <input 
                 type="text" 
                 name="vaga"
+                id="vaga"
                 class="form-control bg-light border-0" 
                 placeholder="12"
               >
@@ -286,6 +323,7 @@
             </label>
             <textarea 
               name="observacoes"
+              id="observacoes"
               class="form-control bg-light border-0" 
               rows="2" 
               placeholder="Morador com acesso à área comum até 22h..."
@@ -320,5 +358,58 @@
     </div>
   </div>
 </div>
+<script>
+
+function abrirEdicao(
+  id,
+  nome,
+  cpf,
+  unidade,
+  telefone,
+  email
+){
+
+  document.getElementById('nome').value = nome;
+  document.getElementById('cpf').value = cpf;
+  document.getElementById('unidade').value = unidade;
+  document.getElementById('telefone').value = telefone;
+  document.getElementById('email').value = email;
+
+  document.getElementById('formMorador').action =
+    '/moradores/' + id + '/editar';
+
+  document.getElementById('modalMoradorLabel').innerText =
+    'Editar Morador';
+
+  const modal = new bootstrap.Modal(
+    document.getElementById('modalMorador')
+  );
+
+  modal.show();
+}
+
+document
+  .getElementById('modalMorador')
+  .addEventListener(
+    'hidden.bs.modal',
+    function(){
+
+      document
+        .getElementById('formMorador')
+        .reset();
+
+      document
+        .getElementById('formMorador')
+        .action =
+          '/moradores/novo';
+
+      document
+        .getElementById('modalMoradorLabel')
+        .innerText =
+          'Cadastrar / Editar Morador';
+    }
+  );
+
+</script>
 
 <%- include('../partials/footer') %>
