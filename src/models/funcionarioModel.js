@@ -33,10 +33,18 @@ function listarTodos() {
 }
 
 function cadastrar(novoFuncionario) {
-  novoFuncionario.id = funcionarios.length + 1;
-  funcionarios.push(novoFuncionario);
+  const novoId = funcionarios.length > 0
+    ? funcionarios[funcionarios.length - 1].id + 1
+    : 1;
 
-  return novoFuncionario;
+  const funcionario = {
+    id: novoId,
+    ...novoFuncionario
+  };
+
+  funcionarios.push(funcionario);
+
+  return funcionario;
 }
 
 function buscarPorId(id) {
@@ -72,10 +80,15 @@ function inativar(id) {
   return funcionario;
 }
 
+function contarTodos() {
+  return funcionarios.length;
+}
+
 module.exports = {
   listarTodos,
   cadastrar,
   buscarPorId,
   atualizar,
-  inativar
+  inativar,
+  contarTodos
 };

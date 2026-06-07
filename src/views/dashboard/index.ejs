@@ -1,5 +1,134 @@
 <%- include('../partials/header') %>
 
+<%
+  const tituloPagina = typeof titulo !== 'undefined' ? titulo : 'Dashboard';
+  const usuarioLogado = typeof usuario !== 'undefined' ? usuario : null;
+  const dadosTotais = typeof totais !== 'undefined' ? totais : {};
+
+  const totalMoradores = Number(dadosTotais.moradores) || 0;
+  const totalUnidades = Number(dadosTotais.unidades) || 0;
+  const totalReservas = Number(dadosTotais.reservas) || 0;
+  const totalOcorrencias = Number(dadosTotais.ocorrencias) || 0;
+  const totalFuncionarios = Number(dadosTotais.funcionarios) || 0;
+
+  const indicadores = [
+    {
+      nome: 'Moradores',
+      valor: totalMoradores,
+      icone: 'bi bi-people-fill',
+      descricao: 'Pessoas cadastradas no condomínio.'
+    },
+    {
+      nome: 'Unidades',
+      valor: totalUnidades,
+      icone: 'bi bi-building-fill',
+      descricao: 'Apartamentos ou casas registradas.'
+    },
+    {
+      nome: 'Reservas',
+      valor: totalReservas,
+      icone: 'bi bi-calendar-check-fill',
+      descricao: 'Solicitações de áreas comuns.'
+    },
+    {
+      nome: 'Ocorrências',
+      valor: totalOcorrencias,
+      icone: 'bi bi-exclamation-triangle-fill',
+      descricao: 'Registros e solicitações abertas.'
+    },
+    {
+      nome: 'Funcionários',
+      valor: totalFuncionarios,
+      icone: 'bi bi-person-badge-fill',
+      descricao: 'Equipe administrativa e operacional.'
+    }
+  ];
+
+  const maiorValor = Math.max(
+    totalMoradores,
+    totalUnidades,
+    totalReservas,
+    totalOcorrencias,
+    totalFuncionarios,
+    1
+  );
+%>
+
+<style>
+  .dashboard-hero {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  }
+
+  .dashboard-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 22px;
+    height: 100%;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    border: 1px solid rgba(15, 23, 42, 0.04);
+  }
+
+  .dashboard-card-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(13, 110, 253, 0.10);
+    color: #0d6efd;
+    font-size: 22px;
+  }
+
+  .dashboard-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #172033;
+  }
+
+  .dashboard-chart-row {
+    margin-bottom: 18px;
+  }
+
+  .dashboard-chart-label {
+    min-width: 120px;
+    font-weight: 600;
+    color: #172033;
+  }
+
+  .dashboard-chart-track {
+    width: 100%;
+    height: 16px;
+    border-radius: 999px;
+    background: #eef2f7;
+    overflow: hidden;
+  }
+
+  .dashboard-chart-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: #0d6efd;
+  }
+
+  .dashboard-chart-value {
+    min-width: 32px;
+    text-align: right;
+    font-weight: 700;
+    color: #172033;
+  }
+
+  .dashboard-info-list {
+    padding-left: 18px;
+  }
+
+  .dashboard-info-list li {
+    margin-bottom: 10px;
+  }
+</style>
+
 <div class="app-layout">
 
   <%- include('../partials/navbar', { paginaAtiva: 'dashboard' }) %>
@@ -7,7 +136,7 @@
   <main class="main-content">
 
     <header class="topbar">
-      <h1><%= titulo || 'Dashboard' %></h1>
+      <h1><%= tituloPagina %></h1>
 
       <div class="topbar-actions">
         <input type="text" placeholder="Pesquisar..." disabled>
@@ -18,104 +147,182 @@
 
         <div class="user-info">
           <div class="user-avatar">
-            <%= usuario && usuario.nome ? usuario.nome.charAt(0).toUpperCase() : 'A' %>
+            <%= usuarioLogado && usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : 'A' %>
           </div>
-          <span><%= usuario && usuario.nome ? usuario.nome : 'Admin' %></span>
+
+          <span>
+            <%= usuarioLogado && usuarioLogado.nome ? usuarioLogado.nome : 'Admin' %>
+          </span>
         </div>
       </div>
     </header>
 
     <section class="content-area">
 
-      <div class="mb-4">
-        <h2>Resumo do Condomínio</h2>
-        <p class="text-muted">
-          Acompanhe os principais indicadores do sistema CondoSys.
+      <div class="dashboard-hero mb-4">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <p class="text-muted mb-1">Painel administrativo</p>
+
+            <h2 class="fw-bold mb-2">
+              Bem-vindo ao CondoSys
+            </h2>
+
+            <p class="text-muted mb-0">
+              Acompanhe os principais indicadores do condomínio em uma visão simples,
+              organizada e integrada aos módulos do sistema.
+            </p>
+          </div>
+
+          <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+            <span class="badge badge-active px-3 py-2">
+              Sistema em funcionamento
+            </span>
+
+            <p class="text-muted small mt-2 mb-0">
+              Gestão condominial em ambiente web
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <h4 class="fw-bold mb-1">Indicadores gerais</h4>
+        <p class="text-muted mb-0">
+          Resumo dos principais registros cadastrados no sistema.
         </p>
+      </div>
+
+      <div class="row g-4 mb-5">
+
+        <% indicadores.forEach(indicador => { %>
+          <div class="col-md-6 col-xl">
+            <div class="dashboard-card text-center">
+              <div class="d-flex justify-content-center mb-3">
+                <div class="dashboard-card-icon">
+                  <i class="<%= indicador.icone %>"></i>
+                </div>
+              </div>
+
+              <div class="dashboard-number">
+                <%= indicador.valor %>
+              </div>
+
+              <p class="fw-semibold mb-1">
+                <%= indicador.nome %>
+              </p>
+
+              <p class="text-muted small mb-0">
+                <%= indicador.descricao %>
+              </p>
+            </div>
+          </div>
+        <% }) %>
+
+      </div>
+
+      <div class="row g-4 mb-5">
+
+        <div class="col-lg-8">
+          <div class="dashboard-card">
+            <h4 class="fw-bold mb-2">Visão geral dos registros</h4>
+
+            <p class="text-muted mb-4">
+              Comparativo simples entre os principais módulos do CondoSys.
+            </p>
+
+            <% indicadores.forEach(indicador => { 
+              const largura = Math.round((indicador.valor / maiorValor) * 100);
+            %>
+              <div class="dashboard-chart-row">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="dashboard-chart-label">
+                    <%= indicador.nome %>
+                  </div>
+
+                  <div class="dashboard-chart-track">
+                    <div 
+                      class="dashboard-chart-bar" 
+                      style="width: <%= largura %>%;"
+                    ></div>
+                  </div>
+
+                  <div class="dashboard-chart-value">
+                    <%= indicador.valor %>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="dashboard-card">
+            <h4 class="fw-bold mb-3">Resumo do sistema</h4>
+
+            <p class="text-muted">
+              O CondoSys centraliza informações importantes para auxiliar a administração
+              condominial no dia a dia.
+            </p>
+
+            <p class="text-muted mb-0">
+              Os indicadores desta tela são enviados pelo controller e podem ser integrados
+              aos models de cada entidade, mantendo o padrão MVC do projeto.
+            </p>
+
+            <hr>
+
+            <p class="small text-muted mb-2">
+              <strong>Módulos monitorados:</strong> 5
+            </p>
+
+            <p class="small text-muted mb-2">
+              <strong>Objetivo:</strong> facilitar consultas e acompanhamento
+            </p>
+
+            <p class="small text-muted mb-0">
+              <strong>Tipo:</strong> Dashboard de leitura e análise
+            </p>
+          </div>
+        </div>
+
       </div>
 
       <div class="row g-4">
 
-        <div class="col-md-6 col-lg-4">
-          <div class="card border-0 shadow-sm rounded-4 p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <p class="text-muted mb-1">Moradores</p>
-                <h3 class="fw-bold mb-0"><%= totais.moradores %></h3>
-              </div>
-              <div class="fs-2 text-primary">
-                <i class="bi bi-people-fill"></i>
-              </div>
-            </div>
+        <div class="col-lg-6">
+          <div class="dashboard-card">
+            <h4 class="fw-bold mb-3">
+              <i class="bi bi-lightbulb-fill text-primary me-2"></i>
+              Boas práticas de uso
+            </h4>
+
+            <ul class="text-muted dashboard-info-list mb-0">
+              <li>Mantenha os dados dos moradores atualizados.</li>
+              <li>Consulte reservas antes de liberar áreas comuns.</li>
+              <li>Registre ocorrências assim que forem identificadas.</li>
+              <li>Atualize status de funcionários e unidades sempre que necessário.</li>
+            </ul>
           </div>
         </div>
 
-        <div class="col-md-6 col-lg-4">
-          <div class="card border-0 shadow-sm rounded-4 p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <p class="text-muted mb-1">Unidades</p>
-                <h3 class="fw-bold mb-0"><%= totais.unidades %></h3>
-              </div>
-              <div class="fs-2 text-primary">
-                <i class="bi bi-building-fill"></i>
-              </div>
-            </div>
+        <div class="col-lg-6">
+          <div class="dashboard-card">
+            <h4 class="fw-bold mb-3">
+              <i class="bi bi-info-circle-fill text-primary me-2"></i>
+              Curiosidades do sistema
+            </h4>
+
+            <ul class="text-muted dashboard-info-list mb-0">
+              <li>O Dashboard não é um CRUD, ele apenas apresenta indicadores.</li>
+              <li>Os cards dependem dos valores enviados pelo dashboardController.</li>
+              <li>O gráfico usa os mesmos dados exibidos nos cards.</li>
+              <li>A integração correta acontece quando o controller consulta os models.</li>
+            </ul>
           </div>
         </div>
 
-        <div class="col-md-6 col-lg-4">
-          <div class="card border-0 shadow-sm rounded-4 p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <p class="text-muted mb-1">Reservas</p>
-                <h3 class="fw-bold mb-0"><%= totais.reservas %></h3>
-              </div>
-              <div class="fs-2 text-primary">
-                <i class="bi bi-calendar-check-fill"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-          <div class="card border-0 shadow-sm rounded-4 p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <p class="text-muted mb-1">Ocorrências</p>
-                <h3 class="fw-bold mb-0"><%= totais.ocorrencias %></h3>
-              </div>
-              <div class="fs-2 text-primary">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-          <div class="card border-0 shadow-sm rounded-4 p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <p class="text-muted mb-1">Funcionários</p>
-                <h3 class="fw-bold mb-0"><%= totais.funcionarios %></h3>
-              </div>
-              <div class="fs-2 text-primary">
-                <i class="bi bi-person-badge-fill"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="table-card mt-5">
-        <h4 class="fw-bold mb-3">Visão Geral</h4>
-
-        <p class="text-muted mb-0">
-          Este dashboard apresenta indicadores básicos do condomínio.
-          Nesta primeira versão, os números são preparados pelo controller.
-          Depois, eles serão integrados aos models e ao banco de dados.
-        </p>
       </div>
 
     </section>
