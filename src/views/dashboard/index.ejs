@@ -1,7 +1,21 @@
+<%- include('../partials/header') %>
 <h1>Dash Board CondoSys</h1>
-<p>Usuario autentificado!!!</p>
+<p>Usuario autenticado!!!</p>
 
 <p>Bem-vindo, <%= usuario && usuario.nome ? usuario.nome : 'Admin' %></p>
-<a href="/moradores">morador</a>
-<a href="/funcionarios">funcionário</a>
-<a href="/reservas">reservas</a>
+<button>
+<a href="/moradores">Moradores</a>
+</button>
+
+<button>
+<a href="/funcionarios">Funcionário</a>
+</button>
+
+<button>
+<a href="/reservas">Reservas</a>
+</button>
+
+
+<button>
+<a href="/unidades"> Unidades</a>
+</button>
