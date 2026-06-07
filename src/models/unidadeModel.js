@@ -22,15 +22,12 @@ const unidades = [
     }
 ];
 
-function listarTodos() {
-    return unidades;
-}
 
 function cadastrar(unidade) {
     unidade.id_unidade = unidades.length + 1;
-
+    
     unidades.push(unidade);
-
+    
     return unidade;
 }
 
@@ -38,13 +35,13 @@ function atualizar(id, dadosAtualizados) {
     const unidade = unidades.find(
         u => u.id_unidade === id
     );
-
+    
     if (!unidade) {
         return null;
     }
-
+    
     Object.assign(unidade, dadosAtualizados);
-
+    
     return unidade;
 }
 
@@ -52,19 +49,27 @@ function inativar(id) {
     const unidade = unidades.find(
         u => u.id_unidade === id
     );
-
+    
     if (!unidade) {
         return null;
     }
-
+    
     unidade.status = "Inativa";
-
+    
     return unidade;
+}
+function listarTodos() {
+    return unidades;
+}
+
+function contarTodos() {
+    return unidades.length;
 }
 
 module.exports = {
     listarTodos,
     cadastrar,
     atualizar,
-    inativar
+    inativar,
+    contarTodos
 };
