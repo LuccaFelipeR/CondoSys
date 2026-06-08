@@ -1,49 +1,45 @@
-// Classe resposavel pelas regras de autentificação
+// Classe responsável pelas regras de autenticação
 
-class AuthController{
-    
-    // Exide a telade login
-    loginPage(req, res){
-        res.render('auth/login');
-    }
+class AuthController {
 
-    // Processa os dados enviados pelo formulário
-    login(req, res){
+  loginPage(req, res) {
+    res.render('auth/login');
+  }
 
-        // Captura email e senha enviados pelo form
-        const {email, password} = req.body ||{};
-    
+  login(req, res) {
+    const { email, password } = req.body || {};
 
-        // Validação simples (temporária)
-        if(email === "admin@condosys.com" && password ==="12345"){
+    if (email === 'admin@condosys.com' && password === '12345') {
 
-                // cria uma sessão para manter o usuario logado
-            req.session.usuario = {
-                nome: 'Abel',
-                email: email
-            };
-            req.session.save((err) => {
+      req.session.usuario = {
+        id: 1,
+        nome: 'Administrador Geral',
+        email: 'admin@condosys.com.br',
+        telefone: '(43) 9 9900-0001',
+        tipo: 'Administrador',
+        cadastradoEm: '01/01/2024'
+      };
+
+      req.session.save((err) => {
         if (err) {
-            console.log("Erro ao salvar sessão:", err);
-            return res.send("Erro interno no servidor");
+          console.log('Erro ao salvar sessão:', err);
+          return res.send('Erro interno no servidor');
         }
-        
-        
+
         return res.redirect('/dashboard');
-    });
-    
+      });
+
     } else {
-    // Se falhar a senha
-    console.log("Falha na validação das credenciais.");
-    return res.send('Usuário ou senha inválidos');
-    };
-}
-    logout(req, res){
-    req.session.destroy(() =>{
-        res.redirect('/login');
+      console.log('Falha na validação das credenciais.');
+      return res.send('Usuário ou senha inválidos');
+    }
+  }
+
+  logout(req, res) {
+    req.session.destroy(() => {
+      res.redirect('/login');
     });
-}
-        
+  }
 }
 
 module.exports = new AuthController();

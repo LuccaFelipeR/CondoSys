@@ -6,7 +6,13 @@ exports.listarReservas = (req, res) => {
   res.render('reservas/index', { 
     reservas: reservas,
     titulo: 'Reservas',
-    usuario: req.session.usuario || { nome: 'Admin' }
+    usuario: req.session.usuario || {
+  nome: 'Administrador Geral',
+  email: 'admin@condosys.com.br',
+  telefone: '(43) 9 9900-0001',
+  tipo: 'Administrador',
+  cadastradoEm: '01/01/2024'
+}
   });
 };
 
@@ -16,7 +22,13 @@ exports.formNovaReserva = (req, res) => {
   res.render('reservas/index', {
     reservas: reservas, 
     titulo: 'Reservas',
-    usuario: req.session.usuario || { nome: 'Admin' }
+    usuario: req.session.usuario || {
+  nome: 'Administrador Geral',
+  email: 'admin@condosys.com.br',
+  telefone: '(43) 9 9900-0001',
+  tipo: 'Administrador',
+  cadastradoEm: '01/01/2024'
+}
   });
 };
 
@@ -48,7 +60,13 @@ exports.formEditarReserva = (req, res) => {
     reservas: reservas,
     reserva: reserva,
     titulo: 'Reservas',
-    usuario: req.session.usuario || { nome: 'Admin' }
+    usuario: req.session.usuario || {
+    nome: 'Administrador Geral',
+    email: 'admin@condosys.com.br',
+    telefone: '(43) 9 9900-0001',
+    tipo: 'Administrador',
+    cadastradoEm: '01/01/2024'
+}
   });
 };
 
