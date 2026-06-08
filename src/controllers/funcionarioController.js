@@ -6,31 +6,23 @@ function listar(req, res) {
   res.render('funcionarios/index', {
     titulo: 'Funcionários',
     funcionarios,
-    usuario: req.session.usuario
+    usuario: req.session.usuario,
+    erros: []
   });
 }
 
 function cadastrar(req, res) {
   const erros = validarFuncionario(req.body);
 
-  if (erros.length > 0) {
-    return res.status(400).send(`
-      <h2>Erro ao cadastrar funcionário</h2>
-      <ul>
-        ${erros.map(erro => `<li>${erro}</li>`).join('')}
-      </ul>
-      <a href="/funcionarios">Voltar</a>
-    `);
+  const dadosFuncionario = montarDadosFuncionario(req.body);
+
+  if (FuncionarioModel.cpfJaExiste(dadosFuncionario.cpf)) {
+    erros.push('Já existe um funcionário cadastrado com este CPF.');
   }
 
-  const dadosFuncionario = {
-    nome: req.body.nome.trim(),
-    cpf: formatarCPF(req.body.cpf),
-    cargo: req.body.cargo.trim(),
-    telefone: formatarTelefone(req.body.telefone),
-    dataAdmissao: formatarDataParaTabela(req.body.dataAdmissao),
-    status: req.body.status || 'Ativo'
-  };
+  if (erros.length > 0) {
+    return renderizarComErros(req, res, erros);
+  }
 
   FuncionarioModel.cadastrar(dadosFuncionario);
 
@@ -40,32 +32,25 @@ function cadastrar(req, res) {
 function editar(req, res) {
   const id = Number(req.params.id);
 
-  const erros = validarFuncionario(req.body);
+  const funcionarioExistente = FuncionarioModel.buscarPorId(id);
 
-  if (erros.length > 0) {
-    return res.status(400).send(`
-      <h2>Erro ao editar funcionário</h2>
-      <ul>
-        ${erros.map(erro => `<li>${erro}</li>`).join('')}
-      </ul>
-      <a href="/funcionarios">Voltar</a>
-    `);
-  }
-
-  const dadosFuncionario = {
-    nome: req.body.nome.trim(),
-    cpf: formatarCPF(req.body.cpf),
-    cargo: req.body.cargo.trim(),
-    telefone: formatarTelefone(req.body.telefone),
-    dataAdmissao: formatarDataParaTabela(req.body.dataAdmissao),
-    status: req.body.status || 'Ativo'
-  };
-
-  const funcionario = FuncionarioModel.atualizar(id, dadosFuncionario);
-
-  if (!funcionario) {
+  if (!funcionarioExistente) {
     return res.status(404).send('Funcionário não encontrado.');
   }
+
+  const erros = validarFuncionario(req.body);
+
+  const dadosFuncionario = montarDadosFuncionario(req.body);
+
+  if (FuncionarioModel.cpfJaExiste(dadosFuncionario.cpf, id)) {
+    erros.push('Já existe outro funcionário cadastrado com este CPF.');
+  }
+
+  if (erros.length > 0) {
+    return renderizarComErros(req, res, erros);
+  }
+
+  FuncionarioModel.atualizar(id, dadosFuncionario);
 
   res.redirect('/funcionarios');
 }
@@ -82,20 +67,67 @@ function inativar(req, res) {
   res.redirect('/funcionarios');
 }
 
-function formatarDataParaTabela(data) {
-  if (!data) return '';
+function reativar(req, res) {
+  const id = Number(req.params.id);
 
-  if (data.includes('/')) return data;
+  const funcionario = FuncionarioModel.reativar(id);
+
+  if (!funcionario) {
+    return res.status(404).send('Funcionário não encontrado.');
+  }
+
+  res.redirect('/funcionarios');
+}
+
+function renderizarComErros(req, res, erros) {
+  const funcionarios = FuncionarioModel.listarTodos();
+
+  return res.status(400).render('funcionarios/index', {
+    titulo: 'Funcionários',
+    funcionarios,
+    usuario: req.session.usuario,
+    erros
+  });
+}
+
+function montarDadosFuncionario(body) {
+  return {
+    nome: body.nome ? body.nome.trim() : '',
+    cpf: formatarCPF(body.cpf),
+    cargo: body.cargo ? body.cargo.trim() : '',
+    telefone: formatarTelefone(body.telefone),
+    dataAdmissao: formatarDataParaTabela(body.dataAdmissao),
+    status: body.status || 'Ativo'
+  };
+}
+
+function formatarDataParaTabela(data) {
+  if (!data) {
+    return '';
+  }
+
+  if (data.includes('/')) {
+    return data;
+  }
 
   const partes = data.split('-');
 
-  if (partes.length !== 3) return data;
+  if (partes.length !== 3) {
+    return data;
+  }
 
-  return `${partes[2]}/${partes[1]}/${partes[0]}`;
+  const ano = partes[0];
+  const mes = partes[1];
+  const dia = partes[2];
+
+  return `${dia}/${mes}/${ano}`;
 }
 
 function limparNumeros(valor) {
-  if (!valor) return '';
+  if (!valor) {
+    return '';
+  }
+
   return valor.replace(/\D/g, '');
 }
 
@@ -103,7 +135,7 @@ function formatarCPF(cpf) {
   const cpfLimpo = limparNumeros(cpf);
 
   if (cpfLimpo.length !== 11) {
-    return cpf;
+    return cpf || '';
   }
 
   return cpfLimpo.replace(
@@ -129,7 +161,7 @@ function formatarTelefone(telefone) {
     );
   }
 
-  return telefone;
+  return telefone || '';
 }
 
 function validarTexto(valor, campo) {
@@ -138,6 +170,10 @@ function validarTexto(valor, campo) {
   }
 
   const texto = valor.trim();
+
+  if (texto.length < 3) {
+    return `${campo} deve ter pelo menos 3 caracteres.`;
+  }
 
   const regex = /^[A-Za-zÀ-ÿ\s]+$/;
 
@@ -168,6 +204,33 @@ function validarTelefone(telefone) {
   return null;
 }
 
+function validarDataAdmissao(data) {
+  if (!data || data.trim() === '') {
+    return 'Data de admissão é obrigatória.';
+  }
+
+  const dataInformada = new Date(data);
+  const hoje = new Date();
+
+  hoje.setHours(0, 0, 0, 0);
+
+  if (dataInformada > hoje) {
+    return 'Data de admissão não pode ser futura.';
+  }
+
+  return null;
+}
+
+function validarStatus(status) {
+  const statusPermitidos = ['Ativo', 'Inativo'];
+
+  if (!statusPermitidos.includes(status)) {
+    return 'Status inválido.';
+  }
+
+  return null;
+}
+
 function validarFuncionario(dados) {
   const erros = [];
 
@@ -175,15 +238,15 @@ function validarFuncionario(dados) {
   const erroCargo = validarTexto(dados.cargo, 'Cargo');
   const erroCPF = validarCPF(dados.cpf);
   const erroTelefone = validarTelefone(dados.telefone);
+  const erroDataAdmissao = validarDataAdmissao(dados.dataAdmissao);
+  const erroStatus = validarStatus(dados.status || 'Ativo');
 
   if (erroNome) erros.push(erroNome);
   if (erroCargo) erros.push(erroCargo);
   if (erroCPF) erros.push(erroCPF);
   if (erroTelefone) erros.push(erroTelefone);
-
-  if (!dados.dataAdmissao || dados.dataAdmissao.trim() === '') {
-    erros.push('Data de admissão é obrigatória.');
-  }
+  if (erroDataAdmissao) erros.push(erroDataAdmissao);
+  if (erroStatus) erros.push(erroStatus);
 
   return erros;
 }
@@ -192,5 +255,6 @@ module.exports = {
   listar,
   cadastrar,
   editar,
-  inativar
+  inativar,
+  reativar
 };

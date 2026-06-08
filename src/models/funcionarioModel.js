@@ -32,13 +32,18 @@ function listarTodos() {
   return funcionarios;
 }
 
-function cadastrar(novoFuncionario) {
-  const novoId = funcionarios.length > 0
-    ? funcionarios[funcionarios.length - 1].id + 1
-    : 1;
+function gerarNovoId() {
+  if (funcionarios.length === 0) {
+    return 1;
+  }
 
+  const maiorId = Math.max(...funcionarios.map(funcionario => funcionario.id));
+  return maiorId + 1;
+}
+
+function cadastrar(novoFuncionario) {
   const funcionario = {
-    id: novoId,
+    id: gerarNovoId(),
     ...novoFuncionario
   };
 
@@ -49,6 +54,19 @@ function cadastrar(novoFuncionario) {
 
 function buscarPorId(id) {
   return funcionarios.find(funcionario => funcionario.id === Number(id));
+}
+
+function buscarPorCpf(cpf) {
+  return funcionarios.find(funcionario => funcionario.cpf === cpf);
+}
+
+function cpfJaExiste(cpf, idIgnorado = null) {
+  return funcionarios.some(funcionario => {
+    const mesmoCpf = funcionario.cpf === cpf;
+    const outroFuncionario = funcionario.id !== Number(idIgnorado);
+
+    return mesmoCpf && outroFuncionario;
+  });
 }
 
 function atualizar(id, dadosAtualizados) {
@@ -80,15 +98,40 @@ function inativar(id) {
   return funcionario;
 }
 
+function reativar(id) {
+  const funcionario = buscarPorId(id);
+
+  if (!funcionario) {
+    return null;
+  }
+
+  funcionario.status = 'Ativo';
+
+  return funcionario;
+}
+
 function contarTodos() {
   return funcionarios.length;
+}
+
+function contarAtivos() {
+  return funcionarios.filter(funcionario => funcionario.status === 'Ativo').length;
+}
+
+function contarInativos() {
+  return funcionarios.filter(funcionario => funcionario.status === 'Inativo').length;
 }
 
 module.exports = {
   listarTodos,
   cadastrar,
   buscarPorId,
+  buscarPorCpf,
+  cpfJaExiste,
   atualizar,
   inativar,
-  contarTodos
+  reativar,
+  contarTodos,
+  contarAtivos,
+  contarInativos
 };

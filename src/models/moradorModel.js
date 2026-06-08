@@ -68,7 +68,7 @@ function inativar(id) {
   return morador;
 }
     status: 'Ativo'
-  },
+  ,
   {
     id: 3,
     nome: 'Beatriz Souza',
@@ -83,8 +83,7 @@ function inativar(id) {
     id: 5,
     nome: 'Elaine Ferreira',
     status: 'Ativo'
-  }
-];
+  };
 
 function contarTodos() {
   return moradores.length;
