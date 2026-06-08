@@ -39,6 +39,7 @@ app.use('/moradores', moradorRoutes);
 app.use('/funcionarios', funcionarioRoutes);
 app.use('/reservas', reservaRoutes);
 app.use('/unidades', unidadeRoutes);
+app.use('/ocorrencias', ocorrenciaRoutes);
 
 app.use((req, res) => {
   res.status(404).send('Página não encontrada.');
