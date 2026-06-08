@@ -1,3 +1,5 @@
+
+
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
@@ -36,6 +38,7 @@ app.use('/dashboard', dashboardRoutes);
 app.use('/moradores', moradorRoutes);
 app.use('/funcionarios', funcionarioRoutes);
 app.use('/reservas', reservaRoutes);
+app.use('/unidades', unidadeRoutes);
 
 app.use((req, res) => {
   res.status(404).send('Página não encontrada.');

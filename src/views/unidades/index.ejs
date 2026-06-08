@@ -1,0 +1,464 @@
+<%- include('../partials/header') %>
+
+<div class="app-layout">
+
+    <%- include('../partials/navbar', { paginaAtiva: 'unidades' }) %>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <h1><%= titulo || 'Unidades' %></h1>
+
+            <div class="topbar-actions">
+                <input type="text" placeholder="Pesquisar..." disabled>
+
+                <span class="notification-icon">
+                    <i class="bi bi-bell-fill"></i>
+                </span>
+
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <%= usuario && usuario.nome ? usuario.nome.charAt(0).toUpperCase() : 'A' %>
+                    </div>
+
+                    <span>
+                        <%= usuario && usuario.nome ? usuario.nome : 'Admin' %>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <section class="content-area">
+
+            <h2>Unidades Cadastradas</h2>
+
+            <div class="table-card">
+
+                <div class="table-toolbar">
+
+                    <div class="search-group">
+                        <i class="bi bi-search"></i>
+
+                        <input
+                            type="text"
+                            placeholder="Buscar por bloco ou número..."
+                            disabled
+                        >
+                    </div>
+
+                    <button class="filter-button" disabled>
+                        Filtros
+                    </button>
+
+                    <button
+                        type="button"
+                        class="primary-button border-0"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalCadastrarUnidade"
+                    >
+                        <i class="bi bi-plus-lg"></i>
+                        Nova Unidade
+                    </button>
+
+                </div>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Bloco</th>
+                                <th>Número</th>
+                                <th>Andar</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <% if (!unidades || unidades.length === 0) { %>
+
+                                <tr>
+                                    <td colspan="6" class="empty-message">
+                                        Nenhuma unidade cadastrada.
+                                    </td>
+                                </tr>
+
+                            <% } else { %>
+
+                                <% unidades.forEach(unidade => { %>
+
+                                    <tr>
+
+                                        <td><%= unidade.id_unidade %></td>
+                                        <td><%= unidade.bloco %></td>
+                                        <td><%= unidade.numero %></td>
+                                        <td><%= unidade.andar %></td>
+
+                                        <td>
+                                            <% if (unidade.status === 'Ativa') { %>
+
+                                                <span class="badge badge-active">
+                                                    Ativa
+                                                </span>
+
+                                            <% } else { %>
+
+                                                <span class="badge badge-inactive">
+                                                    Inativa
+                                                </span>
+
+                                            <% } %>
+                                        </td>
+
+                                        <td>
+
+                                            <button
+                                                type="button"
+                                                class="edit-link border-0 bg-transparent p-0"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalEditarUnidade"
+                                                data-id="<%= unidade.id_unidade %>"
+                                                data-bloco="<%= unidade.bloco %>"
+                                                data-numero="<%= unidade.numero %>"
+                                                data-andar="<%= unidade.andar %>"
+                                                data-status="<%= unidade.status %>"
+                                            >
+                                                <i class="bi bi-pencil-fill"></i>
+                                                Editar
+                                            </button>
+
+                                            <form
+                                                action="/unidades/excluir/<%= unidade.id_unidade %>"
+                                                method="POST"
+                                                style="display:inline;"
+                                            >
+                                                <button
+                                                    type="submit"
+                                                    class="edit-link border-0 bg-transparent p-0 ms-2 text-danger"
+                                                    onclick="return confirm('Deseja realmente inativar esta unidade?')"
+                                                >
+                                                    <i class="bi bi-trash-fill"></i>
+                                                    Inativar
+                                                </button>
+                                            </form>
+
+                                        </td>
+
+                                    </tr>
+
+                                <% }) %>
+
+                            <% } %>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div class="table-footer">
+
+                    <span>
+                        Exibindo <%= unidades ? unidades.length : 0 %> unidades
+                    </span>
+
+                    <div class="pagination">
+                        <button disabled>&laquo;</button>
+                        <button class="active-page">1</button>
+                        <button disabled>&raquo;</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!--CADASTRAR -->
+
+        <div
+            class="modal fade"
+            id="modalCadastrarUnidade"
+            tabindex="-1"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+
+                <div
+                    class="modal-content border-0 shadow-lg"
+                    style="border-radius:16px;"
+                >
+
+                    <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
+
+                        <h4 class="modal-title fw-bold">
+                            Cadastrar Unidade
+                        </h4>
+
+                        <button
+                            type="button"
+                            class="btn-close me-3"
+                            data-bs-dismiss="modal"
+                        ></button>
+
+                    </div>
+
+                    <div class="modal-body p-4">
+
+                        <form action="/unidades/salvar" method="POST">
+
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-building text-primary me-2"></i>
+                                Dados da Unidade
+                            </h6>
+
+                            <div class="row g-3 mb-4">
+
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold text-muted">
+                                        Bloco
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="bloco"
+                                        class="form-control bg-light border-0"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold text-muted">
+                                        Número
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="numero"
+                                        class="form-control bg-light border-0"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold text-muted">
+                                        Andar
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        name="andar"
+                                        class="form-control bg-light border-0"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-semibold text-muted">
+                                        Status
+                                    </label>
+
+                                    <select
+                                        name="status"
+                                        class="form-control bg-light border-0"
+                                    >
+                                        <option value="Ativa">Ativa</option>
+                                        <option value="Inativa">Inativa</option>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-secondary px-4 py-2 rounded-3"
+                                    data-bs-dismiss="modal"
+                                >
+                                    Cancelar
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    class="btn text-white px-4 py-2 rounded-3"
+                                    style="background-color:#172033;"
+                                >
+                                    Salvar Unidade
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- EDITAR -->
+
+        <div
+            class="modal fade"
+            id="modalEditarUnidade"
+            tabindex="-1"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+
+                <div
+                    class="modal-content border-0 shadow-lg"
+                    style="border-radius:16px;"
+                >
+
+                    <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
+
+                        <h4 class="modal-title fw-bold">
+                            Editar Unidade
+                        </h4>
+
+                        <button
+                            type="button"
+                            class="btn-close me-3"
+                            data-bs-dismiss="modal"
+                        ></button>
+
+                    </div>
+
+                    <div class="modal-body p-4">
+
+                        <form
+                            id="formEditarUnidade"
+                            method="POST"
+                        >
+
+                            <div class="row g-3">
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Bloco</label>
+
+                                    <input
+                                        type="text"
+                                        id="editBloco"
+                                        name="bloco"
+                                        class="form-control"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Número</label>
+
+                                    <input
+                                        type="text"
+                                        id="editNumero"
+                                        name="numero"
+                                        class="form-control"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Andar</label>
+
+                                    <input
+                                        type="number"
+                                        id="editAndar"
+                                        name="andar"
+                                        class="form-control"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Status</label>
+
+                                    <select
+                                        id="editStatus"
+                                        name="status"
+                                        class="form-control"
+                                    >
+                                        <option value="Ativa">Ativa</option>
+                                        <option value="Inativa">Inativa</option>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-4">
+
+                                <button
+                                    type="submit"
+                                    class="btn text-white px-4"
+                                    style="background-color:#172033;"
+                                >
+                                    Salvar Alterações
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+
+const modalEditarUnidade =
+document.getElementById('modalEditarUnidade');
+
+if (modalEditarUnidade) {
+
+    modalEditarUnidade.addEventListener(
+        'show.bs.modal',
+        function(event) {
+
+            const botao = event.relatedTarget;
+
+            const id =
+                botao.getAttribute('data-id');
+
+            document.getElementById(
+                'formEditarUnidade'
+            ).action = `/unidades/editar/${id}`;
+
+            document.getElementById(
+                'editBloco'
+            ).value =
+                botao.getAttribute('data-bloco');
+
+            document.getElementById(
+                'editNumero'
+            ).value =
+                botao.getAttribute('data-numero');
+
+            document.getElementById(
+                'editAndar'
+            ).value =
+                botao.getAttribute('data-andar');
+
+            document.getElementById(
+                'editStatus'
+            ).value =
+                botao.getAttribute('data-status');
+        }
+    );
+}
+
+</script>
+
+<%- include('../partials/footer') %>
