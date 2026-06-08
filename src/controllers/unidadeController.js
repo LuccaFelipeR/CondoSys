@@ -1,15 +1,19 @@
 const UnidadeModel = require('../models/unidadeModel');
 
 exports.listarUnidades = (req, res) => {
-    const unidades = UnidadeModel.listarTodos();
+  const unidades = UnidadeModel.listarTodos();
 
-    res.render('unidades/index', {
-        titulo: 'Unidades',
-        usuario: {
-            nome: 'Admin'
-        },
-        unidades
-    });
+  res.render('unidades/index', {
+    titulo: 'Unidades',
+    usuario: req.session.usuario || {
+      nome: 'Administrador Geral',
+      email: 'admin@condosys.com.br',
+      telefone: '(43) 9 9900-0001',
+      tipo: 'Administrador',
+      cadastradoEm: '01/01/2024'
+    },
+    unidades
+  });
 };
 
 exports.salvarUnidade = (req, res) => {
