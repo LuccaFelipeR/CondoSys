@@ -15,7 +15,16 @@ const moradores = [
     unidade: 'Apto 202',
     telefone: '(43) 99999-0002',
     email: 'carlos@email.com',
-    status: 'Ativo'
+  status: 'Ativo'
+  },
+  {
+    id: 3,
+    nome: 'Beatriz Souza',
+    cpf: '345.678.901-22',
+    unidade: 'Apto 303',
+    telefone: '(43) 99999-0003',
+    email: 'beatriz@email.com',
+    status: 'Inativo'
   }
 ];
 
@@ -67,24 +76,6 @@ function inativar(id) {
 
   return morador;
 }
-    status: 'Ativo'
-  },
-  {
-    id: 3,
-    nome: 'Beatriz Souza',
-    status: 'Inativo'
-  },
-  {
-    id: 4,
-    nome: 'Daniel Costa',
-    status: 'Ativo'
-  },
-  {
-    id: 5,
-    nome: 'Elaine Ferreira',
-    status: 'Ativo'
-  }
-];
 
 function contarTodos() {
   return moradores.length;

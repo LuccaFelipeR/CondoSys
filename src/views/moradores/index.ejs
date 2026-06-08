@@ -82,35 +82,35 @@
                     </td>
                     <td>
                       <button
-    type="button"
-    class="edit-link border-0 bg-transparent p-0"
-    onclick="abrirEdicao(
-    '<%= morador.id %>',
-    '<%= morador.nome %>',
-    '<%= morador.cpf %>',
-    '<%= morador.unidade %>',
-    '<%= morador.telefone %>',
-    '<%= morador.email %>'
-)"
-  >
-    <i class="bi bi-pencil-fill"></i>
-    Editar
-  </button>
+                        type="button"
+                        class="edit-link border-0 bg-transparent p-0"
+                        onclick="abrirEdicao(
+                          '<%= morador.id %>',
+                          '<%= morador.nome %>',
+                          '<%= morador.cpf %>',
+                          '<%= morador.unidade %>',
+                          '<%= morador.telefone %>',
+                          '<%= morador.email %>'
+                        )"
+                      >
+                        <i class="bi bi-pencil-fill"></i>
+                        Editar
+                      </button>
 
-  <form
-    action="/moradores/<%= morador.id %>/inativar"
-    method="POST"
-    style="display:inline;"
-  >
-    <button
-      type="submit"
-      class="edit-link border-0 bg-transparent p-0 ms-2 text-danger"
-      onclick="return confirm('Deseja inativar este morador?')"
-    >
-      <i class="bi bi-trash-fill"></i>
-      Inativar
-    </button>
-  </form>
+                      <form
+                        action="/moradores/<%= morador.id %>/inativar"
+                        method="POST"
+                        style="display:inline;"
+                      >
+                        <button
+                          type="submit"
+                          class="edit-link border-0 bg-transparent p-0 ms-2 text-danger"
+                          onclick="return confirm('Deseja realmente inativar este morador?')"
+                        >
+                          <i class="bi bi-trash-fill"></i>
+                          Inativar
+                        </button>
+                      </form>
                     </td>
                   </tr>
                 <% }) %>
@@ -147,7 +147,6 @@
 
 </div>
 
-<!-- MODAL DE CADASTRO -->
 <div class="modal fade" id="modalMorador" tabindex="-1" aria-labelledby="modalMoradorLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
@@ -166,7 +165,8 @@
       </div>
 
       <div class="modal-body p-4">
-        <form id= "formMorador" action="/moradores/novo" method="POST">
+
+        <form id="formMorador" action="/moradores/novo" method="POST">
 
           <h6 class="fw-bold mb-3">
             <i class="bi bi-person-fill text-primary me-2"></i>
@@ -200,6 +200,8 @@
                 id="cpf"
                 class="form-control bg-light border-0" 
                 placeholder="123.456.789-00" 
+                pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                title="Digite no formato 123.456.789-00"
                 required
               >
             </div>
@@ -358,58 +360,29 @@
     </div>
   </div>
 </div>
+
 <script>
-
-function abrirEdicao(
-  id,
-  nome,
-  cpf,
-  unidade,
-  telefone,
-  email
-){
-
+// Função limpa e unificada para abrir o modal de edição
+function abrirEdicao(id, nome, cpf, unidade, telefone, email) {
   document.getElementById('nome').value = nome;
   document.getElementById('cpf').value = cpf;
   document.getElementById('unidade').value = unidade;
   document.getElementById('telefone').value = telefone;
   document.getElementById('email').value = email;
 
-  document.getElementById('formMorador').action =
-    '/moradores/' + id + '/editar';
+  document.getElementById('formMorador').action = '/moradores/' + id + '/editar';
+  document.getElementById('modalMoradorLabel').innerText = 'Editar Morador';
 
-  document.getElementById('modalMoradorLabel').innerText =
-    'Editar Morador';
-
-  const modal = new bootstrap.Modal(
-    document.getElementById('modalMorador')
-  );
-
+  const modal = new bootstrap.Modal(document.getElementById('modalMorador'));
   modal.show();
 }
 
-document
-  .getElementById('modalMorador')
-  .addEventListener(
-    'hidden.bs.modal',
-    function(){
-
-      document
-        .getElementById('formMorador')
-        .reset();
-
-      document
-        .getElementById('formMorador')
-        .action =
-          '/moradores/novo';
-
-      document
-        .getElementById('modalMoradorLabel')
-        .innerText =
-          'Cadastrar / Editar Morador';
-    }
-  );
-
+// Reseta o formulário quando o modal é fechado
+document.getElementById('modalMorador').addEventListener('hidden.bs.modal', function() {
+  document.getElementById('formMorador').reset();
+  document.getElementById('formMorador').action = '/moradores/novo';
+  document.getElementById('modalMoradorLabel').innerText = 'Cadastrar / Editar Morador';
+});
 </script>
 
 <%- include('../partials/footer') %>
