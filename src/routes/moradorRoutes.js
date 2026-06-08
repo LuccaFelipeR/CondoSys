@@ -11,4 +11,6 @@ router.post('/:id/editar', moradorController.edit);
 
 router.post('/:id/inativar', moradorController.inativar);
 
+router.post('/:id/reativar', moradorController.reativar);
+
 module.exports = router;

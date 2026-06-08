@@ -7,7 +7,7 @@
   <main class="main-content">
 
     <header class="topbar">
-      <h1>Moradores</h1>
+      <h1><%= titulo || 'Moradores' %></h1>
 
       <div class="topbar-actions">
         <input type="text" placeholder="Pesquisar..." disabled>
@@ -20,7 +20,10 @@
           <div class="user-avatar">
             <%= usuario && usuario.nome ? usuario.nome.charAt(0).toUpperCase() : 'A' %>
           </div>
-          <span><%= usuario && usuario.nome ? usuario.nome : 'Admin' %></span>
+
+          <span>
+            <%= usuario && usuario.nome ? usuario.nome : 'Administrador Geral' %>
+          </span>
         </div>
       </div>
     </header>
@@ -33,7 +36,7 @@
         <div class="table-toolbar">
           <div class="search-group">
             <i class="bi bi-search"></i>
-            <input type="text" placeholder="Buscar por nome, CPF ou unidade...">
+            <input type="text" placeholder="Buscar por nome, CPF ou unidade..." disabled>
           </div>
 
           <button class="filter-button" disabled>Filtros</button>
@@ -73,6 +76,7 @@
                     <td><%= morador.unidade %></td>
                     <td><%= morador.telefone %></td>
                     <td><%= morador.email %></td>
+
                     <td>
                       <% if (morador.status === 'Ativo') { %>
                         <span class="badge badge-active">Ativo</span>
@@ -80,37 +84,65 @@
                         <span class="badge badge-inactive">Inativo</span>
                       <% } %>
                     </td>
+
                     <td>
                       <button
                         type="button"
-                        class="edit-link border-0 bg-transparent p-0"
-                        onclick="abrirEdicao(
-                          '<%= morador.id %>',
-                          '<%= morador.nome %>',
-                          '<%= morador.cpf %>',
-                          '<%= morador.unidade %>',
-                          '<%= morador.telefone %>',
-                          '<%= morador.email %>'
-                        )"
+                        class="edit-link border-0 bg-transparent p-0 btnEditarMorador"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalMorador"
+                        data-id="<%= morador.id %>"
+                        data-nome="<%= morador.nome || '' %>"
+                        data-cpf="<%= morador.cpf || '' %>"
+                        data-unidade="<%= morador.unidade || '' %>"
+                        data-telefone="<%= morador.telefone || '' %>"
+                        data-email="<%= morador.email || '' %>"
+                        data-data-nascimento="<%= morador.dataNascimento || '' %>"
+                        data-modelo-veiculo="<%= morador.modeloVeiculo || '' %>"
+                        data-placa="<%= morador.placa || '' %>"
+                        data-cor="<%= morador.cor || '' %>"
+                        data-vaga="<%= morador.vaga || '' %>"
+                        data-observacoes="<%= morador.observacoes || '' %>"
                       >
                         <i class="bi bi-pencil-fill"></i>
                         Editar
                       </button>
 
-                      <form
-                        action="/moradores/<%= morador.id %>/inativar"
-                        method="POST"
-                        style="display:inline;"
-                      >
-                        <button
-                          type="submit"
-                          class="edit-link border-0 bg-transparent p-0 ms-2 text-danger"
-                          onclick="return confirm('Deseja realmente inativar este morador?')"
+                      <% if (morador.status === 'Ativo') { %>
+
+                        <form
+                          action="/moradores/<%= morador.id %>/inativar"
+                          method="POST"
+                          style="display:inline;"
                         >
-                          <i class="bi bi-trash-fill"></i>
-                          Inativar
-                        </button>
-                      </form>
+                          <button
+                            type="submit"
+                            class="edit-link border-0 bg-transparent p-0 ms-2 text-danger"
+                            onclick="return confirm('Deseja realmente inativar este morador?')"
+                          >
+                            <i class="bi bi-trash-fill"></i>
+                            Inativar
+                          </button>
+                        </form>
+
+                      <% } else { %>
+
+                        <form
+                          action="/moradores/<%= morador.id %>/reativar"
+                          method="POST"
+                          style="display:inline;"
+                        >
+                          <button
+                            type="submit"
+                            class="edit-link border-0 bg-transparent p-0 ms-2 text-success"
+                            onclick="return confirm('Deseja realmente reativar este morador?')"
+                          >
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Reativar
+                          </button>
+                        </form>
+
+                      <% } %>
                     </td>
                   </tr>
                 <% }) %>
@@ -147,13 +179,20 @@
 
 </div>
 
-<div class="modal fade" id="modalMorador" tabindex="-1" aria-labelledby="modalMoradorLabel" aria-hidden="true">
+<!-- MODAL MORADOR -->
+<div 
+  class="modal fade" 
+  id="modalMorador" 
+  tabindex="-1" 
+  aria-labelledby="modalMoradorLabel" 
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
 
       <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
         <h4 class="modal-title fw-bold" id="modalMoradorLabel">
-          Cadastrar / Editar Morador
+          Cadastrar Morador
         </h4>
 
         <button 
@@ -174,16 +213,20 @@
           </h6>
 
           <div class="row g-3 mb-4">
+
             <div class="col-md-4">
               <label class="form-label small fw-semibold text-muted">
                 Nome Completo <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
                 name="nome"
                 id="nome"
                 class="form-control bg-light border-0" 
                 placeholder="Ana Lima" 
+                minlength="3"
+                maxlength="100"
                 pattern="[a-zA-ZÀ-ÿ\s]+" 
                 title="O nome deve conter apenas letras e espaços."
                 required
@@ -194,12 +237,14 @@
               <label class="form-label small fw-semibold text-muted">
                 CPF <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
                 name="cpf"
                 id="cpf"
                 class="form-control bg-light border-0" 
                 placeholder="123.456.789-00" 
+                maxlength="14"
                 pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
                 title="Digite no formato 123.456.789-00"
                 required
@@ -210,6 +255,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Data de Nascimento
               </label>
+
               <input 
                 type="date" 
                 name="dataNascimento"
@@ -222,6 +268,7 @@
               <label class="form-label small fw-semibold text-muted">
                 E-mail <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="email" 
                 name="email"
@@ -236,12 +283,14 @@
               <label class="form-label small fw-semibold text-muted">
                 Telefone
               </label>
+
               <input 
                 type="text" 
                 name="telefone"
                 id="telefone"
                 class="form-control bg-light border-0" 
                 placeholder="(43) 9 9999-0001"
+                maxlength="16"
               >
             </div>
 
@@ -249,6 +298,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Unidade Vinculada <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
                 name="unidade"
@@ -258,6 +308,7 @@
                 required
               >
             </div>
+
           </div>
 
           <h6 class="fw-bold mb-3">
@@ -266,10 +317,12 @@
           </h6>
 
           <div class="row g-3 mb-4">
+
             <div class="col-md-4">
               <label class="form-label small fw-semibold text-muted">
                 Modelo
               </label>
+
               <input 
                 type="text" 
                 name="modeloVeiculo"
@@ -283,12 +336,14 @@
               <label class="form-label small fw-semibold text-muted">
                 Placa
               </label>
+
               <input 
                 type="text" 
                 name="placa"
                 id="placa"
                 class="form-control bg-light border-0" 
                 placeholder="ABC-1D23"
+                maxlength="8"
               >
             </div>
 
@@ -296,6 +351,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Cor
               </label>
+
               <input 
                 type="text" 
                 name="cor"
@@ -309,6 +365,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Vaga nº
               </label>
+
               <input 
                 type="text" 
                 name="vaga"
@@ -317,12 +374,14 @@
                 placeholder="12"
               >
             </div>
+
           </div>
 
           <div class="mb-4">
             <label class="form-label small fw-semibold text-muted">
               Observações
             </label>
+
             <textarea 
               name="observacoes"
               id="observacoes"
@@ -362,27 +421,99 @@
 </div>
 
 <script>
-// Função limpa e unificada para abrir o modal de edição
-function abrirEdicao(id, nome, cpf, unidade, telefone, email) {
-  document.getElementById('nome').value = nome;
-  document.getElementById('cpf').value = cpf;
-  document.getElementById('unidade').value = unidade;
-  document.getElementById('telefone').value = telefone;
-  document.getElementById('email').value = email;
+  function somenteNumeros(valor) {
+    return valor.replace(/\D/g, '');
+  }
 
-  document.getElementById('formMorador').action = '/moradores/' + id + '/editar';
-  document.getElementById('modalMoradorLabel').innerText = 'Editar Morador';
+  function aplicarMascaraCPF(valor) {
+    let cpf = somenteNumeros(valor);
 
-  const modal = new bootstrap.Modal(document.getElementById('modalMorador'));
-  modal.show();
-}
+    cpf = cpf.substring(0, 11);
+    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+    cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
 
-// Reseta o formulário quando o modal é fechado
-document.getElementById('modalMorador').addEventListener('hidden.bs.modal', function() {
-  document.getElementById('formMorador').reset();
-  document.getElementById('formMorador').action = '/moradores/novo';
-  document.getElementById('modalMoradorLabel').innerText = 'Cadastrar / Editar Morador';
-});
+    return cpf;
+  }
+
+  function aplicarMascaraTelefone(valor) {
+    let telefone = somenteNumeros(valor);
+
+    telefone = telefone.substring(0, 11);
+
+    if (telefone.length <= 10) {
+      telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
+      telefone = telefone.replace(/(\d{4})(\d)/, '$1-$2');
+      return telefone;
+    }
+
+    telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
+    telefone = telefone.replace(/(\d{1})(\d{4})(\d)/, '$1 $2-$3');
+
+    return telefone;
+  }
+
+  function ativarMascaras() {
+    const campoCpf = document.getElementById('cpf');
+    const campoTelefone = document.getElementById('telefone');
+
+    if (campoCpf) {
+      campoCpf.addEventListener('input', function () {
+        campoCpf.value = aplicarMascaraCPF(campoCpf.value);
+      });
+    }
+
+    if (campoTelefone) {
+      campoTelefone.addEventListener('input', function () {
+        campoTelefone.value = aplicarMascaraTelefone(campoTelefone.value);
+      });
+    }
+  }
+
+  function preencherFormularioEdicao(botao) {
+    const form = document.getElementById('formMorador');
+
+    document.getElementById('nome').value = botao.dataset.nome || '';
+    document.getElementById('cpf').value = botao.dataset.cpf || '';
+    document.getElementById('unidade').value = botao.dataset.unidade || '';
+    document.getElementById('telefone').value = botao.dataset.telefone || '';
+    document.getElementById('email').value = botao.dataset.email || '';
+    document.getElementById('dataNascimento').value = botao.dataset.dataNascimento || '';
+    document.getElementById('modeloVeiculo').value = botao.dataset.modeloVeiculo || '';
+    document.getElementById('placa').value = botao.dataset.placa || '';
+    document.getElementById('cor').value = botao.dataset.cor || '';
+    document.getElementById('vaga').value = botao.dataset.vaga || '';
+    document.getElementById('observacoes').value = botao.dataset.observacoes || '';
+
+    form.action = '/moradores/' + botao.dataset.id + '/editar';
+
+    document.getElementById('modalMoradorLabel').innerText = 'Editar Morador';
+  }
+
+  function resetarFormularioMorador() {
+    const form = document.getElementById('formMorador');
+
+    form.reset();
+    form.action = '/moradores/novo';
+
+    document.getElementById('modalMoradorLabel').innerText = 'Cadastrar Morador';
+  }
+
+  document.querySelectorAll('.btnEditarMorador').forEach(function (botao) {
+    botao.addEventListener('click', function () {
+      preencherFormularioEdicao(botao);
+    });
+  });
+
+  const modalMorador = document.getElementById('modalMorador');
+
+  if (modalMorador) {
+    modalMorador.addEventListener('hidden.bs.modal', function () {
+      resetarFormularioMorador();
+    });
+  }
+
+  ativarMascaras();
 </script>
 
 <%- include('../partials/footer') %>

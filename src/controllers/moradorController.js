@@ -1,19 +1,33 @@
-const moradorModel =
-  require('../models/moradorModel');
+const moradorModel = require('../models/moradorModel');
+
+function obterUsuarioLogado(req) {
+  return req.session.usuario || {
+    id: 1,
+    nome: 'Administrador Geral',
+    email: 'admin@condosys.com.br',
+    telefone: '(43) 9 9900-0001',
+    tipo: 'Administrador',
+    cadastradoEm: '01/01/2024'
+  };
+}
 
 class MoradorController {
-
   index(req, res) {
-
     res.render('moradores/index', {
       titulo: 'Moradores',
       moradores: moradorModel.listarTodos(),
-      usuario: req.session.usuario
+      usuario: obterUsuarioLogado(req)
     });
-
   }
 
   store(req, res) {
+    const { nome } = req.body;
+
+    const regexNomeValido = /^[a-zA-ZÀ-ÿ\s]+$/;
+
+    if (!nome || !regexNomeValido.test(nome)) {
+      return res.status(400).send('Erro de Validação: o nome deve conter apenas letras e espaços.');
+    }
 
     moradorModel.criar({
       nome: req.body.nome,
@@ -33,8 +47,7 @@ class MoradorController {
   }
 
   edit(req, res) {
-
-    moradorModel.atualizar(
+    const morador = moradorModel.atualizar(
       req.params.id,
       {
         nome: req.body.nome,
@@ -51,19 +64,32 @@ class MoradorController {
       }
     );
 
+    if (!morador) {
+      return res.status(404).send('Morador não encontrado.');
+    }
+
     res.redirect('/moradores');
   }
 
   inativar(req, res) {
+    const morador = moradorModel.inativar(req.params.id);
 
-    moradorModel.inativar(
-      req.params.id
-    );
+    if (!morador) {
+      return res.status(404).send('Morador não encontrado.');
+    }
 
     res.redirect('/moradores');
   }
 
+  reativar(req, res) {
+    const morador = moradorModel.reativar(req.params.id);
+
+    if (!morador) {
+      return res.status(404).send('Morador não encontrado.');
+    }
+
+    res.redirect('/moradores');
+  }
 }
 
-module.exports =
-  new MoradorController();
+module.exports = new MoradorController();

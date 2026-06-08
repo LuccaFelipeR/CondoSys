@@ -51,19 +51,27 @@ function listarTodos() {
 }
 
 function buscarPorId(id) {
-  return moradores.find(
-    morador => morador.id === Number(id)
-  );
+  return moradores.find(morador => morador.id === Number(id));
+}
+
+function gerarNovoId() {
+  if (moradores.length === 0) {
+    return 1;
+  }
+
+  const maiorId = Math.max(...moradores.map(morador => morador.id));
+  return maiorId + 1;
 }
 
 function criar(dados) {
   const novoMorador = {
-    id: moradores.length + 1,
+    id: gerarNovoId(),
     ...dados,
-    status: 'Ativo'
+    status: dados.status || 'Ativo'
   };
 
   moradores.push(novoMorador);
+
   return novoMorador;
 }
 
@@ -74,7 +82,18 @@ function atualizar(id, dados) {
     return null;
   }
 
-  Object.assign(morador, dados);
+  morador.nome = dados.nome;
+  morador.cpf = dados.cpf;
+  morador.email = dados.email;
+  morador.telefone = dados.telefone;
+  morador.unidade = dados.unidade;
+  morador.dataNascimento = dados.dataNascimento;
+  morador.modeloVeiculo = dados.modeloVeiculo;
+  morador.placa = dados.placa;
+  morador.cor = dados.cor;
+  morador.vaga = dados.vaga;
+  morador.observacoes = dados.observacoes;
+
   return morador;
 }
 
@@ -86,25 +105,21 @@ function inativar(id) {
   }
 
   morador.status = 'Inativo';
+
   return morador;
 }
-    status: 'Ativo'
-  ,
-  {
-    id: 3,
-    nome: 'Beatriz Souza',
-    status: 'Inativo'
-  },
-  {
-    id: 4,
-    nome: 'Daniel Costa',
-    status: 'Ativo'
-  },
-  {
-    id: 5,
-    nome: 'Elaine Ferreira',
-    status: 'Ativo'
-  };
+
+function reativar(id) {
+  const morador = buscarPorId(id);
+
+  if (!morador) {
+    return null;
+  }
+
+  morador.status = 'Ativo';
+
+  return morador;
+}
 
 function contarTodos() {
   return moradores.length;
@@ -116,5 +131,6 @@ module.exports = {
   criar,
   atualizar,
   inativar,
+  reativar,
   contarTodos
 };
