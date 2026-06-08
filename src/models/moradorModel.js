@@ -16,6 +16,33 @@ const moradores = [
     telefone: '(43) 99999-0002',
     email: 'carlos@email.com',
     status: 'Ativo'
+  },
+  {
+    id: 3,
+    nome: 'Beatriz Souza',
+    cpf: '345.678.901-22',
+    unidade: 'Apto 303',
+    telefone: '(43) 99999-0003',
+    email: 'beatriz@email.com',
+    status: 'Inativo'
+  },
+  {
+    id: 4,
+    nome: 'Daniel Costa',
+    cpf: '456.789.012-33',
+    unidade: 'Apto 104',
+    telefone: '(43) 99999-0004',
+    email: 'daniel@email.com',
+    status: 'Ativo'
+  },
+  {
+    id: 5,
+    nome: 'Elaine Ferreira',
+    cpf: '567.890.123-44',
+    unidade: 'Apto 205',
+    telefone: '(43) 99999-0005',
+    email: 'elaine@email.com',
+    status: 'Ativo'
   }
 ];
 
@@ -30,7 +57,6 @@ function buscarPorId(id) {
 }
 
 function criar(dados) {
-
   const novoMorador = {
     id: moradores.length + 1,
     ...dados,
@@ -38,12 +64,10 @@ function criar(dados) {
   };
 
   moradores.push(novoMorador);
-
   return novoMorador;
 }
 
 function atualizar(id, dados) {
-
   const morador = buscarPorId(id);
 
   if (!morador) {
@@ -51,12 +75,10 @@ function atualizar(id, dados) {
   }
 
   Object.assign(morador, dados);
-
   return morador;
 }
 
 function inativar(id) {
-
   const morador = buscarPorId(id);
 
   if (!morador) {
@@ -64,27 +86,8 @@ function inativar(id) {
   }
 
   morador.status = 'Inativo';
-
   return morador;
 }
-    status: 'Ativo'
-  },
-  {
-    id: 3,
-    nome: 'Beatriz Souza',
-    status: 'Inativo'
-  },
-  {
-    id: 4,
-    nome: 'Daniel Costa',
-    status: 'Ativo'
-  },
-  {
-    id: 5,
-    nome: 'Elaine Ferreira',
-    status: 'Ativo'
-  }
-];
 
 function contarTodos() {
   return moradores.length;
