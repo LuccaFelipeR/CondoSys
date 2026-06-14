@@ -1,8 +1,11 @@
-// Configuração futura do banco PostgreSQL.
-//
-// Por enquanto, a equipe ainda não instalou/configurou o PostgreSQL em todos os PCs.
-// Então este arquivo fica como base segura para não quebrar o projeto.
-//
-// Quando o banco estiver configurado, este arquivo será atualizado com Pool do pacote pg.
+const { Pool } = require('pg');
 
-module.exports = {};
+const pool = new Pool({
+    host: 'localhost',
+    user: 'postgres',
+    password: '1234',
+    database: 'projeto_ecosys',
+    port: 5444 //pegar a porta padrao do postgre
+});
+
+module.exports = pool;//exporta a pool já conectada para outros arquivos usarem
