@@ -2,10 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 const unidadeController = require("../controllers/unidadeController");
+const authMiddleware = require('../middlewares/authMiddleware');
+
 
 console.log("CONTROLLER:");
 console.log(unidadeController);
 
+router.use(authMiddleware);
 // Listar
 router.get("/", unidadeController.listarUnidades);
 
