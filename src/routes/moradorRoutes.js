@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const moradorController = require('../controllers/moradorController');
+const authMiddleware = require('../middlewares/authMiddleware');
+
+router.use(authMiddleware);
 
 router.get('/', moradorController.index);
 
