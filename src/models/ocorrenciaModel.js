@@ -45,9 +45,17 @@ function buscarPorId(id) {
   return ocorrencias.find(o => o.id === Number(id));
 }
 
+function gerarNovoId() {
+  if (ocorrencias.length === 0) {
+    return 1;
+  }
+  const maiorId = Math.max(...ocorrencias.map(o => o.id));
+  return maiorId + 1;
+}
+
 function criar(dados) {
   const novaOcorrencia = {
-    id: ocorrencias.length + 1,
+    id: gerarNovoId(),
     ...dados
   };
   ocorrencias.push(novaOcorrencia);
@@ -63,6 +71,15 @@ function atualizar(id, dados) {
   return ocorrencia;
 }
 
+function excluir(id) {
+  const index = ocorrencias.findIndex(o => o.id === Number(id));
+  if (index === -1) {
+    return false;
+  }
+  ocorrencias.splice(index, 1);
+  return true;
+}
+
 function contarTodos() {
   return ocorrencias.length;
 }
@@ -72,5 +89,6 @@ module.exports = {
   buscarPorId,
   criar,
   atualizar,
+  excluir,
   contarTodos
 };
