@@ -25,7 +25,7 @@ const ReservaModel = carregarModel('../models/reservaModel');
 const OcorrenciaModel = carregarModel('../models/ocorrenciaModel');
 const FuncionarioModel = carregarModel('../models/funcionarioModel');
 
-function contar(nome, model) {
+async function contar(nome, model) {
   if (!model) {
     console.log(`${nome}: model não carregado.`);
     return 0;
@@ -38,7 +38,7 @@ function contar(nome, model) {
   }
 
   try {
-    return model.contarTodos();
+    return await model.contarTodos();
   } catch (erro) {
     console.log(`${nome}: erro ao executar contarTodos.`);
     console.log(erro.message);
@@ -46,13 +46,13 @@ function contar(nome, model) {
   }
 }
 
-function index(req, res) {
+async function index(req, res) {
   const totais = {
-    moradores: contar('Moradores', MoradorModel),
-    unidades: contar('Unidades', UnidadeModel),
-    reservas: contar('Reservas', ReservaModel),
-    ocorrencias: contar('Ocorrências', OcorrenciaModel),
-    funcionarios: contar('Funcionários', FuncionarioModel)
+    moradores: await contar('Moradores', MoradorModel),
+    unidades: await contar('Unidades', UnidadeModel),
+    reservas: await contar('Reservas', ReservaModel),
+    ocorrencias: await contar('Ocorrências', OcorrenciaModel),
+    funcionarios: await contar('Funcionários', FuncionarioModel)
   };
 
   const grafico = {
@@ -67,10 +67,10 @@ function index(req, res) {
   };
 
   res.render('dashboard/index', {
-  titulo: 'Dashboard',
-  totais,
-  grafico,
-  usuario: obterUsuarioLogado(req)
+    titulo: 'Dashboard',
+    totais,
+    grafico,
+    usuario: obterUsuarioLogado(req)
   });
 }
 
