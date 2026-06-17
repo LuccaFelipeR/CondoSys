@@ -47,74 +47,85 @@ function validarOcorrencia(dados) {
   return erros;
 }
 
-function renderizarComErros(req, res, erros) {
-  res.status(400).render('ocorrencias/index', {
-    titulo: 'Ocorrências',
-    ocorrencias: ocorrenciaModel.listarTodos(),
-    usuario: req.session.usuario,
-    erros
-  });
+async function renderizarComErros(req, res, erros) {
+  try {
+    const ocorrencias = await ocorrenciaModel.listarTodos();
+    res.status(400).render('ocorrencias/index', {
+      titulo: 'Ocorrências',
+      ocorrencias,
+      usuario: req.session.usuario,
+      erros
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Erro crítico do servidor.');
+  }
 }
 
 class OcorrenciaController {
-  listarOcorrencias(req, res) {
-    res.render('ocorrencias/index', {
-      titulo: 'Ocorrências',
-      ocorrencias: ocorrenciaModel.listarTodos(),
-      usuario: req.session.usuario,
-      erros: []
-    });
+  async listarOcorrencias(req, res) {
+    try {
+      const ocorrencias = await ocorrenciaModel.listarTodos();
+      res.render('ocorrencias/index', {
+        titulo: 'Ocorrências',
+        ocorrencias,
+        usuario: req.session.usuario,
+        erros: []
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Erro ao carregar as ocorrências.');
+    }
   }
 
-  salvarOcorrencia(req, res) {
+  async salvarOcorrencia(req, res) {
     const erros = validarOcorrencia(req.body);
     if (erros.length > 0) {
       return renderizarComErros(req, res, erros);
     }
 
-    const { titulo, descricao, morador, unidade, data, status } = req.body;
-    ocorrenciaModel.criar({
-      titulo: titulo.trim(),
-      descricao: descricao.trim(),
-      morador: morador.trim(),
-      unidade: unidade.trim(),
-      data,
-      status
-    });
-    res.redirect('/ocorrencias');
+    try {
+      await ocorrenciaModel.criar(req.body);
+      res.redirect('/ocorrencias');
+    } catch (err) {
+      console.error(err);
+      return renderizarComErros(req, res, [err.message]);
+    }
   }
 
-  editarOcorrencia(req, res) {
+  async editarOcorrencia(req, res) {
     const id = Number(req.params.id);
-    const ocorrenciaExistente = ocorrenciaModel.buscarPorId(id);
-    if (!ocorrenciaExistente) {
-      return res.status(404).send('Ocorrência não encontrada.');
-    }
+    try {
+      const ocorrenciaExistente = await ocorrenciaModel.buscarPorId(id);
+      if (!ocorrenciaExistente) {
+        return res.status(404).send('Ocorrência não encontrada.');
+      }
 
-    const erros = validarOcorrencia(req.body);
-    if (erros.length > 0) {
-      return renderizarComErros(req, res, erros);
-    }
+      const erros = validarOcorrencia(req.body);
+      if (erros.length > 0) {
+        return renderizarComErros(req, res, erros);
+      }
 
-    const { titulo, descricao, morador, unidade, data, status } = req.body;
-    ocorrenciaModel.atualizar(id, {
-      titulo: titulo.trim(),
-      descricao: descricao.trim(),
-      morador: morador.trim(),
-      unidade: unidade.trim(),
-      data,
-      status
-    });
-    res.redirect('/ocorrencias');
+      await ocorrenciaModel.atualizar(id, req.body);
+      res.redirect('/ocorrencias');
+    } catch (err) {
+      console.error(err);
+      return renderizarComErros(req, res, [err.message]);
+    }
   }
 
-  excluirOcorrencia(req, res) {
+  async excluirOcorrencia(req, res) {
     const id = Number(req.params.id);
-    const deletado = ocorrenciaModel.excluir(id);
-    if (!deletado) {
-      return res.status(404).send('Ocorrência não encontrada.');
+    try {
+      const deletado = await ocorrenciaModel.excluir(id);
+      if (!deletado) {
+        return res.status(404).send('Ocorrência não encontrada.');
+      }
+      res.redirect('/ocorrencias');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Erro ao excluir ocorrência.');
     }
-    res.redirect('/ocorrencias');
   }
 }
 
