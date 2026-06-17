@@ -1,3 +1,14 @@
+function obterUsuarioLogado(req) {
+  return req.session.usuario || {
+    id: 1,
+    nome: 'Administrador Geral',
+    email: 'admin@condosys.com.br',
+    telefone: '(43) 9 9900-0001',
+    tipo: 'Administrador',
+    cadastradoEm: '01/01/2024'
+  };
+}
+
 function carregarModel(caminho) {
   try {
     return require(caminho);
@@ -56,10 +67,10 @@ function index(req, res) {
   };
 
   res.render('dashboard/index', {
-    titulo: 'Dashboard',
-    totais,
-    grafico,
-    usuario: req.session.usuario
+  titulo: 'Dashboard',
+  totais,
+  grafico,
+  usuario: obterUsuarioLogado(req)
   });
 }
 

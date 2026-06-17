@@ -1,12 +1,23 @@
 const FuncionarioModel = require('../models/funcionarioModel');
 
+function obterUsuarioLogado(req) {
+  return req.session.usuario || {
+    id: 1,
+    nome: 'Administrador Geral',
+    email: 'admin@condosys.com.br',
+    telefone: '(43) 9 9900-0001',
+    tipo: 'Administrador',
+    cadastradoEm: '01/01/2024'
+  };
+}
+
 function listar(req, res) {
   const funcionarios = FuncionarioModel.listarTodos();
 
   res.render('funcionarios/index', {
     titulo: 'Funcionários',
     funcionarios,
-    usuario: req.session.usuario,
+    usuario: obterUsuarioLogado(req),
     erros: []
   });
 }
@@ -85,7 +96,7 @@ function renderizarComErros(req, res, erros) {
   return res.status(400).render('funcionarios/index', {
     titulo: 'Funcionários',
     funcionarios,
-    usuario: req.session.usuario,
+    usuario: obterUsuarioLogado(req),
     erros
   });
 }
