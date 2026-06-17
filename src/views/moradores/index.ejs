@@ -290,7 +290,9 @@
                 id="telefone"
                 class="form-control bg-light border-0" 
                 placeholder="(43) 9 9999-0001"
-                maxlength="16"
+                maxlength="15"
+                pattern="\(\d{2}\)\s\d{4,5}-\d{4}"
+                oninput="mascaraTelefone(this)"
               >
             </div>
 
@@ -421,99 +423,51 @@
 </div>
 
 <script>
-  function somenteNumeros(valor) {
-    return valor.replace(/\D/g, '');
-  }
+// Função limpa e unificada para abrir o modal de edição
+function abrirEdicao(id, nome, cpf, unidade, telefone, email) {
+  document.getElementById('nome').value = nome;
+  document.getElementById('cpf').value = cpf;
+  document.getElementById('unidade').value = unidade;
+  document.getElementById('telefone').value = telefone;
+  document.getElementById('email').value = email;
 
-  function aplicarMascaraCPF(valor) {
-    let cpf = somenteNumeros(valor);
+  document.getElementById('formMorador').action = '/moradores/' + id + '/editar';
+  document.getElementById('modalMoradorLabel').innerText = 'Editar Morador';
 
-    cpf = cpf.substring(0, 11);
-    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
-    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
-    cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  const modal = new bootstrap.Modal(document.getElementById('modalMorador'));
+  modal.show();
+}
 
-    return cpf;
-  }
+// Reseta o formulário quando o modal é fechado
+document.getElementById('modalMorador').addEventListener('hidden.bs.modal', function() {
+  document.getElementById('formMorador').reset();
+  document.getElementById('formMorador').action = '/moradores/novo';
+  document.getElementById('modalMoradorLabel').innerText = 'Cadastrar / Editar Morador';
+});
 
-  function aplicarMascaraTelefone(valor) {
-    let telefone = somenteNumeros(valor);
 
-    telefone = telefone.substring(0, 11);
-
-    if (telefone.length <= 10) {
-      telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
-      telefone = telefone.replace(/(\d{4})(\d)/, '$1-$2');
-      return telefone;
+function mascaraTelefone(input) {
+    // Remove tudo o que não for número
+    let v = input.value.replace(/\D/g, "");
+    
+    // Formata o DDD: (XX
+    if (v.length > 0) v = "(" + v;
+    // Fecha o parêntese do DDD: (XX) 
+    if (v.length > 3) v = v.substring(0, 3) + ") " + v.substring(3);
+    
+    // Ajusta o hífen dinamicamente para fixo ou celular
+    if (v.length > 13) {
+        // Formato Celular: (XX) XXXXX-XXXX
+        v = v.substring(0, 10) + "-" + v.substring(10, 14);
+    } else if (v.length > 9) {
+        // Formato Fixo temporário: (XX) XXXX-XXXX
+        v = v.substring(0, 9) + "-" + v.substring(9);
     }
+    
+    input.value = v;
+}
 
-    telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
-    telefone = telefone.replace(/(\d{1})(\d{4})(\d)/, '$1 $2-$3');
 
-    return telefone;
-  }
-
-  function ativarMascaras() {
-    const campoCpf = document.getElementById('cpf');
-    const campoTelefone = document.getElementById('telefone');
-
-    if (campoCpf) {
-      campoCpf.addEventListener('input', function () {
-        campoCpf.value = aplicarMascaraCPF(campoCpf.value);
-      });
-    }
-
-    if (campoTelefone) {
-      campoTelefone.addEventListener('input', function () {
-        campoTelefone.value = aplicarMascaraTelefone(campoTelefone.value);
-      });
-    }
-  }
-
-  function preencherFormularioEdicao(botao) {
-    const form = document.getElementById('formMorador');
-
-    document.getElementById('nome').value = botao.dataset.nome || '';
-    document.getElementById('cpf').value = botao.dataset.cpf || '';
-    document.getElementById('unidade').value = botao.dataset.unidade || '';
-    document.getElementById('telefone').value = botao.dataset.telefone || '';
-    document.getElementById('email').value = botao.dataset.email || '';
-    document.getElementById('dataNascimento').value = botao.dataset.dataNascimento || '';
-    document.getElementById('modeloVeiculo').value = botao.dataset.modeloVeiculo || '';
-    document.getElementById('placa').value = botao.dataset.placa || '';
-    document.getElementById('cor').value = botao.dataset.cor || '';
-    document.getElementById('vaga').value = botao.dataset.vaga || '';
-    document.getElementById('observacoes').value = botao.dataset.observacoes || '';
-
-    form.action = '/moradores/' + botao.dataset.id + '/editar';
-
-    document.getElementById('modalMoradorLabel').innerText = 'Editar Morador';
-  }
-
-  function resetarFormularioMorador() {
-    const form = document.getElementById('formMorador');
-
-    form.reset();
-    form.action = '/moradores/novo';
-
-    document.getElementById('modalMoradorLabel').innerText = 'Cadastrar Morador';
-  }
-
-  document.querySelectorAll('.btnEditarMorador').forEach(function (botao) {
-    botao.addEventListener('click', function () {
-      preencherFormularioEdicao(botao);
-    });
-  });
-
-  const modalMorador = document.getElementById('modalMorador');
-
-  if (modalMorador) {
-    modalMorador.addEventListener('hidden.bs.modal', function () {
-      resetarFormularioMorador();
-    });
-  }
-
-  ativarMascaras();
 </script>
 
 <%- include('../partials/footer') %>
