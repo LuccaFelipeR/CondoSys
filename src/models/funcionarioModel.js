@@ -1,125 +1,258 @@
-const funcionarios = [
-  {
-    id: 1,
-    nome: 'Carlos Henrique',
-    cpf: '123.456.789-00',
-    cargo: 'Porteiro',
-    telefone: '(43) 9 9999-1001',
-    dataAdmissao: '10/03/2024',
-    status: 'Ativo'
-  },
-  {
-    id: 2,
-    nome: 'Marina Souza',
-    cpf: '234.567.890-11',
-    cargo: 'Zeladora',
-    telefone: '(43) 9 9999-1002',
-    dataAdmissao: '15/08/2023',
-    status: 'Ativo'
-  },
-  {
-    id: 3,
-    nome: 'Roberto Lima',
-    cpf: '345.678.901-22',
-    cargo: 'Manutenção',
-    telefone: '(43) 9 9999-1003',
-    dataAdmissao: '20/11/2022',
-    status: 'Inativo'
-  }
-];
+const pool = require('../database/connection');
 
-function listarTodos() {
-  return funcionarios;
-}
-
-function gerarNovoId() {
-  if (funcionarios.length === 0) {
-    return 1;
+function formatarDataParaTela(data) {
+  if (!data) {
+    return '';
   }
 
-  const maiorId = Math.max(...funcionarios.map(funcionario => funcionario.id));
-  return maiorId + 1;
+  const dataObj = data instanceof Date ? data : new Date(data);
+
+  if (Number.isNaN(dataObj.getTime())) {
+    return '';
+  }
+
+  const dia = String(dataObj.getDate()).padStart(2, '0');
+  const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+  const ano = dataObj.getFullYear();
+
+  return `${dia}/${mes}/${ano}`;
 }
 
-function cadastrar(novoFuncionario) {
-  const funcionario = {
-    id: gerarNovoId(),
-    ...novoFuncionario
+function formatarDataParaInput(data) {
+  if (!data) {
+    return '';
+  }
+
+  if (typeof data === 'string') {
+    return data.slice(0, 10);
+  }
+
+  const ano = data.getFullYear();
+  const mes = String(data.getMonth() + 1).padStart(2, '0');
+  const dia = String(data.getDate()).padStart(2, '0');
+
+  return `${ano}-${mes}-${dia}`;
+}
+
+function mapearFuncionario(linha) {
+  return {
+    id: linha.id_funcionario,
+    nome: linha.nome,
+    cpf: linha.cpf,
+    cargo: linha.cargo,
+    telefone: linha.telefone,
+    dataAdmissao: formatarDataParaTela(linha.data_admissao),
+    dataAdmissaoInput: formatarDataParaInput(linha.data_admissao),
+    salario: linha.salario,
+    status: linha.status,
+    idUsuario: linha.id_usuario
   };
-
-  funcionarios.push(funcionario);
-
-  return funcionario;
 }
 
-function buscarPorId(id) {
-  return funcionarios.find(funcionario => funcionario.id === Number(id));
+async function listarTodos() {
+  const resultado = await pool.query(`
+    SELECT *
+    FROM funcionarios
+    ORDER BY id_funcionario
+  `);
+
+  return resultado.rows.map(mapearFuncionario);
 }
 
-function buscarPorCpf(cpf) {
-  return funcionarios.find(funcionario => funcionario.cpf === cpf);
+async function cadastrar(novoFuncionario) {
+  const {
+    nome,
+    cpf,
+    cargo,
+    telefone,
+    dataAdmissao,
+    salario,
+    status,
+    idUsuario
+  } = novoFuncionario;
+
+  const resultado = await pool.query(
+    `
+      INSERT INTO funcionarios
+        (nome, cpf, cargo, telefone, data_admissao, salario, status, id_usuario)
+      VALUES
+        ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING *
+    `,
+    [
+      nome,
+      cpf,
+      cargo,
+      telefone,
+      dataAdmissao,
+      salario || 0,
+      status || 'Ativo',
+      idUsuario || 1
+    ]
+  );
+
+  return mapearFuncionario(resultado.rows[0]);
 }
 
-function cpfJaExiste(cpf, idIgnorado = null) {
-  return funcionarios.some(funcionario => {
-    const mesmoCpf = funcionario.cpf === cpf;
-    const outroFuncionario = funcionario.id !== Number(idIgnorado);
+async function buscarPorId(id) {
+  const resultado = await pool.query(
+    `
+      SELECT *
+      FROM funcionarios
+      WHERE id_funcionario = $1
+    `,
+    [id]
+  );
 
-    return mesmoCpf && outroFuncionario;
-  });
-}
-
-function atualizar(id, dadosAtualizados) {
-  const funcionario = buscarPorId(id);
-
-  if (!funcionario) {
+  if (resultado.rowCount === 0) {
     return null;
   }
 
-  funcionario.nome = dadosAtualizados.nome;
-  funcionario.cpf = dadosAtualizados.cpf;
-  funcionario.cargo = dadosAtualizados.cargo;
-  funcionario.telefone = dadosAtualizados.telefone;
-  funcionario.dataAdmissao = dadosAtualizados.dataAdmissao;
-  funcionario.status = dadosAtualizados.status;
-
-  return funcionario;
+  return mapearFuncionario(resultado.rows[0]);
 }
 
-function inativar(id) {
-  const funcionario = buscarPorId(id);
+async function buscarPorCpf(cpf) {
+  const resultado = await pool.query(
+    `
+      SELECT *
+      FROM funcionarios
+      WHERE cpf = $1
+    `,
+    [cpf]
+  );
 
-  if (!funcionario) {
+  if (resultado.rowCount === 0) {
     return null;
   }
 
-  funcionario.status = 'Inativo';
-
-  return funcionario;
+  return mapearFuncionario(resultado.rows[0]);
 }
 
-function reativar(id) {
-  const funcionario = buscarPorId(id);
+async function cpfJaExiste(cpf, idIgnorado = null) {
+  let sql = `
+    SELECT id_funcionario
+    FROM funcionarios
+    WHERE cpf = $1
+  `;
 
-  if (!funcionario) {
+  const parametros = [cpf];
+
+  if (idIgnorado) {
+    sql += ` AND id_funcionario <> $2`;
+    parametros.push(Number(idIgnorado));
+  }
+
+  sql += ` LIMIT 1`;
+
+  const resultado = await pool.query(sql, parametros);
+
+  return resultado.rowCount > 0;
+}
+
+async function atualizar(id, dadosAtualizados) {
+  const {
+    nome,
+    cpf,
+    cargo,
+    telefone,
+    dataAdmissao,
+    salario,
+    status
+  } = dadosAtualizados;
+
+  const resultado = await pool.query(
+    `
+      UPDATE funcionarios
+      SET
+        nome = $1,
+        cpf = $2,
+        cargo = $3,
+        telefone = $4,
+        data_admissao = $5,
+        salario = $6,
+        status = $7
+      WHERE id_funcionario = $8
+      RETURNING *
+    `,
+    [
+      nome,
+      cpf,
+      cargo,
+      telefone,
+      dataAdmissao,
+      salario || 0,
+      status || 'Ativo',
+      id
+    ]
+  );
+
+  if (resultado.rowCount === 0) {
     return null;
   }
 
-  funcionario.status = 'Ativo';
-
-  return funcionario;
+  return mapearFuncionario(resultado.rows[0]);
 }
 
-function contarTodos() {
-  return funcionarios.length;
+async function inativar(id) {
+  const resultado = await pool.query(
+    `
+      UPDATE funcionarios
+      SET status = 'Inativo'
+      WHERE id_funcionario = $1
+      RETURNING *
+    `,
+    [id]
+  );
+
+  if (resultado.rowCount === 0) {
+    return null;
+  }
+
+  return mapearFuncionario(resultado.rows[0]);
 }
 
-function contarAtivos() {
-  return funcionarios.filter(funcionario => funcionario.status === 'Ativo').length;
+async function reativar(id) {
+  const resultado = await pool.query(
+    `
+      UPDATE funcionarios
+      SET status = 'Ativo'
+      WHERE id_funcionario = $1
+      RETURNING *
+    `,
+    [id]
+  );
+
+  if (resultado.rowCount === 0) {
+    return null;
+  }
+
+  return mapearFuncionario(resultado.rows[0]);
 }
 
-function contarInativos() {
-  return funcionarios.filter(funcionario => funcionario.status === 'Inativo').length;
+async function contarTodos() {
+  const resultado = await pool.query(`
+    SELECT COUNT(*) FROM funcionarios
+  `);
+
+  return parseInt(resultado.rows[0].count, 10);
+}
+
+async function contarAtivos() {
+  const resultado = await pool.query(`
+    SELECT COUNT(*) FROM funcionarios
+    WHERE status = 'Ativo'
+  `);
+
+  return parseInt(resultado.rows[0].count, 10);
+}
+
+async function contarInativos() {
+  const resultado = await pool.query(`
+    SELECT COUNT(*) FROM funcionarios
+    WHERE status = 'Inativo'
+  `);
+
+  return parseInt(resultado.rows[0].count, 10);
 }
 
 module.exports = {
