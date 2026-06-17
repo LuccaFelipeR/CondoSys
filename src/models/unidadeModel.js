@@ -1,69 +1,53 @@
-const unidades = [
-    {
-        id_unidade: 1,
-        bloco: "A",
-        numero: "101",
-        andar: 1,
-        status: "Ativa"
-    },
-    {
-        id_unidade: 2,
-        bloco: "A",
-        numero: "102",
-        andar: 1,
-        status: "Ativa"
-    },
-    {
-        id_unidade: 3,
-        bloco: "B",
-        numero: "201",
-        andar: 2,
-        status: "Inativa"
-    }
-];
+const pool = require('../database/connection');
 
-
-function cadastrar(unidade) {
-    unidade.id_unidade = unidades.length + 1;
-    
-    unidades.push(unidade);
-    
-    return unidade;
-}
-
-function atualizar(id, dadosAtualizados) {
-    const unidade = unidades.find(
-        u => u.id_unidade === id
+async function listarTodos() {
+    const result = await pool.query(
+        'SELECT * FROM unidades ORDER BY id_unidade'
     );
-    
-    if (!unidade) {
-        return null;
-    }
-    
-    Object.assign(unidade, dadosAtualizados);
-    
-    return unidade;
+    return result.rows;
 }
 
-function inativar(id) {
-    const unidade = unidades.find(
-        u => u.id_unidade === id
+async function contarTodos() {
+    const result = await pool.query(
+        'SELECT COUNT(*) FROM unidades'
     );
-    
-    if (!unidade) {
-        return null;
-    }
-    
-    unidade.status = "Inativa";
-    
-    return unidade;
-}
-function listarTodos() {
-    return unidades;
+    return parseInt(result.rows[0].count);
 }
 
-function contarTodos() {
-    return unidades.length;
+async function cadastrar(unidade) {
+    const { bloco, numero, andar, status } = unidade;
+    const result = await pool.query(
+        `INSERT INTO unidades (bloco, numero, andar, status)
+         VALUES ($1, $2, $3, $4)
+         RETURNING *`,
+        [bloco, numero, andar, status]
+    );
+    return result.rows[0];
+}
+
+async function atualizar(id, dadosAtualizados) {
+    const { bloco, numero, andar, status } = dadosAtualizados;
+    const result = await pool.query(
+        `UPDATE unidades
+         SET bloco = $1, numero = $2, andar = $3, status = $4
+         WHERE id_unidade = $5
+         RETURNING *`,
+        [bloco, numero, andar, status, id]
+    );
+    if (result.rowCount === 0) return null;
+    return result.rows[0];
+}
+
+async function inativar(id) {
+    const result = await pool.query(
+        `UPDATE unidades
+         SET status = 'Inativa'
+         WHERE id_unidade = $1
+         RETURNING *`,
+        [id]
+    );
+    if (result.rowCount === 0) return null;
+    return result.rows[0];
 }
 
 module.exports = {

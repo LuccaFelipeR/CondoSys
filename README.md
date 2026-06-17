@@ -215,24 +215,51 @@ O middleware `authMiddleware.js` já foi criado para proteger rotas privadas, ve
 
 ## Banco de dados
 
-O projeto foi planejado para utilizar **PostgreSQL**.
+O projeto utiliza **PostgreSQL** como banco de dados relacional.
 
-Arquivos relacionados:
+### Configuração
 
-```txt
-src/database/schema.sql
-src/database/seed.sql
-src/models/
+As credenciais de conexão ficam no arquivo `src/database/connection.js`.  
+Para facilitar a configuração entre ambientes diferentes, as variáveis sensíveis devem ser definidas no `.env`:
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=sua_senha
+DB_DATABASE=condoServer
 ```
 
-Situação atual:
+### Estrutura
 
-- Arquivos de model já existem como base;
-- Scripts de banco foram separados na pasta `database`;
-- A integração completa com PostgreSQL ainda será feita;
-- O módulo de Funcionários ainda utiliza dados temporários em memória.
+```txt
+src/database/
+├── connection.js  → Pool de conexão com o PostgreSQL
+├── setup.js       → Cria o banco, tabelas e dados iniciais automaticamente
+├── schema.sql     → Estrutura das tabelas (CREATE TABLE IF NOT EXISTS)
+└── seed.sql       → Dados iniciais para teste
+```
 
----
+### Tabelas
+
+| Tabela | Depende de |
+|---|---|
+| `unidades` | — |
+| `usuarios` | — |
+| `funcionarios` | `usuarios` |
+| `moradores` | `unidades`, `usuarios` |
+| `reservas` | `moradores` |
+| `ocorrencias` | `moradores` |
+
+### Inicializar o banco
+
+Após clonar o projeto, rode **uma vez**:
+
+```bash
+npm run setup
+```
+
+Esse comando cria o banco `condoServer`, executa o `schema.sql` e popula com dados de teste via `seed.sql`.
 
 ## Como rodar o projeto
 
