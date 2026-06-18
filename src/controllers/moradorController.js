@@ -2,94 +2,106 @@ const moradorModel = require('../models/moradorModel');
 
 function obterUsuarioLogado(req) {
   return req.session.usuario || {
-    id: 1,
-    nome: 'Administrador Geral',
-    email: 'admin@condosys.com.br',
-    telefone: '(43) 9 9900-0001',
-    tipo: 'Administrador',
-    cadastradoEm: '01/01/2024'
+    id_usuario: 1,
+    nome: 'Administrador Geral'
   };
 }
 
 class MoradorController {
-  index(req, res) {
-    res.render('moradores/index', {
-      titulo: 'Moradores',
-      moradores: moradorModel.listarTodos(),
-      usuario: obterUsuarioLogado(req)
-    });
-  }
 
-  store(req, res) {
-    const { nome } = req.body;
+  async index(req, res) {
+    try {
 
-    const regexNomeValido = /^[a-zA-ZÀ-ÿ\s]+$/;
+      const moradores = await moradorModel.listarTodos();
 
-    if (!nome || !regexNomeValido.test(nome)) {
-      return res.status(400).send('Erro de Validação: o nome deve conter apenas letras e espaços.');
+      res.render('moradores/index', {
+        titulo: 'Moradores',
+        moradores,
+        usuario: obterUsuarioLogado(req)
+      });
+
+    } catch (erro) {
+      console.error(erro);
+      res.status(500).send('Erro ao carregar moradores');
     }
-
-    moradorModel.criar({
-      nome: req.body.nome,
-      cpf: req.body.cpf,
-      email: req.body.email,
-      telefone: req.body.telefone,
-      unidade: req.body.unidade,
-      dataNascimento: req.body.dataNascimento,
-      modeloVeiculo: req.body.modeloVeiculo,
-      placa: req.body.placa,
-      cor: req.body.cor,
-      vaga: req.body.vaga,
-      observacoes: req.body.observacoes
-    });
-
-    res.redirect('/moradores');
   }
 
-  edit(req, res) {
-    const morador = moradorModel.atualizar(
-      req.params.id,
-      {
+  async store(req, res) {
+    try {
+
+      await moradorModel.criar({
         nome: req.body.nome,
         cpf: req.body.cpf,
-        email: req.body.email,
         telefone: req.body.telefone,
-        unidade: req.body.unidade,
+        email: req.body.email,
         dataNascimento: req.body.dataNascimento,
-        modeloVeiculo: req.body.modeloVeiculo,
         placa: req.body.placa,
-        cor: req.body.cor,
-        vaga: req.body.vaga,
-        observacoes: req.body.observacoes
-      }
-    );
+        modeloVeiculo: req.body.modeloVeiculo,
 
-    if (!morador) {
-      return res.status(404).send('Morador não encontrado.');
+        // temporário
+        id_unidade: 1,
+        id_usuario: 1
+      });
+
+      res.redirect('/moradores');
+
+    } catch (erro) {
+      console.error(erro);
+      res.status(500).send(erro.message);
     }
-
-    res.redirect('/moradores');
   }
 
-  inativar(req, res) {
-    const morador = moradorModel.inativar(req.params.id);
+  async edit(req, res) {
+    try {
 
-    if (!morador) {
-      return res.status(404).send('Morador não encontrado.');
+      await moradorModel.atualizar(
+        req.params.id,
+        {
+          nome: req.body.nome,
+          cpf: req.body.cpf,
+          telefone: req.body.telefone,
+          email: req.body.email,
+          dataNascimento: req.body.dataNascimento,
+          placa: req.body.placa,
+          modeloVeiculo: req.body.modeloVeiculo,
+          id_unidade: 1
+        }
+      );
+
+      res.redirect('/moradores');
+
+    } catch (erro) {
+      console.error(erro);
+      res.status(500).send(erro.message);
     }
-
-    res.redirect('/moradores');
   }
 
-  reativar(req, res) {
-    const morador = moradorModel.reativar(req.params.id);
+  async inativar(req, res) {
+    try {
 
-    if (!morador) {
-      return res.status(404).send('Morador não encontrado.');
+      await moradorModel.inativar(req.params.id);
+
+      res.redirect('/moradores');
+
+    } catch (erro) {
+      console.error(erro);
+      res.status(500).send('Erro ao inativar');
     }
-
-    res.redirect('/moradores');
   }
+
+  async reativar(req, res) {
+    try {
+
+      await moradorModel.reativar(req.params.id);
+
+      res.redirect('/moradores');
+
+    } catch (erro) {
+      console.error(erro);
+      res.status(500).send('Erro ao reativar');
+    }
+  }
+
 }
 
 module.exports = new MoradorController();
