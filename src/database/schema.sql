@@ -1,3 +1,4 @@
+-- Database Schema
 -- ============================================================
 -- CONDOSYS - Schema do Banco de Dados
 -- Executar conectado ao banco: condoServer
@@ -74,4 +75,5 @@ CREATE TABLE IF NOT EXISTS ocorrencias (
     prioridade      VARCHAR(20)     NOT NULL DEFAULT 'Normal',
     id_morador      INTEGER         NOT NULL,
     FOREIGN KEY (id_morador) REFERENCES moradores(id_morador) ON DELETE RESTRICT
+);
 );
