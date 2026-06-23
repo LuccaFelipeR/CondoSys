@@ -12,6 +12,7 @@ const unidadeRoutes = require('./src/routes/unidadeRoutes');
 const reservaRoutes = require('./src/routes/reservaRoutes');
 const ocorrenciaRoutes = require('./src/routes/ocorrenciaRoutes');
 const funcionarioRoutes = require('./src/routes/funcionarioRoutes');
+const usuarioRoutes = require('./src/routes/usuarioRoutes');
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src', 'views'));
@@ -36,6 +37,9 @@ app.use('/dashboard', dashboardRoutes);
 app.use('/moradores', moradorRoutes);
 app.use('/funcionarios', funcionarioRoutes);
 app.use('/reservas', reservaRoutes);
+app.use('/unidades', unidadeRoutes);
+app.use('/ocorrencias', ocorrenciaRoutes);
+app.use('/usuarios', usuarioRoutes);
 
 app.use((req, res) => {
   res.status(404).send('Página não encontrada.');
@@ -47,4 +51,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
-

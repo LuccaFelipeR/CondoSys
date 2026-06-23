@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const reservaController = require("../controllers/reservaController");
+const authMiddleware = require('../middlewares/authMiddleware');
+
+router.use(authMiddleware);
 
 router.get("/", reservaController.listarReservas);
 router.get("/nova", reservaController.formNovaReserva);
