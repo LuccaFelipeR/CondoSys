@@ -77,3 +77,4 @@ CREATE TABLE IF NOT EXISTS ocorrencias (
     FOREIGN KEY (id_morador) REFERENCES moradores(id_morador) ON DELETE RESTRICT
 );
 );
+);
