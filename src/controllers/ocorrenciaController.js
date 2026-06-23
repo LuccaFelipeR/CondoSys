@@ -59,6 +59,24 @@ async function renderizarComErros(req, res, erros) {
   } catch (err) {
     console.error(err);
     res.status(500).send('Erro crítico do servidor.');
+function obterUsuarioLogado(req) {
+  return req.session.usuario || {
+    id: 1,
+    nome: 'Administrador Geral',
+    email: 'admin@condosys.com.br',
+    telefone: '(43) 9 9900-0001',
+    tipo: 'Administrador',
+    cadastradoEm: '01/01/2024'
+  };
+}
+
+class OcorrenciaController {
+  listarOcorrencias(req, res) {
+    res.render('ocorrencias/index', {
+  titulo: 'Ocorrências',
+  ocorrencias: ocorrenciaModel.listarTodos(),
+  usuario: obterUsuarioLogado(req)
+});
   }
 }
 

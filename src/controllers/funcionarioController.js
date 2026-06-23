@@ -1,126 +1,151 @@
 const FuncionarioModel = require('../models/funcionarioModel');
 
-function listar(req, res) {
-  const funcionarios = FuncionarioModel.listarTodos();
-
-  res.render('funcionarios/index', {
-    titulo: 'Funcionários',
-    funcionarios,
-    usuario: req.session.usuario,
-    erros: []
-  });
+function obterUsuarioLogado(req) {
+  return req.session.usuario || {
+    id: 1,
+    nome: 'Administrador Geral',
+    email: 'admin@condosys.com.br',
+    telefone: '(43) 9 9900-0001',
+    tipo: 'Administrador',
+    cadastradoEm: '01/01/2024'
+  };
 }
 
-function cadastrar(req, res) {
-  const erros = validarFuncionario(req.body);
+async function listar(req, res) {
+  try {
+    const funcionarios = await FuncionarioModel.listarTodos();
 
-  const dadosFuncionario = montarDadosFuncionario(req.body);
-
-  if (FuncionarioModel.cpfJaExiste(dadosFuncionario.cpf)) {
-    erros.push('Já existe um funcionário cadastrado com este CPF.');
+    res.render('funcionarios/index', {
+      titulo: 'Funcionários',
+      funcionarios,
+      usuario: obterUsuarioLogado(req),
+      erros: []
+    });
+  } catch (erro) {
+    console.log('Erro ao listar funcionários:');
+    console.log(erro.message);
+    res.status(500).send('Erro ao listar funcionários.');
   }
-
-  if (erros.length > 0) {
-    return renderizarComErros(req, res, erros);
-  }
-
-  FuncionarioModel.cadastrar(dadosFuncionario);
-
-  res.redirect('/funcionarios');
 }
 
-function editar(req, res) {
-  const id = Number(req.params.id);
+async function cadastrar(req, res) {
+  try {
+    const erros = validarFuncionario(req.body);
+    const dadosFuncionario = montarDadosFuncionario(req.body, req);
 
-  const funcionarioExistente = FuncionarioModel.buscarPorId(id);
+    const cpfExiste = await FuncionarioModel.cpfJaExiste(dadosFuncionario.cpf);
 
-  if (!funcionarioExistente) {
-    return res.status(404).send('Funcionário não encontrado.');
+    if (cpfExiste) {
+      erros.push('Já existe um funcionário cadastrado com este CPF.');
+    }
+
+    if (erros.length > 0) {
+      return renderizarComErros(req, res, erros);
+    }
+
+    await FuncionarioModel.cadastrar(dadosFuncionario);
+
+    res.redirect('/funcionarios');
+  } catch (erro) {
+    console.log('Erro ao cadastrar funcionário:');
+    console.log(erro.message);
+    res.status(500).send('Erro ao cadastrar funcionário.');
   }
-
-  const erros = validarFuncionario(req.body);
-
-  const dadosFuncionario = montarDadosFuncionario(req.body);
-
-  if (FuncionarioModel.cpfJaExiste(dadosFuncionario.cpf, id)) {
-    erros.push('Já existe outro funcionário cadastrado com este CPF.');
-  }
-
-  if (erros.length > 0) {
-    return renderizarComErros(req, res, erros);
-  }
-
-  FuncionarioModel.atualizar(id, dadosFuncionario);
-
-  res.redirect('/funcionarios');
 }
 
-function inativar(req, res) {
-  const id = Number(req.params.id);
+async function editar(req, res) {
+  try {
+    const id = Number(req.params.id);
 
-  const funcionario = FuncionarioModel.inativar(id);
+    const funcionarioExistente = await FuncionarioModel.buscarPorId(id);
 
-  if (!funcionario) {
-    return res.status(404).send('Funcionário não encontrado.');
+    if (!funcionarioExistente) {
+      return res.status(404).send('Funcionário não encontrado.');
+    }
+
+    const erros = validarFuncionario(req.body);
+    const dadosFuncionario = montarDadosFuncionario(req.body, req);
+
+    const cpfExiste = await FuncionarioModel.cpfJaExiste(dadosFuncionario.cpf, id);
+
+    if (cpfExiste) {
+      erros.push('Já existe outro funcionário cadastrado com este CPF.');
+    }
+
+    if (erros.length > 0) {
+      return renderizarComErros(req, res, erros);
+    }
+
+    await FuncionarioModel.atualizar(id, dadosFuncionario);
+
+    res.redirect('/funcionarios');
+  } catch (erro) {
+    console.log('Erro ao editar funcionário:');
+    console.log(erro.message);
+    res.status(500).send('Erro ao editar funcionário.');
   }
-
-  res.redirect('/funcionarios');
 }
 
-function reativar(req, res) {
-  const id = Number(req.params.id);
+async function inativar(req, res) {
+  try {
+    const id = Number(req.params.id);
 
-  const funcionario = FuncionarioModel.reativar(id);
+    const funcionario = await FuncionarioModel.inativar(id);
 
-  if (!funcionario) {
-    return res.status(404).send('Funcionário não encontrado.');
+    if (!funcionario) {
+      return res.status(404).send('Funcionário não encontrado.');
+    }
+
+    res.redirect('/funcionarios');
+  } catch (erro) {
+    console.log('Erro ao inativar funcionário:');
+    console.log(erro.message);
+    res.status(500).send('Erro ao inativar funcionário.');
   }
-
-  res.redirect('/funcionarios');
 }
 
-function renderizarComErros(req, res, erros) {
-  const funcionarios = FuncionarioModel.listarTodos();
+async function reativar(req, res) {
+  try {
+    const id = Number(req.params.id);
+
+    const funcionario = await FuncionarioModel.reativar(id);
+
+    if (!funcionario) {
+      return res.status(404).send('Funcionário não encontrado.');
+    }
+
+    res.redirect('/funcionarios');
+  } catch (erro) {
+    console.log('Erro ao reativar funcionário:');
+    console.log(erro.message);
+    res.status(500).send('Erro ao reativar funcionário.');
+  }
+}
+
+async function renderizarComErros(req, res, erros) {
+  const funcionarios = await FuncionarioModel.listarTodos();
 
   return res.status(400).render('funcionarios/index', {
     titulo: 'Funcionários',
     funcionarios,
-    usuario: req.session.usuario,
+    usuario: obterUsuarioLogado(req),
     erros
   });
 }
 
-function montarDadosFuncionario(body) {
+function montarDadosFuncionario(body, req) {
   return {
     nome: body.nome ? body.nome.trim() : '',
     cpf: formatarCPF(body.cpf),
     cargo: body.cargo ? body.cargo.trim() : '',
     telefone: formatarTelefone(body.telefone),
-    dataAdmissao: formatarDataParaTabela(body.dataAdmissao),
-    status: body.status || 'Ativo'
+    dataAdmissao: body.dataAdmissao || '',
+    salario: body.salario ? Number(body.salario) : 0,
+    status: body.status || 'Ativo',
+    idUsuario: req.session.usuario && req.session.usuario.id
+      ? req.session.usuario.id
+      : 1
   };
-}
-
-function formatarDataParaTabela(data) {
-  if (!data) {
-    return '';
-  }
-
-  if (data.includes('/')) {
-    return data;
-  }
-
-  const partes = data.split('-');
-
-  if (partes.length !== 3) {
-    return data;
-  }
-
-  const ano = partes[0];
-  const mes = partes[1];
-  const dia = partes[2];
-
-  return `${dia}/${mes}/${ano}`;
 }
 
 function limparNumeros(valor) {

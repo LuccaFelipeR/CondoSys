@@ -1,113 +1,124 @@
-const moradores = [
-  {
-    id: 1,
-    nome: 'Ana Lima',
-    cpf: '123.456.789-00',
-    unidade: 'Apto 101',
-    telefone: '(43) 99999-0001',
-    email: 'ana@email.com',
-    status: 'Ativo'
-  },
-  {
-    id: 2,
-    nome: 'Carlos Mendes',
-    cpf: '234.567.890-11',
-    unidade: 'Apto 202',
-    telefone: '(43) 99999-0002',
-    email: 'carlos@email.com',
-    status: 'Ativo'
-  },
-  {
-    id: 3,
-    nome: 'Beatriz Souza',
-    cpf: '345.678.901-22',
-    unidade: 'Apto 303',
-    telefone: '(43) 99999-0003',
-    email: 'beatriz@email.com',
-    status: 'Inativo'
-  },
-  {
-    id: 4,
-    nome: 'Daniel Costa',
-    cpf: '456.789.012-33',
-    unidade: 'Apto 104',
-    telefone: '(43) 99999-0004',
-    email: 'daniel@email.com',
-    status: 'Ativo'
-  },
-  {
-    id: 5,
-    nome: 'Elaine Ferreira',
-    cpf: '567.890.123-44',
-    unidade: 'Apto 205',
-    telefone: '(43) 99999-0005',
-    email: 'elaine@email.com',
-    status: 'Ativo'
-  }
-];
+const pool = require('../database/connection');
 
-function listarTodos() {
-  return moradores;
-}
-
-function buscarPorId(id) {
-  return moradores.find(
-    morador => morador.id === Number(id)
+async function listarTodos() {
+  const resultado = await pool.query(
+    'SELECT * FROM moradores ORDER BY id_morador'
   );
+
+  return resultado.rows;
 }
 
-function criar(dados) {
-  const novoMorador = {
-    id: moradores.length + 1,
-    ...dados,
-    status: 'Ativo'
-  };
+async function buscarPorId(id) {
+  const resultado = await pool.query(
+    'SELECT * FROM moradores WHERE id_morador = $1',
+    [id]
+  );
 
-  moradores.push(novoMorador);
-  return novoMorador;
+  return resultado.rows[0];
 }
 
-function atualizar(id, dados) {
-  const morador = buscarPorId(id);
+async function criar(dados) {
+  const resultado = await pool.query(
+    `
+    INSERT INTO moradores
+    (
+      nome,
+      cpf,
+      telefone,
+      email,
+      data_nascimento,
+      placa_carro,
+      car_model,
+      id_unidade,
+      id_usuario,
+      status
+    )
+    VALUES
+    ($1,$2,$3,$4,$5,$6,$7,$8,$9,'Ativo')
+    RETURNING *
+    `,
+    [
+      dados.nome,
+      dados.cpf,
+      dados.telefone,
+      dados.email,
+      dados.dataNascimento,
+      dados.placa,
+      dados.modeloVeiculo,
+      dados.id_unidade,
+      dados.id_usuario
+    ]
+  );
 
-  if (!morador) {
-    return null;
-  }
-
-  Object.assign(morador, dados);
-  return morador;
+  return resultado.rows[0];
 }
 
-function inativar(id) {
-  const morador = buscarPorId(id);
+async function atualizar(id, dados) {
+  const resultado = await pool.query(
+    `
+    UPDATE moradores
+    SET
+      nome = $1,
+      cpf = $2,
+      telefone = $3,
+      email = $4,
+      data_nascimento = $5,
+      placa_carro = $6,
+      car_model = $7,
+      id_unidade = $8
+    WHERE id_morador = $9
+    RETURNING *
+    `,
+    [
+      dados.nome,
+      dados.cpf,
+      dados.telefone,
+      dados.email,
+      dados.dataNascimento,
+      dados.placa,
+      dados.modeloVeiculo,
+      dados.id_unidade,
+      id
+    ]
+  );
 
-  if (!morador) {
-    return null;
-  }
-
-  morador.status = 'Inativo';
-  return morador;
+  return resultado.rows[0];
 }
-    status: 'Ativo'
-  ,
-  {
-    id: 3,
-    nome: 'Beatriz Souza',
-    status: 'Inativo'
-  },
-  {
-    id: 4,
-    nome: 'Daniel Costa',
-    status: 'Ativo'
-  },
-  {
-    id: 5,
-    nome: 'Elaine Ferreira',
-    status: 'Ativo'
-  };
 
-function contarTodos() {
-  return moradores.length;
+async function inativar(id) {
+  const resultado = await pool.query(
+    `
+    UPDATE moradores
+    SET status = 'Inativo'
+    WHERE id_morador = $1
+    RETURNING *
+    `,
+    [id]
+  );
+
+  return resultado.rows[0];
+}
+
+async function reativar(id) {
+  const resultado = await pool.query(
+    `
+    UPDATE moradores
+    SET status = 'Ativo'
+    WHERE id_morador = $1
+    RETURNING *
+    `,
+    [id]
+  );
+
+  return resultado.rows[0];
+}
+
+async function contarTodos() {
+  const resultado = await pool.query(
+    'SELECT COUNT(*) FROM moradores'
+  );
+
+  return Number(resultado.rows[0].count);
 }
 
 module.exports = {
@@ -116,5 +127,6 @@ module.exports = {
   criar,
   atualizar,
   inativar,
+  reativar,
   contarTodos
 };

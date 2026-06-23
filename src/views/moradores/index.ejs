@@ -7,7 +7,7 @@
   <main class="main-content">
 
     <header class="topbar">
-      <h1>Moradores</h1>
+      <h1><%= titulo || 'Moradores' %></h1>
 
       <div class="topbar-actions">
         <input type="text" placeholder="Pesquisar..." disabled>
@@ -20,7 +20,10 @@
           <div class="user-avatar">
             <%= usuario && usuario.nome ? usuario.nome.charAt(0).toUpperCase() : 'A' %>
           </div>
-          <span><%= usuario && usuario.nome ? usuario.nome : 'Admin' %></span>
+
+          <span>
+            <%= usuario && usuario.nome ? usuario.nome : 'Administrador Geral' %>
+          </span>
         </div>
       </div>
     </header>
@@ -33,7 +36,7 @@
         <div class="table-toolbar">
           <div class="search-group">
             <i class="bi bi-search"></i>
-            <input type="text" placeholder="Buscar por nome, CPF ou unidade...">
+            <input type="text" placeholder="Buscar por nome, CPF ou unidade..." disabled>
           </div>
 
           <button class="filter-button" disabled>Filtros</button>
@@ -73,6 +76,7 @@
                     <td><%= morador.unidade %></td>
                     <td><%= morador.telefone %></td>
                     <td><%= morador.email %></td>
+
                     <td>
                       <% if (morador.status === 'Ativo') { %>
                         <span class="badge badge-active">Ativo</span>
@@ -80,37 +84,65 @@
                         <span class="badge badge-inactive">Inativo</span>
                       <% } %>
                     </td>
+
                     <td>
                       <button
-    type="button"
-    class="edit-link border-0 bg-transparent p-0"
-    onclick="abrirEdicao(
-    '<%= morador.id %>',
-    '<%= morador.nome %>',
-    '<%= morador.cpf %>',
-    '<%= morador.unidade %>',
-    '<%= morador.telefone %>',
-    '<%= morador.email %>'
-)"
-  >
-    <i class="bi bi-pencil-fill"></i>
-    Editar
-  </button>
+                        type="button"
+                        class="edit-link border-0 bg-transparent p-0 btnEditarMorador"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalMorador"
+                        data-id="<%= morador.id %>"
+                        data-nome="<%= morador.nome || '' %>"
+                        data-cpf="<%= morador.cpf || '' %>"
+                        data-unidade="<%= morador.unidade || '' %>"
+                        data-telefone="<%= morador.telefone || '' %>"
+                        data-email="<%= morador.email || '' %>"
+                        data-data-nascimento="<%= morador.dataNascimento || '' %>"
+                        data-modelo-veiculo="<%= morador.modeloVeiculo || '' %>"
+                        data-placa="<%= morador.placa || '' %>"
+                        data-cor="<%= morador.cor || '' %>"
+                        data-vaga="<%= morador.vaga || '' %>"
+                        data-observacoes="<%= morador.observacoes || '' %>"
+                      >
+                        <i class="bi bi-pencil-fill"></i>
+                        Editar
+                      </button>
 
-  <form
-    action="/moradores/<%= morador.id %>/inativar"
-    method="POST"
-    style="display:inline;"
-  >
-    <button
-      type="submit"
-      class="edit-link border-0 bg-transparent p-0 ms-2 text-danger"
-      onclick="return confirm('Deseja inativar este morador?')"
-    >
-      <i class="bi bi-trash-fill"></i>
-      Inativar
-    </button>
-  </form>
+                      <% if (morador.status === 'Ativo') { %>
+
+                        <form
+                          action="/moradores/<%= morador.id %>/inativar"
+                          method="POST"
+                          style="display:inline;"
+                        >
+                          <button
+                            type="submit"
+                            class="edit-link border-0 bg-transparent p-0 ms-2 text-danger"
+                            onclick="return confirm('Deseja realmente inativar este morador?')"
+                          >
+                            <i class="bi bi-trash-fill"></i>
+                            Inativar
+                          </button>
+                        </form>
+
+                      <% } else { %>
+
+                        <form
+                          action="/moradores/<%= morador.id %>/reativar"
+                          method="POST"
+                          style="display:inline;"
+                        >
+                          <button
+                            type="submit"
+                            class="edit-link border-0 bg-transparent p-0 ms-2 text-success"
+                            onclick="return confirm('Deseja realmente reativar este morador?')"
+                          >
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Reativar
+                          </button>
+                        </form>
+
+                      <% } %>
                     </td>
                   </tr>
                 <% }) %>
@@ -147,14 +179,20 @@
 
 </div>
 
-<!-- MODAL DE CADASTRO -->
-<div class="modal fade" id="modalMorador" tabindex="-1" aria-labelledby="modalMoradorLabel" aria-hidden="true">
+<!-- MODAL MORADOR -->
+<div 
+  class="modal fade" 
+  id="modalMorador" 
+  tabindex="-1" 
+  aria-labelledby="modalMoradorLabel" 
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
 
       <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
         <h4 class="modal-title fw-bold" id="modalMoradorLabel">
-          Cadastrar / Editar Morador
+          Cadastrar Morador
         </h4>
 
         <button 
@@ -166,7 +204,8 @@
       </div>
 
       <div class="modal-body p-4">
-        <form id= "formMorador" action="/moradores/novo" method="POST">
+
+        <form id="formMorador" action="/moradores/novo" method="POST">
 
           <h6 class="fw-bold mb-3">
             <i class="bi bi-person-fill text-primary me-2"></i>
@@ -174,16 +213,20 @@
           </h6>
 
           <div class="row g-3 mb-4">
+
             <div class="col-md-4">
               <label class="form-label small fw-semibold text-muted">
                 Nome Completo <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
                 name="nome"
                 id="nome"
                 class="form-control bg-light border-0" 
                 placeholder="Ana Lima" 
+                minlength="3"
+                maxlength="100"
                 pattern="[a-zA-ZÀ-ÿ\s]+" 
                 title="O nome deve conter apenas letras e espaços."
                 required
@@ -194,12 +237,16 @@
               <label class="form-label small fw-semibold text-muted">
                 CPF <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
                 name="cpf"
                 id="cpf"
                 class="form-control bg-light border-0" 
                 placeholder="123.456.789-00" 
+                maxlength="14"
+                pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                title="Digite no formato 123.456.789-00"
                 required
               >
             </div>
@@ -208,6 +255,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Data de Nascimento
               </label>
+
               <input 
                 type="date" 
                 name="dataNascimento"
@@ -220,6 +268,7 @@
               <label class="form-label small fw-semibold text-muted">
                 E-mail <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="email" 
                 name="email"
@@ -234,12 +283,16 @@
               <label class="form-label small fw-semibold text-muted">
                 Telefone
               </label>
+
               <input 
                 type="text" 
                 name="telefone"
                 id="telefone"
                 class="form-control bg-light border-0" 
                 placeholder="(43) 9 9999-0001"
+                maxlength="15"
+                pattern="\(\d{2}\)\s\d{4,5}-\d{4}"
+                oninput="mascaraTelefone(this)"
               >
             </div>
 
@@ -247,6 +300,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Unidade Vinculada <span class="text-danger">*</span>
               </label>
+
               <input 
                 type="text" 
                 name="unidade"
@@ -256,6 +310,7 @@
                 required
               >
             </div>
+
           </div>
 
           <h6 class="fw-bold mb-3">
@@ -264,10 +319,12 @@
           </h6>
 
           <div class="row g-3 mb-4">
+
             <div class="col-md-4">
               <label class="form-label small fw-semibold text-muted">
                 Modelo
               </label>
+
               <input 
                 type="text" 
                 name="modeloVeiculo"
@@ -281,12 +338,14 @@
               <label class="form-label small fw-semibold text-muted">
                 Placa
               </label>
+
               <input 
                 type="text" 
                 name="placa"
                 id="placa"
                 class="form-control bg-light border-0" 
                 placeholder="ABC-1D23"
+                maxlength="8"
               >
             </div>
 
@@ -294,6 +353,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Cor
               </label>
+
               <input 
                 type="text" 
                 name="cor"
@@ -307,6 +367,7 @@
               <label class="form-label small fw-semibold text-muted">
                 Vaga nº
               </label>
+
               <input 
                 type="text" 
                 name="vaga"
@@ -315,12 +376,14 @@
                 placeholder="12"
               >
             </div>
+
           </div>
 
           <div class="mb-4">
             <label class="form-label small fw-semibold text-muted">
               Observações
             </label>
+
             <textarea 
               name="observacoes"
               id="observacoes"
@@ -358,57 +421,52 @@
     </div>
   </div>
 </div>
+
 <script>
-
-function abrirEdicao(
-  id,
-  nome,
-  cpf,
-  unidade,
-  telefone,
-  email
-){
-
+// Função limpa e unificada para abrir o modal de edição
+function abrirEdicao(id, nome, cpf, unidade, telefone, email) {
   document.getElementById('nome').value = nome;
   document.getElementById('cpf').value = cpf;
   document.getElementById('unidade').value = unidade;
   document.getElementById('telefone').value = telefone;
   document.getElementById('email').value = email;
 
-  document.getElementById('formMorador').action =
-    '/moradores/' + id + '/editar';
+  document.getElementById('formMorador').action = '/moradores/' + id + '/editar';
+  document.getElementById('modalMoradorLabel').innerText = 'Editar Morador';
 
-  document.getElementById('modalMoradorLabel').innerText =
-    'Editar Morador';
-
-  const modal = new bootstrap.Modal(
-    document.getElementById('modalMorador')
-  );
-
+  const modal = new bootstrap.Modal(document.getElementById('modalMorador'));
   modal.show();
 }
 
-document
-  .getElementById('modalMorador')
-  .addEventListener(
-    'hidden.bs.modal',
-    function(){
+// Reseta o formulário quando o modal é fechado
+document.getElementById('modalMorador').addEventListener('hidden.bs.modal', function() {
+  document.getElementById('formMorador').reset();
+  document.getElementById('formMorador').action = '/moradores/novo';
+  document.getElementById('modalMoradorLabel').innerText = 'Cadastrar / Editar Morador';
+});
 
-      document
-        .getElementById('formMorador')
-        .reset();
 
-      document
-        .getElementById('formMorador')
-        .action =
-          '/moradores/novo';
-
-      document
-        .getElementById('modalMoradorLabel')
-        .innerText =
-          'Cadastrar / Editar Morador';
+function mascaraTelefone(input) {
+    // Remove tudo o que não for número
+    let v = input.value.replace(/\D/g, "");
+    
+    // Formata o DDD: (XX
+    if (v.length > 0) v = "(" + v;
+    // Fecha o parêntese do DDD: (XX) 
+    if (v.length > 3) v = v.substring(0, 3) + ") " + v.substring(3);
+    
+    // Ajusta o hífen dinamicamente para fixo ou celular
+    if (v.length > 13) {
+        // Formato Celular: (XX) XXXXX-XXXX
+        v = v.substring(0, 10) + "-" + v.substring(10, 14);
+    } else if (v.length > 9) {
+        // Formato Fixo temporário: (XX) XXXX-XXXX
+        v = v.substring(0, 9) + "-" + v.substring(9);
     }
-  );
+    
+    input.value = v;
+}
+
 
 </script>
 

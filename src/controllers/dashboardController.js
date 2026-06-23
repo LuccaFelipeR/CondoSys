@@ -1,3 +1,14 @@
+function obterUsuarioLogado(req) {
+  return req.session.usuario || {
+    id: 1,
+    nome: 'Administrador Geral',
+    email: 'admin@condosys.com.br',
+    telefone: '(43) 9 9900-0001',
+    tipo: 'Administrador',
+    cadastradoEm: '01/01/2024'
+  };
+}
+
 function carregarModel(caminho) {
   try {
     return require(caminho);
@@ -14,7 +25,7 @@ const ReservaModel = carregarModel('../models/reservaModel');
 const OcorrenciaModel = carregarModel('../models/ocorrenciaModel');
 const FuncionarioModel = carregarModel('../models/funcionarioModel');
 
-function contar(nome, model) {
+async function contar(nome, model) {
   if (!model) {
     console.log(`${nome}: model não carregado.`);
     return 0;
@@ -27,7 +38,7 @@ function contar(nome, model) {
   }
 
   try {
-    return model.contarTodos();
+    return await model.contarTodos();
   } catch (erro) {
     console.log(`${nome}: erro ao executar contarTodos.`);
     console.log(erro.message);
@@ -35,13 +46,13 @@ function contar(nome, model) {
   }
 }
 
-function index(req, res) {
+async function index(req, res) {
   const totais = {
-    moradores: contar('Moradores', MoradorModel),
-    unidades: contar('Unidades', UnidadeModel),
-    reservas: contar('Reservas', ReservaModel),
-    ocorrencias: contar('Ocorrências', OcorrenciaModel),
-    funcionarios: contar('Funcionários', FuncionarioModel)
+    moradores: await contar('Moradores', MoradorModel),
+    unidades: await contar('Unidades', UnidadeModel),
+    reservas: await contar('Reservas', ReservaModel),
+    ocorrencias: await contar('Ocorrências', OcorrenciaModel),
+    funcionarios: await contar('Funcionários', FuncionarioModel)
   };
 
   const grafico = {
@@ -59,7 +70,7 @@ function index(req, res) {
     titulo: 'Dashboard',
     totais,
     grafico,
-    usuario: req.session.usuario
+    usuario: obterUsuarioLogado(req)
   });
 }
 

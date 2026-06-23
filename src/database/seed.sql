@@ -1,3 +1,4 @@
+-- Database Seed Data
 -- ============================================================
 -- CONDOSYS - Dados iniciais para teste
 -- Ordem respeita as dependências entre tabelas

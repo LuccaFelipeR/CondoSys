@@ -172,6 +172,82 @@
             Cadastrar Funcionário
           </h4>
 
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Cargo</th>
+                <th>Telefone</th>
+                <th>Data de Admissão</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (!funcionarios || funcionarios.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-message">
+                    Nenhum funcionário cadastrado.
+                  </td>
+                </tr>
+              <% } else { %>
+
+                <% funcionarios.forEach(funcionario => { %>
+                  <tr>
+                    <td><%= funcionario.nome %></td>
+                    <td><%= funcionario.cpf %></td>
+                    <td><%= funcionario.cargo %></td>
+                    <td><%= funcionario.telefone %></td>
+                    <td><%= funcionario.dataAdmissao %></td>
+                    <td>
+                      <% if (funcionario.status === 'Ativo') { %>
+                        <span class="badge badge-active">Ativo</span>
+                      <% } else { %>
+                        <span class="badge badge-inactive">Inativo</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <button 
+                        type="button"
+                        class="edit-link border-0 bg-transparent p-0"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalEditarFuncionario"
+                        data-id="<%= funcionario.id %>"
+                        data-nome="<%= funcionario.nome %>"
+                        data-cpf="<%= funcionario.cpf %>"
+                        data-cargo="<%= funcionario.cargo %>"
+                        data-telefone="<%= funcionario.telefone %>"
+                        data-admissao="<a%= funcionario.dataAdmissao %>"
+                        data-status="<%= funcionario.status %>"
+                      >
+                        <i class="bi bi-pencil-fill"></i>
+                        Editar
+                      </button>
+
+                      <form 
+                        action="/funcionarios/<%= funcionario.id %>/inativar" 
+                        method="POST" 
+                        style="display: inline;"
+                      >
+                        <button 
+                          type="submit" 
+                          class="edit-link border-0 bg-transparent p-0 ms-2 text-danger"
+                          onclick="return confirm('Deseja realmente inativar este funcionário?')"
+                        >
+                          <i class="bi bi-trash-fill"></i>
+                          Inativar
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
+
+              <% } %>
+            </tbody>
+          </table>
           <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
 
