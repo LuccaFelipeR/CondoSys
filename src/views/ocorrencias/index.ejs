@@ -1,0 +1,285 @@
+<%- include('../partials/header') %>
+
+    <div class="app-layout">
+
+        <%- include('../partials/navbar', { paginaAtiva: 'ocorrencias' }) %>
+
+            <main class="main-content">
+
+                <header class="topbar">
+                    <h1>Ocorrências</h1>
+
+                    <div class="topbar-actions">
+                        <input type="text" placeholder="Pesquisar..." disabled>
+
+                        <span class="notification-icon">
+                            <i class="bi bi-bell-fill"></i>
+                        </span>
+
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <%= usuario && usuario.nome ? usuario.nome.charAt(0).toUpperCase() : 'A' %>
+                            </div>
+                            <span>
+                                <%= usuario && usuario.nome ? usuario.nome : 'Admin' %>
+                            </span>
+                        </div>
+                    </div>
+                </header>
+
+                <section class="content-area">
+                    <h2>Registro de Ocorrências</h2>
+
+                    <div class="table-card">
+
+                        <div class="table-toolbar">
+                            <div class="search-group">
+                                <i class="bi bi-search"></i>
+                                <input type="text" placeholder="Buscar por título, morador, unidade ou status...">
+                            </div>
+
+                            <button class="filter-button" disabled>Filtros</button>
+
+                            <button type="button" class="primary-button" data-bs-toggle="modal"
+                                data-bs-target="#modalOcorrencia">
+                                <i class="bi bi-plus-lg"></i>
+                                Nova Ocorrência
+                            </button>
+                        </div>
+
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Título</th>
+                                        <th>Relatante</th>
+                                        <th>Unidade</th>
+                                        <th>Data</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <% if (ocorrencias && ocorrencias.length> 0) { %>
+
+                                        <% ocorrencias.forEach(ocorrencia=> { %>
+                                            <tr>
+                                                <td>
+                                                    <strong>
+                                                        <%= ocorrencia.titulo %>
+                                                    </strong>
+                                                    <br>
+                                                    <small class="text-muted">
+                                                        <%= ocorrencia.descricao %>
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <%= ocorrencia.morador %>
+                                                </td>
+                                                <td>
+                                                    <%= ocorrencia.unidade %>
+                                                </td>
+                                                <td>
+                                                    <%= ocorrencia.data ? ocorrencia.data.split('-').reverse().join('/')
+                                                        : '' %>
+                                                </td>
+                                                <td>
+                                                    <% if (ocorrencia.status==='Resolvido' ) { %>
+                                                        <span class="badge badge-active">Resolvido</span>
+                                                        <% } else if (ocorrencia.status==='Em Andamento' ) { %>
+                                                            <span class="badge"
+                                                                style="background: #fff3cd; color: #856404; border: 1px solid #ffeeba;">Em
+                                                                Andamento</span>
+                                                            <% } else { %>
+                                                                <span class="badge badge-inactive">Pendente</span>
+                                                                <% } %>
+                                                </td>
+                                                <td>
+                                                    <a href="#" class="edit-link" data-bs-toggle="modal"
+                                                        data-bs-target="#modalOcorrencia" data-id="<%= ocorrencia.id %>"
+                                                        data-titulo="<%= ocorrencia.titulo %>"
+                                                        data-morador="<%= ocorrencia.morador %>"
+                                                        data-unidade="<%= ocorrencia.unidade %>"
+                                                        data-data="<%= ocorrencia.data %>"
+                                                        data-status="<%= ocorrencia.status %>"
+                                                        data-descricao="<%= ocorrencia.descricao %>">
+                                                        <i class="bi bi-pencil-fill"></i>
+                                                        Editar
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+
+                                                <% } else { %>
+
+                                                    <tr>
+                                                        <td colspan="6" class="empty-message">
+                                                            Nenhuma ocorrência cadastrada.
+                                                        </td>
+                                                    </tr>
+
+                                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="table-footer">
+                            <span>
+                                Exibindo <%= ocorrencias ? ocorrencias.length : 0 %> ocorrências
+                            </span>
+
+                            <div class="pagination">
+                                <button disabled>&laquo;</button>
+                                <button class="active-page">1</button>
+                                <button disabled>&raquo;</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+            </main>
+
+    </div>
+
+    <!-- Modal para Nova/Editar Ocorrência -->
+    <div class="modal fade" id="modalOcorrencia" tabindex="-1" aria-labelledby="modalOcorrenciaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+
+                <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
+                    <h4 class="modal-title fw-bold" id="modalOcorrenciaLabel">
+                        Registrar / Editar Ocorrência
+                    </h4>
+
+                    <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                    <form action="#" method="POST">
+
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+                            Dados da Ocorrência
+                        </h6>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-muted">
+                                    Título da Ocorrência <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" name="titulo" class="form-control bg-light border-0"
+                                    placeholder="Ex: Vazamento de Água, Barulho Excessivo..." required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold text-muted">
+                                    Unidade Vinculada <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" name="unidade" class="form-control bg-light border-0"
+                                    placeholder="Ex: Apto 101 — Bloco A" required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold text-muted">
+                                    Data do Registro <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" name="data" class="form-control bg-light border-0" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-muted">
+                                    Nome do Morador Relatante <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" name="morador" class="form-control bg-light border-0"
+                                    placeholder="Ex: Ana Lima" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-muted">
+                                    Status da Ocorrência <span class="text-danger">*</span>
+                                </label>
+                                <select name="status" class="form-select bg-light border-0" required>
+                                    <option value="Pendente" selected>Pendente</option>
+                                    <option value="Em Andamento">Em Andamento</option>
+                                    <option value="Resolvido">Resolvido</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-muted">
+                                Descrição Detalhada <span class="text-danger">*</span>
+                            </label>
+                            <textarea name="descricao" class="form-control bg-light border-0" rows="4"
+                                placeholder="Descreva detalhadamente o ocorrido (ex: local, gravidade, pessoas envolvidas...)"
+                                required></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-3"
+                                data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="text-muted small">* Campos obrigatórios</span>
+
+                                <button type="submit" class="btn text-white px-4 py-2 rounded-3"
+                                    style="background-color: #172033; font-weight: 500;">
+                                    Salvar Ocorrência
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalOcorrencia = document.getElementById('modalOcorrencia');
+            if (modalOcorrencia) {
+                modalOcorrencia.addEventListener('show.bs.modal', (event) => {
+                    const button = event.relatedTarget;
+
+                    // Se o botão não tiver data-id, assumimos que é um cadastro de "Nova Ocorrência"
+                    const id = button.getAttribute('data-id');
+
+                    const modalTitle = modalOcorrencia.querySelector('.modal-title');
+                    const form = modalOcorrencia.querySelector('form');
+
+                    if (id) {
+                        // Prepara para Edição
+                        modalTitle.textContent = 'Editar Ocorrência';
+                        form.action = `/ocorrencias/${id}/editar`;
+
+                        // Preenche os campos do formulário com os atributos de dados do link clicado
+                        form.querySelector('[name="titulo"]').value = button.getAttribute('data-titulo') || '';
+                        form.querySelector('[name="unidade"]').value = button.getAttribute('data-unidade') || '';
+                        form.querySelector('[name="data"]').value = button.getAttribute('data-data') || '';
+                        form.querySelector('[name="morador"]').value = button.getAttribute('data-morador') || '';
+                        form.querySelector('[name="status"]').value = button.getAttribute('data-status') || 'Pendente';
+                        form.querySelector('[name="descricao"]').value = button.getAttribute('data-descricao') || '';
+                    } else {
+                        // Prepara para Cadastro
+                        modalTitle.textContent = 'Registrar Nova Ocorrência';
+                        form.action = '/ocorrencias';
+                        form.reset();
+
+                        // Data padrão para o dia de hoje
+                        const hoje = new Date().toISOString().split('T')[0];
+                        form.querySelector('[name="data"]').value = hoje;
+                        form.querySelector('[name="status"]').value = 'Pendente';
+                    }
+                });
+            }
+        });
+    </script>
+
+    <%- include('../partials/footer') %>

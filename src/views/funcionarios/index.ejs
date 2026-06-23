@@ -1,57 +1,176 @@
 <%- include('../partials/header') %>
 
-<div class="app-layout">
+  <div class="app-layout">
 
-  <%- include('../partials/navbar', { paginaAtiva: 'funcionarios' }) %>
+    <%- include('../partials/navbar', { paginaAtiva: 'funcionarios' }) %>
 
-  <main class="main-content">
+      <main class="main-content">
 
-    <header class="topbar">
-      <h1><%= titulo || 'Funcionários' %></h1>
+        <header class="topbar">
+          <h1>
+            <%= titulo || 'Funcionários' %>
+          </h1>
 
-      <div class="topbar-actions">
-        <input type="text" placeholder="Pesquisar..." disabled>
+          <div class="topbar-actions">
+            <span class="notification-icon">
+              <i class="bi bi-bell-fill"></i>
+            </span>
 
-        <span class="notification-icon">
-          <i class="bi bi-bell-fill"></i>
-        </span>
-
-        <div class="user-info">
-          <div class="user-avatar">
-            <%= usuario && usuario.nome ? usuario.nome.charAt(0).toUpperCase() : 'A' %>
+            <div class="user-info">
+              <div class="user-avatar">
+                <%= usuario && usuario.nome ? usuario.nome.charAt(0).toUpperCase() : 'A' %>
+              </div>
+              <span>
+                <%= usuario && usuario.nome ? usuario.nome : 'Admin' %>
+              </span>
+            </div>
           </div>
-          <span><%= usuario && usuario.nome ? usuario.nome : 'Admin' %></span>
-        </div>
-      </div>
-    </header>
+        </header>
 
-    <section class="content-area">
-      <h2>Funcionários Cadastrados</h2>
+        <section class="content-area">
+          <h2>Funcionários Cadastrados</h2>
 
-      <div class="table-card">
+          <% if (erros && erros.length> 0) { %>
+            <div class="alert alert-danger">
+              <strong>Corrija os seguintes erros:</strong>
+              <ul class="mb-0 mt-2">
+                <% erros.forEach(erro=> { %>
+                  <li>
+                    <%= erro %>
+                  </li>
+                  <% }) %>
+              </ul>
+            </div>
+            <% } %>
 
-        <div class="table-toolbar">
-          <div class="search-group">
-            <i class="bi bi-search"></i>
-            <input 
-              type="text" 
-              placeholder="Buscar por nome, CPF ou cargo..."
-              disabled
-            >
-          </div>
+              <div class="table-card">
 
-          <button class="filter-button" disabled>Filtros</button>
+                <div class="table-toolbar">
+                  <div>
+                    <p class="text-muted mb-0">
+                      Total de funcionários: <strong>
+                        <%= funcionarios ? funcionarios.length : 0 %>
+                      </strong>
+                    </p>
+                  </div>
 
-          <button 
-            type="button" 
-            class="primary-button border-0" 
-            data-bs-toggle="modal" 
-            data-bs-target="#modalCadastrarFuncionario"
-          >
-            <i class="bi bi-plus-lg"></i>
-            Novo Funcionário
-          </button>
-        </div>
+                  <button type="button" class="primary-button border-0" data-bs-toggle="modal"
+                    data-bs-target="#modalCadastrarFuncionario">
+                    <i class="bi bi-plus-lg"></i>
+                    Novo Funcionário
+                  </button>
+                </div>
+
+                <div class="table-wrapper">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>Cargo</th>
+                        <th>Telefone</th>
+                        <th>Data de Admissão</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <% if (!funcionarios || funcionarios.length===0) { %>
+                        <tr>
+                          <td colspan="7" class="empty-message">
+                            Nenhum funcionário cadastrado.
+                          </td>
+                        </tr>
+                        <% } else { %>
+
+                          <% funcionarios.forEach(funcionario=> { %>
+                            <tr>
+                              <td>
+                                <%= funcionario.nome %>
+                              </td>
+                              <td>
+                                <%= funcionario.cpf %>
+                              </td>
+                              <td>
+                                <%= funcionario.cargo %>
+                              </td>
+                              <td>
+                                <%= funcionario.telefone %>
+                              </td>
+                              <td>
+                                <%= funcionario.dataAdmissao %>
+                              </td>
+
+                              <td>
+                                <% if (funcionario.status==='Ativo' ) { %>
+                                  <span class="badge badge-active">Ativo</span>
+                                  <% } else { %>
+                                    <span class="badge badge-inactive">Inativo</span>
+                                    <% } %>
+                              </td>
+                              <td>
+                                <button type="button" class="edit-link border-0 bg-transparent p-0"
+                                  data-bs-toggle="modal" data-bs-target="#modalEditarFuncionario"
+                                  data-id="<%= funcionario.id %>" data-nome="<%= funcionario.nome %>"
+                                  data-cpf="<%= funcionario.cpf %>" data-cargo="<%= funcionario.cargo %>"
+                                  data-telefone="<%= funcionario.telefone %>"
+                                  data-admissao="<%= funcionario.dataAdmissao %>"
+                                  data-status="<%= funcionario.status %>">
+                                  <i class="bi bi-pencil-fill"></i>
+                                  Editar
+                                </button>
+
+                                <% if (funcionario.status==='Ativo' ) { %>
+
+                                  <form action="/funcionarios/<%= funcionario.id %>/inativar" method="POST"
+                                    style="display: inline;">
+                                    <button type="submit" class="edit-link border-0 bg-transparent p-0 ms-2 text-danger"
+                                      onclick="return confirm('Deseja realmente inativar este funcionário?')">
+                                      <i class="bi bi-trash-fill"></i>
+                                      Inativar
+                                    </button>
+                                  </form>
+
+                                  <% } else { %>
+
+                                    <form action="/funcionarios/<%= funcionario.id %>/reativar" method="POST"
+                                      style="display: inline;">
+                                      <button type="submit"
+                                        class="edit-link border-0 bg-transparent p-0 ms-2 text-success"
+                                        onclick="return confirm('Deseja realmente reativar este funcionário?')">
+                                        <i class="bi bi-arrow-clockwise"></i>
+                                        Reativar
+                                      </button>
+                                    </form>
+
+                                    <% } %>
+                              </td>
+                            </tr>
+                            <% }) %>
+
+                              <% } %>
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+        </section>
+
+      </main>
+
+  </div>
+
+  <!-- MODAL DE CADASTRO -->
+  <div class="modal fade" id="modalCadastrarFuncionario" tabindex="-1" aria-labelledby="modalCadastrarFuncionarioLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+
+        <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
+          <h4 class="modal-title fw-bold" id="modalCadastrarFuncionarioLabel">
+            Cadastrar Funcionário
+          </h4>
 
         <div class="table-wrapper">
           <table>
@@ -129,342 +248,438 @@
               <% } %>
             </tbody>
           </table>
+          <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
 
-        <div class="table-footer">
-          <span>
-            Exibindo <%= funcionarios ? funcionarios.length : 0 %> funcionários
-          </span>
+        <div class="modal-body p-4">
+          <form action="/funcionarios" method="POST" class="form-funcionario">
 
-          <div class="pagination">
-            <button disabled>&laquo;</button>
-            <button class="active-page">1</button>
-            <button disabled>&raquo;</button>
-          </div>
+            <h6 class="fw-bold mb-3">
+              <i class="bi bi-person-badge-fill text-primary me-2"></i>
+              Dados do Funcionário
+            </h6>
+
+            <div class="row g-3 mb-4">
+
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">
+                  Nome Completo <span class="text-danger">*</span>
+                </label>
+
+                <input type="text" name="nome" class="form-control bg-light border-0" placeholder="Carlos Henrique"
+                  minlength="3" maxlength="80" pattern="[A-Za-zÀ-ÿ\s]+" title="Digite apenas letras e espaços" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">
+                  CPF <span class="text-danger">*</span>
+                </label>
+
+                <input type="text" id="cpfCadastro" name="cpf" class="form-control bg-light border-0"
+                  placeholder="123.456.789-00" maxlength="14" inputmode="numeric"
+                  pattern="[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}" title="Digite um CPF completo com 11 números"
+                  required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">
+                  Cargo <span class="text-danger">*</span>
+                </label>
+
+                <input type="text" name="cargo" class="form-control bg-light border-0"
+                  placeholder="Porteiro, Zelador, Manutenção..." minlength="3" maxlength="80" pattern="[A-Za-zÀ-ÿ\s]+"
+                  title="Digite apenas letras e espaços" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">
+                  Telefone <span class="text-danger">*</span>
+                </label>
+
+                <input type="text" id="telefoneCadastro" name="telefone" class="form-control bg-light border-0"
+                  placeholder="(43) 9 9999-0001" maxlength="16" inputmode="numeric"
+                  title="Digite um telefone com 10 ou 11 números" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">
+                  Data de Admissão <span class="text-danger">*</span>
+                </label>
+
+                <input type="date" name="dataAdmissao" class="form-control bg-light border-0" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">
+                  Status <span class="text-danger">*</span>
+                </label>
+
+                <select name="status" class="form-control bg-light border-0" required>
+                  <option value="Ativo">Ativo</option>
+                  <option value="Inativo">Inativo</option>
+                </select>
+              </div>
+
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-3" data-bs-dismiss="modal">
+                Cancelar
+              </button>
+
+              <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small">* Campos obrigatórios</span>
+
+                <button type="submit" class="btn text-white px-4 py-2 rounded-3"
+                  style="background-color: #172033; font-weight: 500;">
+                  Salvar Funcionário
+                </button>
+              </div>
+            </div>
+
+          </form>
         </div>
 
       </div>
-    </section>
+    </div>
+  </div>
 
-  </main>
+  <!-- MODAL DE EDIÇÃO -->
+  <div class="modal fade" id="modalEditarFuncionario" tabindex="-1" aria-labelledby="modalEditarFuncionarioLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
 
-</div>
+        <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
+          <h4 class="modal-title fw-bold" id="modalEditarFuncionarioLabel">
+            Editar Funcionário
+          </h4>
 
-<!-- MODAL DE CADASTRO -->
-<div class="modal fade" id="modalCadastrarFuncionario" tabindex="-1" aria-labelledby="modalCadastrarFuncionarioLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+          <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
 
-      <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
-        <h4 class="modal-title fw-bold" id="modalCadastrarFuncionarioLabel">
-          Cadastrar Funcionário
-        </h4>
+        <div class="modal-body p-4">
+          <form id="formEditarFuncionario" action="#" method="POST" class="form-funcionario">
 
-        <button 
-          type="button" 
-          class="btn-close me-3" 
-          data-bs-dismiss="modal" 
-          aria-label="Fechar"
-        ></button>
-      </div>
+            <h6 class="fw-bold mb-3">
+              <i class="bi bi-person-badge-fill text-primary me-2"></i>
+              Dados do Funcionário
+            </h6>
 
-      <div class="modal-body p-4">
-        <form action="/funcionarios" method="POST">
+            <div class="row g-3 mb-4">
 
-          <h6 class="fw-bold mb-3">
-            <i class="bi bi-person-badge-fill text-primary me-2"></i>
-            Dados do Funcionário
-          </h6>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">
+                  Nome Completo <span class="text-danger">*</span>
+                </label>
 
-          <div class="row g-3 mb-4">
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted">
-                Nome Completo <span class="text-danger">*</span>
-              </label>
-              <input 
-                type="text" 
-                name="nome"
-                class="form-control bg-light border-0" 
-                placeholder="Carlos Henrique" 
-                required
-              >
+                <input type="text" id="editNome" name="nome" class="form-control bg-light border-0" minlength="3"
+                  maxlength="80" pattern="[A-Za-zÀ-ÿ\s]+" title="Digite apenas letras e espaços" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">
+                  CPF <span class="text-danger">*</span>
+                </label>
+
+                <input type="text" id="editCpf" name="cpf" class="form-control bg-light border-0" maxlength="14"
+                  inputmode="numeric" pattern="[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}"
+                  title="Digite um CPF completo com 11 números" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">
+                  Cargo <span class="text-danger">*</span>
+                </label>
+
+                <input type="text" id="editCargo" name="cargo" class="form-control bg-light border-0" minlength="3"
+                  maxlength="80" pattern="[A-Za-zÀ-ÿ\s]+" title="Digite apenas letras e espaços" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">
+                  Telefone <span class="text-danger">*</span>
+                </label>
+
+                <input type="text" id="editTelefone" name="telefone" class="form-control bg-light border-0"
+                  maxlength="16" inputmode="numeric" title="Digite um telefone com 10 ou 11 números" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">
+                  Data de Admissão <span class="text-danger">*</span>
+                </label>
+
+                <input type="date" id="editDataAdmissao" name="dataAdmissao" class="form-control bg-light border-0"
+                  required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">
+                  Status <span class="text-danger">*</span>
+                </label>
+
+                <select id="editStatus" name="status" class="form-control bg-light border-0" required>
+                  <option value="Ativo">Ativo</option>
+                  <option value="Inativo">Inativo</option>
+                </select>
+              </div>
+
             </div>
 
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted">
-                CPF <span class="text-danger">*</span>
-              </label>
-              <input 
-                type="text" 
-                name="cpf"
-                class="form-control bg-light border-0" 
-                placeholder="123.456.789-00" 
-                required
-              >
-            </div>
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-3" data-bs-dismiss="modal">
+                Cancelar
+              </button>
 
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted">
-                Cargo <span class="text-danger">*</span>
-              </label>
-              <input 
-                type="text" 
-                name="cargo"
-                class="form-control bg-light border-0" 
-                placeholder="Porteiro, Zelador, Manutenção..." 
-                required
-              >
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted">
-                Telefone <span class="text-danger">*</span>
-              </label>
-              <input 
-                type="text" 
-                name="telefone"
-                class="form-control bg-light border-0" 
-                placeholder="(43) 9 9999-0001" 
-                required
-              >
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted">
-                Data de Admissão <span class="text-danger">*</span>
-              </label>
-              <input 
-                type="date" 
-                name="dataAdmissao"
-                class="form-control bg-light border-0" 
-                required
-              >
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted">
-                Status <span class="text-danger">*</span>
-              </label>
-              <select 
-                name="status" 
-                class="form-control bg-light border-0" 
-                required
-              >
-                <option value="Ativo">Ativo</option>
-                <option value="Inativo">Inativo</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-between align-items-center mt-4">
-            <button 
-              type="button" 
-              class="btn btn-outline-secondary px-4 py-2 rounded-3" 
-              data-bs-dismiss="modal"
-            >
-              Cancelar
-            </button>
-
-            <div class="d-flex align-items-center gap-3">
-              <span class="text-muted small">* Campos obrigatórios</span>
-
-              <button 
-                type="submit" 
-                class="btn text-white px-4 py-2 rounded-3" 
-                style="background-color: #172033; font-weight: 500;"
-              >
-                Salvar Funcionário
+              <button type="submit" class="btn text-white px-4 py-2 rounded-3"
+                style="background-color: #172033; font-weight: 500;">
+                Salvar Alterações
               </button>
             </div>
-          </div>
 
-        </form>
+          </form>
+        </div>
+
       </div>
-
     </div>
   </div>
-</div>
 
-<!-- MODAL DE EDIÇÃO -->
-<div class="modal fade" id="modalEditarFuncionario" tabindex="-1" aria-labelledby="modalEditarFuncionarioLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
-
-      <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
-        <h4 class="modal-title fw-bold" id="modalEditarFuncionarioLabel">
-          Editar Funcionário
-        </h4>
-
-        <button 
-          type="button" 
-          class="btn-close me-3" 
-          data-bs-dismiss="modal" 
-          aria-label="Fechar"
-        ></button>
-      </div>
-
-      <div class="modal-body p-4">
-        <form id="formEditarFuncionario" action="#" method="POST">
-
-          <h6 class="fw-bold mb-3">
-            <i class="bi bi-person-badge-fill text-primary me-2"></i>
-            Dados do Funcionário
-          </h6>
-
-          <div class="row g-3 mb-4">
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted">
-                Nome Completo <span class="text-danger">*</span>
-              </label>
-              <input 
-                type="text" 
-                id="editNome" 
-                name="nome" 
-                class="form-control bg-light border-0" 
-                required
-              >
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted">
-                CPF <span class="text-danger">*</span>
-              </label>
-              <input 
-                type="text" 
-                id="editCpf" 
-                name="cpf" 
-                class="form-control bg-light border-0" 
-                required
-              >
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted">
-                Cargo <span class="text-danger">*</span>
-              </label>
-              <input 
-                type="text" 
-                id="editCargo" 
-                name="cargo" 
-                class="form-control bg-light border-0" 
-                required
-              >
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted">
-                Telefone <span class="text-danger">*</span>
-              </label>
-              <input 
-                type="text" 
-                id="editTelefone" 
-                name="telefone" 
-                class="form-control bg-light border-0" 
-                required
-              >
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted">
-                Data de Admissão <span class="text-danger">*</span>
-              </label>
-              <input 
-                type="date" 
-                id="editDataAdmissao" 
-                name="dataAdmissao" 
-                class="form-control bg-light border-0" 
-                required
-              >
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted">
-                Status <span class="text-danger">*</span>
-              </label>
-              <select 
-                id="editStatus" 
-                name="status" 
-                class="form-control bg-light border-0" 
-                required
-              >
-                <option value="Ativo">Ativo</option>
-                <option value="Inativo">Inativo</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-between align-items-center mt-4">
-            <button 
-              type="button" 
-              class="btn btn-outline-secondary px-4 py-2 rounded-3" 
-              data-bs-dismiss="modal"
-            >
-              Cancelar
-            </button>
-
-            <button 
-              type="submit" 
-              class="btn text-white px-4 py-2 rounded-3" 
-              style="background-color: #172033; font-weight: 500;"
-            >
-              Salvar Alterações
-            </button>
-          </div>
-
-        </form>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<script>
-  function converterDataParaInput(data) {
-    if (!data) {
-      return '';
+  <script>
+    function somenteNumeros(valor) {
+      return valor.replace(/\D/g, '');
     }
 
-    if (data.includes('-')) {
-      return data;
+    function somenteLetrasEspacos(valor) {
+      return valor.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
     }
 
-    const partes = data.split('/');
+    function aplicarMascaraCPF(valor) {
+      let cpf = somenteNumeros(valor);
 
-    if (partes.length !== 3) {
-      return '';
+      cpf = cpf.substring(0, 11);
+
+      cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+      cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+      cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+
+      return cpf;
     }
 
-    const dia = partes[0];
-    const mes = partes[1];
-    const ano = partes[2];
+    function aplicarMascaraTelefone(valor) {
+      let telefone = somenteNumeros(valor);
 
-    return `${ano}-${mes}-${dia}`;
-  }
+      telefone = telefone.substring(0, 11);
 
-  const modalEditarFuncionario = document.getElementById('modalEditarFuncionario');
+      if (telefone.length <= 10) {
+        telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
+        telefone = telefone.replace(/(\d{4})(\d)/, '$1-$2');
+        return telefone;
+      }
 
-  if (modalEditarFuncionario) {
-    modalEditarFuncionario.addEventListener('show.bs.modal', function (event) {
-      const botao = event.relatedTarget;
+      telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
+      telefone = telefone.replace(/(\d{1})(\d{4})(\d)/, '$1 $2-$3');
 
-      const id = botao.getAttribute('data-id');
-      const nome = botao.getAttribute('data-nome');
-      const cpf = botao.getAttribute('data-cpf');
-      const cargo = botao.getAttribute('data-cargo');
-      const telefone = botao.getAttribute('data-telefone');
-      const dataAdmissao = botao.getAttribute('data-admissao');
-      const status = botao.getAttribute('data-status');
+      return telefone;
+    }
 
-      document.getElementById('formEditarFuncionario').action = `/funcionarios/${id}/editar`;
+    function converterDataParaInput(data) {
+      if (!data) {
+        return '';
+      }
 
-      document.getElementById('editNome').value = nome;
-      document.getElementById('editCpf').value = cpf;
-      document.getElementById('editCargo').value = cargo;
-      document.getElementById('editTelefone').value = telefone;
-      document.getElementById('editDataAdmissao').value = converterDataParaInput(dataAdmissao);
-      document.getElementById('editStatus').value = status;
-    });
-  }
-</script>
+      if (data.includes('-')) {
+        return data;
+      }
 
-<%- include('../partials/footer') %>
+      const partes = data.split('/');
+
+      if (partes.length !== 3) {
+        return '';
+      }
+
+      const dia = partes[0];
+      const mes = partes[1];
+      const ano = partes[2];
+
+      return `${ano}-${mes}-${dia}`;
+    }
+
+    function validarDataNaoFutura(campoData) {
+      if (!campoData || !campoData.value) {
+        return true;
+      }
+
+      const dataInformada = new Date(campoData.value);
+      const hoje = new Date();
+
+      hoje.setHours(0, 0, 0, 0);
+
+      if (dataInformada > hoje) {
+        campoData.setCustomValidity('A data de admissão não pode ser futura.');
+        return false;
+      }
+
+      campoData.setCustomValidity('');
+      return true;
+    }
+
+    function ativarMascaraCPF(idCampo) {
+      const campo = document.getElementById(idCampo);
+
+      if (!campo) {
+        return;
+      }
+
+      campo.addEventListener('input', function () {
+        campo.value = aplicarMascaraCPF(campo.value);
+        campo.setCustomValidity('');
+      });
+    }
+
+    function ativarMascaraTelefone(idCampo) {
+      const campo = document.getElementById(idCampo);
+
+      if (!campo) {
+        return;
+      }
+
+      campo.addEventListener('input', function () {
+        campo.value = aplicarMascaraTelefone(campo.value);
+        campo.setCustomValidity('');
+      });
+    }
+
+    function ativarValidacaoTexto() {
+      const camposTexto = document.querySelectorAll('input[name="nome"], input[name="cargo"]');
+
+      camposTexto.forEach(function (campo) {
+        campo.addEventListener('input', function () {
+          campo.value = somenteLetrasEspacos(campo.value);
+          campo.setCustomValidity('');
+        });
+      });
+    }
+
+    function validarFormularioFuncionario(formulario) {
+      let formularioValido = true;
+
+      const nome = formulario.querySelector('input[name="nome"]');
+      const cargo = formulario.querySelector('input[name="cargo"]');
+      const cpf = formulario.querySelector('input[name="cpf"]');
+      const telefone = formulario.querySelector('input[name="telefone"]');
+      const dataAdmissao = formulario.querySelector('input[name="dataAdmissao"]');
+
+      if (nome) {
+        nome.value = somenteLetrasEspacos(nome.value).trim();
+
+        if (nome.value.length < 3) {
+          nome.setCustomValidity('Digite um nome válido com pelo menos 3 letras.');
+          formularioValido = false;
+        } else {
+          nome.setCustomValidity('');
+        }
+      }
+
+      if (cargo) {
+        cargo.value = somenteLetrasEspacos(cargo.value).trim();
+
+        if (cargo.value.length < 3) {
+          cargo.setCustomValidity('Digite um cargo válido com pelo menos 3 letras.');
+          formularioValido = false;
+        } else {
+          cargo.setCustomValidity('');
+        }
+      }
+
+      if (cpf) {
+        const cpfLimpo = somenteNumeros(cpf.value);
+
+        if (cpfLimpo.length !== 11) {
+          cpf.setCustomValidity('Digite um CPF válido com 11 números.');
+          formularioValido = false;
+        } else {
+          cpf.value = aplicarMascaraCPF(cpf.value);
+          cpf.setCustomValidity('');
+        }
+      }
+
+      if (telefone) {
+        const telefoneLimpo = somenteNumeros(telefone.value);
+
+        if (telefoneLimpo.length !== 10 && telefoneLimpo.length !== 11) {
+          telefone.setCustomValidity('Digite um telefone válido com 10 ou 11 números.');
+          formularioValido = false;
+        } else {
+          telefone.value = aplicarMascaraTelefone(telefone.value);
+          telefone.setCustomValidity('');
+        }
+      }
+
+      if (!validarDataNaoFutura(dataAdmissao)) {
+        formularioValido = false;
+      }
+
+      if (!formulario.checkValidity()) {
+        formularioValido = false;
+      }
+
+      if (!formularioValido) {
+        formulario.reportValidity();
+      }
+
+      return formularioValido;
+    }
+
+    function ativarValidacaoFormulario() {
+      const formularios = document.querySelectorAll('.form-funcionario');
+
+      formularios.forEach(function (formulario) {
+        formulario.addEventListener('submit', function (event) {
+          const formularioValido = validarFormularioFuncionario(formulario);
+
+          if (!formularioValido) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        });
+      });
+    }
+
+    ativarValidacaoTexto();
+
+    ativarMascaraCPF('cpfCadastro');
+    ativarMascaraCPF('editCpf');
+
+    ativarMascaraTelefone('telefoneCadastro');
+    ativarMascaraTelefone('editTelefone');
+
+    ativarValidacaoFormulario();
+
+    const modalEditarFuncionario = document.getElementById('modalEditarFuncionario');
+
+    if (modalEditarFuncionario) {
+      modalEditarFuncionario.addEventListener('show.bs.modal', function (event) {
+        const botao = event.relatedTarget;
+
+        const id = botao.getAttribute('data-id');
+        const nome = botao.getAttribute('data-nome');
+        const cpf = botao.getAttribute('data-cpf');
+        const cargo = botao.getAttribute('data-cargo');
+        const telefone = botao.getAttribute('data-telefone');
+        const dataAdmissao = botao.getAttribute('data-admissao');
+        const status = botao.getAttribute('data-status');
+
+        document.getElementById('formEditarFuncionario').action = `/funcionarios/${id}/editar`;
+
+        document.getElementById('editNome').value = somenteLetrasEspacos(nome);
+        document.getElementById('editCpf').value = aplicarMascaraCPF(cpf);
+        document.getElementById('editCargo').value = somenteLetrasEspacos(cargo);
+        document.getElementById('editTelefone').value = aplicarMascaraTelefone(telefone);
+        document.getElementById('editDataAdmissao').value = converterDataParaInput(dataAdmissao);
+        document.getElementById('editStatus').value = status;
+      });
+    }
+  </script>
+
+  <%- include('../partials/footer') %>

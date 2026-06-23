@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const dashboardController = require('../controllers/dashboardController');
+const usuarioController = require('../controllers/usuarioController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
 router.use(authMiddleware);
-router.get('/', dashboardController.index);
+
+router.get('/', usuarioController.perfil);
+
+
+router.get('/perfil', usuarioController.perfil);
 
 module.exports = router;
