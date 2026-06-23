@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-// Reserva Model
-=======
 const db = require('../database/connection');
 
 async function listarTodos() {
@@ -118,4 +115,3 @@ module.exports = {
   excluir,
   contarTodos
 };
->>>>>>> Stashed changes
