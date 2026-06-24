@@ -28,6 +28,15 @@
     <section class="content-area">
       <h2>Reservas de Áreas Comuns</h2>
 
+      <%# Alerta de erro amigável — aparece no topo se houver erro %>
+      <% if (erro) { %>
+        <div class="alert alert-danger alert-dismissible fade show mx-1 mt-3" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          <%= erro %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% } %>
+
       <div class="table-card">
 
         <div class="table-toolbar">
@@ -41,7 +50,7 @@
             >
           </div>
 
-          <div class="filter-tabs"><%# essas opções só devem aparecer se o usaurio for adm %>
+          <div class="filter-tabs">
             <button class="tab-btn active" onclick="setTab(this, 'todos')">Todos</button>
             <button class="tab-btn" onclick="setTab(this, 'Pendente')">Pendente</button>
             <button class="tab-btn" onclick="setTab(this, 'Aprovada')">Aprovada</button>
@@ -81,7 +90,6 @@
                   </td>
                 </tr>
               <% } else { %>
-
                 <% reservas.forEach(reserva => { %>
                   <tr
                     data-area="<%= reserva.area.toLowerCase() %>"
@@ -139,7 +147,6 @@
                     </td>
                   </tr>
                 <% }) %>
-
               <% } %>
             </tbody>
           </table>
@@ -165,27 +172,13 @@
 </div>
 
 <!-- MODAL DE CADASTRO -->
-<div
-  class="modal fade"
-  id="modalCadastrarReserva"
-  tabindex="-1"
-  aria-labelledby="modalCadastrarReservaLabel"
-  aria-hidden="true"
->
+<div class="modal fade" id="modalCadastrarReserva" tabindex="-1" aria-labelledby="modalCadastrarReservaLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
 
       <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
-        <h4 class="modal-title fw-bold" id="modalCadastrarReservaLabel">
-          Nova Reserva
-        </h4>
-
-        <button
-          type="button"
-          class="btn-close me-3"
-          data-bs-dismiss="modal"
-          aria-label="Fechar"
-        ></button>
+        <h4 class="modal-title fw-bold" id="modalCadastrarReservaLabel">Nova Reserva</h4>
+        <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Fechar"></button>
       </div>
 
       <div class="modal-body p-4">
@@ -202,14 +195,11 @@
               <label class="form-label small fw-semibold text-muted">
                 Área Comum <span class="text-danger">*</span>
               </label>
-
               <select name="area" class="form-control bg-light border-0" required>
                 <option value="">Selecione...</option>
-                <option value="Salão de Festas">Salão de Festas</option>
-                <option value="Churrasqueira">Churrasqueira</option>
-                <option value="Piscina">Piscina</option>
-                <option value="Quadra">Quadra</option>
-                <option value="Sala de Jogos">Sala de Jogos</option>
+                <% ['Salão de Festas','Churrasqueira','Piscina','Quadra','Sala de Jogos'].forEach(a => { %>
+                  <option value="<%= a %>" <%= dadosFormulario && dadosFormulario.area === a ? 'selected' : '' %>><%= a %></option>
+                <% }) %>
               </select>
             </div>
 
@@ -217,25 +207,28 @@
               <label class="form-label small fw-semibold text-muted">
                 Morador <span class="text-danger">*</span>
               </label>
-
-              <input
-                type="text"
-                name="morador"
-                class="form-control bg-light border-0"
-                placeholder="Nome do morador"
-                required
-              >
+              <%# Select populado com moradores do banco %>
+              <select name="morador" class="form-control bg-light border-0" required>
+                <option value="">Selecione o morador...</option>
+                <% if (moradores && moradores.length > 0) { %>
+                  <% moradores.forEach(m => { %>
+                    <option value="<%= m.nome %>" <%= dadosFormulario && dadosFormulario.morador === m.nome ? 'selected' : '' %>>
+                      <%= m.nome %>
+                    </option>
+                  <% }) %>
+                <% } %>
+              </select>
             </div>
 
             <div class="col-md-6">
               <label class="form-label small fw-semibold text-muted">
                 Data <span class="text-danger">*</span>
               </label>
-
               <input
                 type="date"
                 name="data"
                 class="form-control bg-light border-0"
+                value="<%= dadosFormulario ? dadosFormulario.data : '' %>"
                 required
               >
             </div>
@@ -244,12 +237,15 @@
               <label class="form-label small fw-semibold text-muted">
                 Horário <span class="text-danger">*</span>
               </label>
-
+              <%# Máscara aplicada via JS — formata automaticamente HH:MM–HH:MM %>
               <input
                 type="text"
                 name="horario"
+                id="horarioCadastro"
                 class="form-control bg-light border-0"
                 placeholder="Ex: 18:00–23:00"
+                value="<%= dadosFormulario ? dadosFormulario.horario : '' %>"
+                maxlength="11"
                 required
               >
             </div>
@@ -258,34 +254,22 @@
               <label class="form-label small fw-semibold text-muted">
                 Status <span class="text-danger">*</span>
               </label>
-
               <select name="status" class="form-control bg-light border-0" required>
-                <option value="Pendente">Pendente</option>
-                <option value="Aprovada">Aprovada</option>
-                <option value="Cancelada">Cancelada</option>
-                <option value="Concluída">Concluída</option>
+                <% ['Pendente','Aprovada','Cancelada','Concluída'].forEach(s => { %>
+                  <option value="<%= s %>" <%= dadosFormulario && dadosFormulario.status === s ? 'selected' : '' %>><%= s %></option>
+                <% }) %>
               </select>
             </div>
 
           </div>
 
           <div class="d-flex justify-content-between align-items-center mt-4">
-            <button
-              type="button"
-              class="btn btn-outline-secondary px-4 py-2 rounded-3"
-              data-bs-dismiss="modal"
-            >
+            <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-3" data-bs-dismiss="modal">
               Cancelar
             </button>
-
             <div class="d-flex align-items-center gap-3">
               <span class="text-muted small">* Campos obrigatórios</span>
-
-              <button
-                type="submit"
-                class="btn text-white px-4 py-2 rounded-3"
-                style="background-color: #172033; font-weight: 500;"
-              >
+              <button type="submit" class="btn text-white px-4 py-2 rounded-3" style="background-color: #172033; font-weight: 500;">
                 Salvar Reserva
               </button>
             </div>
@@ -299,27 +283,13 @@
 </div>
 
 <!-- MODAL DE EDIÇÃO -->
-<div
-  class="modal fade"
-  id="modalEditarReserva"
-  tabindex="-1"
-  aria-labelledby="modalEditarReservaLabel"
-  aria-hidden="true"
->
+<div class="modal fade" id="modalEditarReserva" tabindex="-1" aria-labelledby="modalEditarReservaLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
 
       <div class="modal-header border-bottom-0 pb-0 mt-3 ms-3">
-        <h4 class="modal-title fw-bold" id="modalEditarReservaLabel">
-          Editar Reserva
-        </h4>
-
-        <button
-          type="button"
-          class="btn-close me-3"
-          data-bs-dismiss="modal"
-          aria-label="Fechar"
-        ></button>
+        <h4 class="modal-title fw-bold" id="modalEditarReservaLabel">Editar Reserva</h4>
+        <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Fechar"></button>
       </div>
 
       <div class="modal-body p-4">
@@ -336,13 +306,10 @@
               <label class="form-label small fw-semibold text-muted">
                 Área Comum <span class="text-danger">*</span>
               </label>
-
               <select id="editArea" name="area" class="form-control bg-light border-0" required>
-                <option value="Salão de Festas">Salão de Festas</option>
-                <option value="Churrasqueira">Churrasqueira</option>
-                <option value="Piscina">Piscina</option>
-                <option value="Quadra">Quadra</option>
-                <option value="Sala de Jogos">Sala de Jogos</option>
+                <% ['Salão de Festas','Churrasqueira','Piscina','Quadra','Sala de Jogos'].forEach(a => { %>
+                  <option value="<%= a %>"><%= a %></option>
+                <% }) %>
               </select>
             </div>
 
@@ -350,40 +317,35 @@
               <label class="form-label small fw-semibold text-muted">
                 Morador <span class="text-danger">*</span>
               </label>
-
-              <input
-                type="text"
-                id="editMorador"
-                name="morador"
-                class="form-control bg-light border-0"
-                required
-              >
+              <%# Select populado com moradores do banco %>
+              <select id="editMorador" name="morador" class="form-control bg-light border-0" required>
+                <option value="">Selecione o morador...</option>
+                <% if (moradores && moradores.length > 0) { %>
+                  <% moradores.forEach(m => { %>
+                    <option value="<%= m.nome %>"><%= m.nome %></option>
+                  <% }) %>
+                <% } %>
+              </select>
             </div>
 
             <div class="col-md-6">
               <label class="form-label small fw-semibold text-muted">
                 Data <span class="text-danger">*</span>
               </label>
-
-              <input
-                type="date"
-                id="editData"
-                name="data"
-                class="form-control bg-light border-0"
-                required
-              >
+              <input type="date" id="editData" name="data" class="form-control bg-light border-0" required>
             </div>
 
             <div class="col-md-6">
               <label class="form-label small fw-semibold text-muted">
                 Horário <span class="text-danger">*</span>
               </label>
-
               <input
                 type="text"
                 id="editHorario"
                 name="horario"
                 class="form-control bg-light border-0"
+                placeholder="Ex: 18:00–23:00"
+                maxlength="11"
                 required
               >
             </div>
@@ -392,31 +354,20 @@
               <label class="form-label small fw-semibold text-muted">
                 Status <span class="text-danger">*</span>
               </label>
-
               <select id="editStatus" name="status" class="form-control bg-light border-0" required>
-                <option value="Pendente">Pendente</option>
-                <option value="Aprovada">Aprovada</option>
-                <option value="Cancelada">Cancelada</option>
-                <option value="Concluída">Concluída</option>
+                <% ['Pendente','Aprovada','Cancelada','Concluída'].forEach(s => { %>
+                  <option value="<%= s %>"><%= s %></option>
+                <% }) %>
               </select>
             </div>
 
           </div>
 
           <div class="d-flex justify-content-between align-items-center mt-4">
-            <button
-              type="button"
-              class="btn btn-outline-secondary px-4 py-2 rounded-3"
-              data-bs-dismiss="modal"
-            >
+            <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-3" data-bs-dismiss="modal">
               Cancelar
             </button>
-
-            <button
-              type="submit"
-              class="btn text-white px-4 py-2 rounded-3"
-              style="background-color: #172033; font-weight: 500;"
-            >
+            <button type="submit" class="btn text-white px-4 py-2 rounded-3" style="background-color: #172033; font-weight: 500;">
               Salvar Alterações
             </button>
           </div>
@@ -429,10 +380,7 @@
 </div>
 
 <style>
-  .filter-tabs {
-    display: flex;
-    gap: 6px;
-  }
+  .filter-tabs { display: flex; gap: 6px; }
 
   .tab-btn {
     padding: 6px 14px;
@@ -445,15 +393,8 @@
     transition: all 0.15s;
   }
 
-  .tab-btn.active {
-    background: #172033;
-    color: #fff;
-    border-color: #172033;
-  }
-
-  .tab-btn:hover:not(.active) {
-    background: #f1f5f9;
-  }
+  .tab-btn.active { background: #172033; color: #fff; border-color: #172033; }
+  .tab-btn:hover:not(.active) { background: #f1f5f9; }
 
   .badge-pending { background: #fef9c3; color: #854d0e; }
   .badge-done    { background: #dbeafe; color: #1e40af; }
@@ -493,8 +434,28 @@
     document.getElementById('contador').textContent = visiveis;
   }
 
-  const modalEditar = document.getElementById('modalEditarReserva');
+  // Máscara de horário — formata automaticamente HH:MM–HH:MM e barra letras
+  function aplicarMascaraHorario(input) {
+    input.addEventListener('keypress', function (e) {
+      // Barra qualquer tecla que não seja número
+      if (!/\d/.test(e.key)) e.preventDefault();
+    });
 
+    input.addEventListener('input', function () {
+      let v = this.value.replace(/[^\d]/g, '');
+      if (v.length >= 3) v = v.slice(0, 2) + ':' + v.slice(2);
+      if (v.length >= 6) v = v.slice(0, 5) + '–' + v.slice(5);
+      if (v.length >= 9) v = v.slice(0, 8) + ':' + v.slice(8);
+      if (v.length > 11) v = v.slice(0, 11);
+      this.value = v;
+    });
+  }
+
+  aplicarMascaraHorario(document.getElementById('horarioCadastro'));
+  aplicarMascaraHorario(document.getElementById('editHorario'));
+
+  // Preenche o modal de edição com os dados da reserva clicada
+  const modalEditar = document.getElementById('modalEditarReserva');
   if (modalEditar) {
     modalEditar.addEventListener('show.bs.modal', function (event) {
       const botao = event.relatedTarget;
@@ -515,12 +476,16 @@
       document.getElementById('editStatus').value  = status;
     });
   }
+
+  // Abre o modal correto automaticamente se o servidor retornou erro
+  <% if (typeof abrirModal !== 'undefined' && abrirModal) { %>
+    document.addEventListener('DOMContentLoaded', function () {
+      const modalId = '<%= abrirModal %>' === 'cadastro'
+        ? 'modalCadastrarReserva'
+        : 'modalEditarReserva';
+      new bootstrap.Modal(document.getElementById(modalId)).show();
+    });
+  <% } %>
 </script>
 
 <%- include('../partials/footer') %>
-    <body>
-        <%- include('../partials/navbar') %>
-        
-    </body>
-
-    <%- include('../partials/footer') %>
