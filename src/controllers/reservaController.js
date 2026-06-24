@@ -1,15 +1,7 @@
 const ReservaModel = require('../models/reservaModel');
-
+const MoradorModel = require('../models/moradorModel');
 
 const usuarioPadrao = {
-
-exports.listarReservas = (req, res) => {
-  const reservas = ReservaModel.listarTodos();
-
-  res.render('reservas/index', { 
-    reservas: reservas,
-    titulo: 'Reservas',
-    usuario: req.session.usuario || {
   nome: 'Administrador Geral',
   email: 'admin@condosys.com.br',
   telefone: '(43) 9 9900-0001',
@@ -17,180 +9,141 @@ exports.listarReservas = (req, res) => {
   cadastradoEm: '01/01/2024'
 };
 
-
+// Lista todas as reservas e moradores para popular o select
 exports.listarReservas = async (req, res) => {
   try {
-    const reservas = await ReservaModel.listarTodos();
+    const [reservas, moradores] = await Promise.all([
+      ReservaModel.listarTodos(),
+      MoradorModel.listarTodos()
+    ]);
     res.render('reservas/index', {
       reservas,
+      moradores,
       titulo: 'Reservas',
-      usuario: req.session.usuario || usuarioPadrao
+      usuario: req.session.usuario || usuarioPadrao,
+      erro: null,
+      dadosFormulario: null,
+      abrirModal: null
     });
   } catch (erro) {
-    res.status(500).send('Erro ao carregar reservas: ' + erro.message);
+    res.render('reservas/index', {
+      reservas: [],
+      moradores: [],
+      titulo: 'Reservas',
+      usuario: req.session.usuario || usuarioPadrao,
+      erro: 'Erro ao carregar reservas.',
+      dadosFormulario: null,
+      abrirModal: null
+    });
   }
 };
 
+// Abre formulário de nova reserva
 exports.formNovaReserva = async (req, res) => {
   try {
-    const reservas = await ReservaModel.listarTodos();
+    const [reservas, moradores] = await Promise.all([
+      ReservaModel.listarTodos(),
+      MoradorModel.listarTodos()
+    ]);
     res.render('reservas/index', {
       reservas,
+      moradores,
       titulo: 'Reservas',
-      usuario: req.session.usuario || usuarioPadrao
+      usuario: req.session.usuario || usuarioPadrao,
+      erro: null,
+      dadosFormulario: null,
+      abrirModal: 'cadastro'
     });
   } catch (erro) {
-    res.status(500).send('Erro ao carregar formulário: ' + erro.message);
+    res.redirect('/reservas');
   }
 };
 
-
+// Salva nova reserva — em caso de erro volta pro formulário com mensagem amigável
 exports.salvarReserva = async (req, res) => {
+  const { area, morador, data, horario, status } = req.body;
   try {
-    const { area, morador, data, horario, status } = req.body;
     await ReservaModel.cadastrar({ area, morador, data, horario, status });
     res.redirect('/reservas');
   } catch (erro) {
-    res.status(400).send('Erro ao salvar reserva: ' + erro.message);
+    const [reservas, moradores] = await Promise.all([
+      ReservaModel.listarTodos(),
+      MoradorModel.listarTodos()
+    ]);
+    res.render('reservas/index', {
+      reservas,
+      moradores,
+      titulo: 'Reservas',
+      usuario: req.session.usuario || usuarioPadrao,
+      // Devolve os dados preenchidos pra não perder o que o usuário digitou
+      dadosFormulario: { area, morador, data, horario, status },
+      erro: erro.message,
+      abrirModal: 'cadastro'
+    });
   }
 };
 
-
+// Abre formulário de edição
 exports.formEditarReserva = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const reserva = await ReservaModel.buscarPorId(id);
+    const [reserva, reservas, moradores] = await Promise.all([
+      ReservaModel.buscarPorId(id),
+      ReservaModel.listarTodos(),
+      MoradorModel.listarTodos()
+    ]);
 
     if (!reserva) {
-      return res.status(404).send('Reserva não encontrada!');
+      return res.redirect('/reservas');
     }
 
-    const reservas = await ReservaModel.listarTodos();
     res.render('reservas/index', {
       reservas,
+      moradores,
       reserva,
       titulo: 'Reservas',
-      usuario: req.session.usuario || usuarioPadrao
+      usuario: req.session.usuario || usuarioPadrao,
+      erro: null,
+      dadosFormulario: null,
+      abrirModal: 'edicao'
     });
   } catch (erro) {
-    res.status(500).send('Erro ao carregar reserva: ' + erro.message);
+    res.redirect('/reservas');
   }
 };
-}
-  });
-};
 
-exports.formNovaReserva = (req, res) => {
-  const reservas = ReservaModel.listarTodos();
-
-  res.render('reservas/index', {
-    reservas: reservas, 
-    titulo: 'Reservas',
-    usuario: req.session.usuario || {
-  nome: 'Administrador Geral',
-  email: 'admin@condosys.com.br',
-  telefone: '(43) 9 9900-0001',
-  tipo: 'Administrador',
-  cadastradoEm: '01/01/2024'
-}
-  });
-};
-
-exports.salvarReserva = (req, res) => {
-  const { area, morador, data, horario, status } = req.body;
-
-  ReservaModel.cadastrar({
-    area,
-    morador,
-    data,
-    horario,
-    status
-  });
-  
-  res.redirect('/reservas');
-};
-
-exports.formEditarReserva = (req, res) => {
-  const id = parseInt(req.params.id);
-  const reserva = ReservaModel.buscarPorId(id);
-
-  if (!reserva) {
-    return res.status(404).send('Reserva não encontrada!');
-  }
-
-  const reservas = ReservaModel.listarTodos();
-
+// Atualiza reserva — em caso de erro volta pro formulário com mensagem amigável
 exports.atualizarReserva = async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { area, morador, data, horario, status } = req.body;
   try {
-    const id = parseInt(req.params.id);
-    const { area, morador, data, horario, status } = req.body;
     await ReservaModel.atualizar(id, { area, morador, data, horario, status });
     res.redirect('/reservas');
   } catch (erro) {
-   
-    const status = erro.message.includes('não encontrada') ? 404 : 400;
-    res.status(status).send('Erro ao atualizar reserva: ' + erro.message);
+    const [reservas, moradores] = await Promise.all([
+      ReservaModel.listarTodos(),
+      MoradorModel.listarTodos()
+    ]);
+    res.render('reservas/index', {
+      reservas,
+      moradores,
+      titulo: 'Reservas',
+      usuario: req.session.usuario || usuarioPadrao,
+      // Devolve os dados preenchidos pra não perder o que o usuário editou
+      reserva: { id, area, morador, data, horario, status },
+      erro: erro.message,
+      abrirModal: 'edicao'
+    });
   }
 };
 
-
+// Exclui reserva
 exports.excluirReserva = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const excluiu = await ReservaModel.excluir(id);
-
-    if (!excluiu) {
-      return res.status(404).send('Reserva não encontrada');
-    }
-
+    await ReservaModel.excluir(id);
     res.redirect('/reservas');
   } catch (erro) {
-    res.status(500).send('Erro ao excluir reserva: ' + erro.message);
+    res.redirect('/reservas');
   }
-  res.render('reservas/index', {
-    reservas: reservas,
-    reserva: reserva,
-    titulo: 'Reservas',
-    usuario: req.session.usuario || {
-    nome: 'Administrador Geral',
-    email: 'admin@condosys.com.br',
-    telefone: '(43) 9 9900-0001',
-    tipo: 'Administrador',
-    cadastradoEm: '01/01/2024'
-}
-  });
-};
-
-exports.atualizarReserva = (req, res) => {
-  const id = parseInt(req.params.id);
-
-  const reserva = ReservaModel.buscarPorId(id);
-
-  if (!reserva) {
-    return res.status(404).send('Reserva não encontrada');
-  }
-
-  const { area, morador, data, horario, status } = req.body;
-
-  ReservaModel.atualizar(id, {
-    area,
-    morador,
-    data,
-    horario,
-    status
-  });
-
-  res.redirect('/reservas');
-};
-
-exports.excluirReserva = (req, res) => {
-  const id = parseInt(req.params.id);
-
-  const excluiu = ReservaModel.excluir(id);
-
-  if (!excluiu) {
-    return res.status(404).send('Reserva não encontrada');
-  }
-
-  res.redirect('/reservas');
 };
