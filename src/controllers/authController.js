@@ -38,7 +38,7 @@ class AuthController {
   }
 
   logout(req, res) {
-    req.session.destroy(() => {c
+    req.session.destroy(() => {
       res.redirect('/login');
     });
   }
