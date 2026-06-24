@@ -1,9 +1,16 @@
 const pool = require('../database/connection');
 
 async function listarTodos() {
-  const resultado = await pool.query(
-    'SELECT * FROM moradores ORDER BY id_morador'
-  );
+
+  const resultado = await pool.query(`
+    SELECT 
+      m.*, 
+      TO_CHAR(m.data_nascimento, 'YYYY-MM-DD') AS data_nascimento_formatada,
+      CONCAT('Bloco ', u.bloco, ' - Apto ', u.numero) AS unidade_formatada
+    FROM moradores m
+    LEFT JOIN unidades u ON m.id_unidade = u.id_unidade
+    ORDER BY m.id_morador
+  `);
 
   return resultado.rows;
 }

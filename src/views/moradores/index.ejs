@@ -73,7 +73,7 @@
                   <tr>
                     <td><%= morador.nome %></td>
                     <td><%= morador.cpf %></td>
-                    <td><%= morador.unidade %></td>
+                    <td><%= morador.unidade_formatada %></td> 
                     <td><%= morador.telefone %></td>
                     <td><%= morador.email %></td>
 
@@ -91,15 +91,15 @@
                         class="edit-link border-0 bg-transparent p-0 btnEditarMorador"
                         data-bs-toggle="modal"
                         data-bs-target="#modalMorador"
-                        data-id="<%= morador.id %>"
+                        data-id="<%= morador.id_morador %>"
                         data-nome="<%= morador.nome || '' %>"
                         data-cpf="<%= morador.cpf || '' %>"
-                        data-unidade="<%= morador.unidade || '' %>"
+                        data-id-unidade="<%= morador.id_unidade || '' %>"
                         data-telefone="<%= morador.telefone || '' %>"
                         data-email="<%= morador.email || '' %>"
-                        data-data-nascimento="<%= morador.dataNascimento || '' %>"
-                        data-modelo-veiculo="<%= morador.modeloVeiculo || '' %>"
-                        data-placa="<%= morador.placa || '' %>"
+                        data-data-nascimento="<%= morador.data_nascimento || morador.dataNascimento || '' %>"
+                        data-modelo-veiculo="<%= morador.modeloVeiculo || morador.car_model || '' %>"
+                        data-placa="<%= morador.placa_carro || morador.placa || '' %>"
                         data-cor="<%= morador.cor || '' %>"
                         data-vaga="<%= morador.vaga || '' %>"
                         data-observacoes="<%= morador.observacoes || '' %>"
@@ -179,7 +179,6 @@
 
 </div>
 
-<!-- MODAL MORADOR -->
 <div 
   class="modal fade" 
   id="modalMorador" 
@@ -302,19 +301,19 @@
               </label>
 
               <select
-                  name="id_unidade"
-                  id="id_unidade"
-                  class="form-select bg-light border-0"
-                  required
-                >
-  <option value="">Selecione uma unidade</option>
-
-  <% unidades.forEach(unidade => { %>
-    <option value="<%= unidade.id_unidade %>">
-      Bloco <%= unidade.bloco %> - Apto <%= unidade.numero %>
-    </option>
-  <% }) %>
-</select>
+                name="id_unidade"
+                id="id_unidade"
+                class="form-select bg-light border-0"
+                required
+              >
+                <option value="">Selecione uma unidade</option>
+                <% unidades.forEach(unidade => { %>
+                  <option value="<%= unidade.id_unidade %>">
+                    Bloco <%= unidade.bloco %> - Apto <%= unidade.numero %>
+                  </option>
+                <% }) %>
+              </select>
+            </div>
 
           </div>
 
@@ -428,51 +427,57 @@
 </div>
 
 <script>
-// Função limpa e unificada para abrir o modal de edição
-function abrirEdicao(id, nome, cpf, unidade, telefone, email) {
-  document.getElementById('nome').value = nome;
-  document.getElementById('cpf').value = cpf;
-  document.getElementById('unidade').value = unidade;
-  document.getElementById('telefone').value = telefone;
-  document.getElementById('email').value = email;
+// Captura a abertura do modal e preenche os campos automaticamente
+document.getElementById('modalMorador').addEventListener('show.bs.modal', function (event) {
+  const button = event.relatedTarget;
+  
+  // Extrai o ID do botão clicado
+  const id = button.getAttribute('data-id');
+  
+  // Se não tem ID, é porque clicou em "Novo Morador", então não faz nada e deixa o modal vazio
+  if (!id) return;
 
+  // Atualiza a rota do formulário e o título
   document.getElementById('formMorador').action = '/moradores/' + id + '/editar';
   document.getElementById('modalMoradorLabel').innerText = 'Editar Morador';
 
-  const modal = new bootstrap.Modal(document.getElementById('modalMorador'));
-  modal.show();
-}
+  // Preenche todos os inputs puxando os dados do botão
+  document.getElementById('nome').value = button.getAttribute('data-nome');
+  document.getElementById('cpf').value = button.getAttribute('data-cpf');
+  document.getElementById('email').value = button.getAttribute('data-email');
+  document.getElementById('telefone').value = button.getAttribute('data-telefone');
+  document.getElementById('id_unidade').value = button.getAttribute('data-id-unidade');
+  
+  // Preenchendo campos extras (caso estejam nulos no banco, eles ficam em branco graças ao || '' lá no botão)
+  document.getElementById('dataNascimento').value = button.getAttribute('data-data-nascimento');
+  document.getElementById('modeloVeiculo').value = button.getAttribute('data-modelo-veiculo');
+  document.getElementById('placa').value = button.getAttribute('data-placa');
+  document.getElementById('cor').value = button.getAttribute('data-cor');
+  document.getElementById('vaga').value = button.getAttribute('data-vaga');
+  document.getElementById('observacoes').value = button.getAttribute('data-observacoes');
+});
 
-// Reseta o formulário quando o modal é fechado
+// Reseta o formulário e a rota de volta para "Novo Morador" quando a janela fecha
 document.getElementById('modalMorador').addEventListener('hidden.bs.modal', function() {
   document.getElementById('formMorador').reset();
   document.getElementById('formMorador').action = '/moradores/novo';
-  document.getElementById('modalMoradorLabel').innerText = 'Cadastrar / Editar Morador';
+  document.getElementById('modalMoradorLabel').innerText = 'Cadastrar Morador';
 });
 
-
+// Máscara do Telefone
 function mascaraTelefone(input) {
-    // Remove tudo o que não for número
     let v = input.value.replace(/\D/g, "");
-    
-    // Formata o DDD: (XX
     if (v.length > 0) v = "(" + v;
-    // Fecha o parêntese do DDD: (XX) 
     if (v.length > 3) v = v.substring(0, 3) + ") " + v.substring(3);
     
-    // Ajusta o hífen dinamicamente para fixo ou celular
     if (v.length > 13) {
-        // Formato Celular: (XX) XXXXX-XXXX
         v = v.substring(0, 10) + "-" + v.substring(10, 14);
     } else if (v.length > 9) {
-        // Formato Fixo temporário: (XX) XXXX-XXXX
         v = v.substring(0, 9) + "-" + v.substring(9);
     }
     
     input.value = v;
 }
-
-
 </script>
 
 <%- include('../partials/footer') %>
