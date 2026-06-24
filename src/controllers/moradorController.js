@@ -1,4 +1,5 @@
-const moradorModel = require('../models/moradorModel');
+const Morador = require('../models/moradorModel');
+const Unidade = require('../models/unidadeModel');
 
 function obterUsuarioLogado(req) {
   return req.session.usuario || {
@@ -11,12 +12,16 @@ class MoradorController {
 
   async index(req, res) {
     try {
-
-      const moradores = await moradorModel.listarTodos();
+      
+      const moradores = await Morador.listarTodos(); 
+      
+      
+      const unidades = await Unidade.listarTodos();
 
       res.render('moradores/index', {
         titulo: 'Moradores',
-        moradores,
+        moradores, 
+        unidades,  
         usuario: obterUsuarioLogado(req)
       });
 
@@ -28,8 +33,7 @@ class MoradorController {
 
   async store(req, res) {
     try {
-
-      await moradorModel.criar({
+      await Morador.criar({
         nome: req.body.nome,
         cpf: req.body.cpf,
         telefone: req.body.telefone,
@@ -39,7 +43,7 @@ class MoradorController {
         modeloVeiculo: req.body.modeloVeiculo,
 
         // temporário
-        id_unidade: 1,
+        id_unidade: req.body.id_unidade,
         id_usuario: 1
       });
 
@@ -53,8 +57,7 @@ class MoradorController {
 
   async edit(req, res) {
     try {
-
-      await moradorModel.atualizar(
+      await Morador.atualizar(
         req.params.id,
         {
           nome: req.body.nome,
@@ -64,7 +67,7 @@ class MoradorController {
           dataNascimento: req.body.dataNascimento,
           placa: req.body.placa,
           modeloVeiculo: req.body.modeloVeiculo,
-          id_unidade: 1
+          id_unidade: req.body.id_unidade
         }
       );
 
@@ -78,11 +81,8 @@ class MoradorController {
 
   async inativar(req, res) {
     try {
-
-      await moradorModel.inativar(req.params.id);
-
+      await Morador.inativar(req.params.id);
       res.redirect('/moradores');
-
     } catch (erro) {
       console.error(erro);
       res.status(500).send('Erro ao inativar');
@@ -91,11 +91,8 @@ class MoradorController {
 
   async reativar(req, res) {
     try {
-
-      await moradorModel.reativar(req.params.id);
-
+      await Morador.reativar(req.params.id);
       res.redirect('/moradores');
-
     } catch (erro) {
       console.error(erro);
       res.status(500).send('Erro ao reativar');

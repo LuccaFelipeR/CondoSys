@@ -1,7 +1,6 @@
-// Classe responsável pelas regras de autenticação
+const { criaToken } = require('../middlewares/adminMiddleware');
 
 class AuthController {
-
   loginPage(req, res) {
     res.render('auth/login');
   }
@@ -10,8 +9,7 @@ class AuthController {
     const { email, password } = req.body || {};
 
     if (email === 'admin@condosys.com' && password === '12345') {
-
-      req.session.usuario = {
+      const usuario = {
         id: 1,
         nome: 'Administrador Geral',
         email: 'admin@condosys.com.br',
@@ -20,15 +18,19 @@ class AuthController {
         cadastradoEm: '01/01/2024'
       };
 
+      // Gera o token JWT e salva na sessão
+      const token = criaToken(usuario);
+      //console.log('Token gerado:', token); testando o token
+      req.session.token = token;
+      req.session.usuario = usuario;
+
       req.session.save((err) => {
         if (err) {
           console.log('Erro ao salvar sessão:', err);
           return res.send('Erro interno no servidor');
         }
-
         return res.redirect('/dashboard');
       });
-
     } else {
       console.log('Falha na validação das credenciais.');
       return res.send('Usuário ou senha inválidos');

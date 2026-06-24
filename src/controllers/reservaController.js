@@ -9,7 +9,7 @@ const usuarioPadrao = {
   cadastradoEm: '01/01/2024'
 };
 
-// Lista todas as reservas e moradores para popular o select
+
 exports.listarReservas = async (req, res) => {
   try {
     const [reservas, moradores] = await Promise.all([
@@ -38,7 +38,7 @@ exports.listarReservas = async (req, res) => {
   }
 };
 
-// Abre formulário de nova reserva
+
 exports.formNovaReserva = async (req, res) => {
   try {
     const [reservas, moradores] = await Promise.all([
@@ -59,7 +59,6 @@ exports.formNovaReserva = async (req, res) => {
   }
 };
 
-// Salva nova reserva — em caso de erro volta pro formulário com mensagem amigável
 exports.salvarReserva = async (req, res) => {
   const { area, morador, data, horario, status } = req.body;
   try {
@@ -75,7 +74,6 @@ exports.salvarReserva = async (req, res) => {
       moradores,
       titulo: 'Reservas',
       usuario: req.session.usuario || usuarioPadrao,
-      // Devolve os dados preenchidos pra não perder o que o usuário digitou
       dadosFormulario: { area, morador, data, horario, status },
       erro: erro.message,
       abrirModal: 'cadastro'
@@ -83,7 +81,6 @@ exports.salvarReserva = async (req, res) => {
   }
 };
 
-// Abre formulário de edição
 exports.formEditarReserva = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -112,7 +109,7 @@ exports.formEditarReserva = async (req, res) => {
   }
 };
 
-// Atualiza reserva — em caso de erro volta pro formulário com mensagem amigável
+
 exports.atualizarReserva = async (req, res) => {
   const id = parseInt(req.params.id);
   const { area, morador, data, horario, status } = req.body;
@@ -129,7 +126,6 @@ exports.atualizarReserva = async (req, res) => {
       moradores,
       titulo: 'Reservas',
       usuario: req.session.usuario || usuarioPadrao,
-      // Devolve os dados preenchidos pra não perder o que o usuário editou
       reserva: { id, area, morador, data, horario, status },
       erro: erro.message,
       abrirModal: 'edicao'
@@ -137,7 +133,7 @@ exports.atualizarReserva = async (req, res) => {
   }
 };
 
-// Exclui reserva
+
 exports.excluirReserva = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -145,5 +141,7 @@ exports.excluirReserva = async (req, res) => {
     res.redirect('/reservas');
   } catch (erro) {
     res.redirect('/reservas');
+    res.status(500).send('Erro ao excluir reserva: ' + erro.message);
+
   }
 };
