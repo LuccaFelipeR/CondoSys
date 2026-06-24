@@ -111,7 +111,7 @@
                       <% if (morador.status === 'Ativo') { %>
 
                         <form
-                          action="/moradores/<%= morador.id %>/inativar"
+                          action="/moradores/<%= morador.id_morador %>/inativar"
                           method="POST"
                           style="display:inline;"
                         >
@@ -128,7 +128,7 @@
                       <% } else { %>
 
                         <form
-                          action="/moradores/<%= morador.id %>/reativar"
+                          action="/moradores/<%= morador.id_morador %>/reativar"
                           method="POST"
                           style="display:inline;"
                         >
@@ -301,15 +301,20 @@
                 Unidade Vinculada <span class="text-danger">*</span>
               </label>
 
-              <input 
-                type="text" 
-                name="unidade"
-                id="unidade"
-                class="form-control bg-light border-0" 
-                placeholder="Apto 101 — Bloco A" 
-                required
-              >
-            </div>
+              <select
+                  name="id_unidade"
+                  id="id_unidade"
+                  class="form-select bg-light border-0"
+                  required
+                >
+  <option value="">Selecione uma unidade</option>
+
+  <% unidades.forEach(unidade => { %>
+    <option value="<%= unidade.id_unidade %>">
+      Bloco <%= unidade.bloco %> - Apto <%= unidade.numero %>
+    </option>
+  <% }) %>
+</select>
 
           </div>
 

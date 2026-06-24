@@ -4,6 +4,7 @@
 -- ON CONFLICT DO NOTHING evita duplicatas ao rodar novamente
 -- ============================================================
 
+TRUNCATE TABLE ocorrencias, reservas, moradores, funcionarios, usuarios, unidades RESTART IDENTITY CASCADE;
 
 INSERT INTO unidades (bloco, numero, andar, status)
 VALUES ('A', '101', 1, 'Ativa')
