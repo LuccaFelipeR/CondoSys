@@ -1,31 +1,47 @@
-# CondoSys - Sistema de Gestão Condominial
+# CondoSys - Sistema Web Fullstack de Gestão Condominial
 
-O **CondoSys** é uma aplicação web fullstack para apoio à gestão de condomínios residenciais.
+> **Status:** em validação final para entrega e apresentação acadêmica.  
+> **Curso:** Análise e Desenvolvimento de Sistemas  
+> **Disciplina:** Tópicos Especiais  
+> **Tema:** Gestão de Condomínios
 
-O objetivo do sistema é centralizar informações administrativas de um condomínio, como unidades, moradores, funcionários, reservas de áreas comuns, ocorrências e usuários do sistema, reduzindo controles manuais feitos por planilhas, mensagens soltas ou cadernos administrativos.
+O **CondoSys** é uma aplicação web fullstack desenvolvida para apoiar a administração de condomínios residenciais. O sistema centraliza informações de unidades, moradores, funcionários, reservas de áreas comuns, ocorrências e usuários do sistema, reduzindo controles manuais feitos em planilhas, mensagens soltas ou anotações físicas.
 
-Este projeto foi desenvolvido como trabalho acadêmico do curso de **Análise e Desenvolvimento de Sistemas**, na disciplina **Tópicos Especiais**, utilizando **Node.js**, **Express**, **EJS**, **Bootstrap**, arquitetura **MVC**, autenticação por sessão, rotas protegidas e banco de dados **PostgreSQL**.
+O projeto foi desenvolvido com **Node.js**, **Express**, **EJS**, **Bootstrap**, **PostgreSQL** e arquitetura **MVC**, atendendo à proposta acadêmica de construir uma aplicação com banco de dados persistente, autenticação, rotas protegidas, CRUDs completos, documentação técnica, uso responsável de Inteligência Artificial e versionamento no GitHub.
 
 ---
 
 ## Sumário
 
+- [Links do projeto](#links-do-projeto)
 - [Tecnologias utilizadas](#tecnologias-utilizadas)
-- [Funcionalidades atuais](#funcionalidades-atuais)
-- [Estado atual dos módulos](#estado-atual-dos-módulos)
+- [Funcionalidades do sistema](#funcionalidades-do-sistema)
+- [Módulos e responsabilidades](#módulos-e-responsabilidades)
 - [Arquitetura MVC](#arquitetura-mvc)
-- [Estrutura do projeto](#estrutura-do-projeto)
+- [Estrutura de pastas](#estrutura-de-pastas)
 - [Rotas principais](#rotas-principais)
-- [Autenticação](#autenticação)
+- [Autenticação e rotas protegidas](#autenticação-e-rotas-protegidas)
 - [Banco de dados](#banco-de-dados)
 - [Modelo de dados e relacionamentos](#modelo-de-dados-e-relacionamentos)
 - [Como rodar o projeto](#como-rodar-o-projeto)
 - [Scripts disponíveis](#scripts-disponíveis)
-- [Equipe e responsabilidades](#equipe-e-responsabilidades)
-- [Testes manuais sugeridos](#testes-manuais-sugeridos)
+- [Testes manuais recomendados](#testes-manuais-recomendados)
 - [Uso de Inteligência Artificial](#uso-de-inteligência-artificial)
-- [Situação atual do projeto](#situação-atual-do-projeto)
-- [Pontos de atenção](#pontos-de-atenção)
+- [Pontos de atenção antes da apresentação](#pontos-de-atenção-antes-da-apresentação)
+- [Observações finais](#observações-finais)
+
+---
+
+## Links do projeto
+
+| Item | Link |
+|---|---|
+| Repositório GitHub | `https://github.com/LuccaFelipeR/CondoSys` |
+| Protótipo no Canva | `https://canva.link/bbj3stnodggeso6` |
+| Quadro Miro | `https://miro.com/app/board/uXjVHSA3JIY=/?share_link_id=822904129862` |
+| Kanban ClickUp | `https://app.clickup.com/90132544251/v/li/901327243146` |
+
+Os protótipos foram usados como referência visual para as principais telas: login, dashboard, listagens, formulários de cadastro/edição, reservas, ocorrências, funcionários, moradores, unidades e perfil de usuário.
 
 ---
 
@@ -34,58 +50,57 @@ Este projeto foi desenvolvido como trabalho acadêmico do curso de **Análise e 
 - Node.js
 - Express
 - EJS
-- HTML
-- CSS
+- HTML5
+- CSS3
+- JavaScript
 - Bootstrap
 - Bootstrap Icons
-- JavaScript
 - PostgreSQL
 - pg
 - dotenv
 - express-session
 - bcrypt
+- jsonwebtoken
 - nodemon
 - Git e GitHub
 
 ---
 
-## Funcionalidades atuais
+## Funcionalidades do sistema
 
-Nesta versão, o sistema possui:
+Nesta versão, o sistema contempla:
 
-- Tela de login;
-- Logout;
-- Criação de sessão de usuário;
-- Middleware de autenticação para proteger rotas internas;
-- Dashboard com indicadores dos módulos principais;
-- Menu lateral com navegação entre telas;
-- Tela de perfil do usuário;
-- CRUD de Unidades integrado ao PostgreSQL;
-- CRUD de Funcionários funcional no sistema;
-- CRUD de Moradores funcional;
-- CRUD de Reservas funcional;
-- CRUD de Ocorrências funcional;
-- Validações básicas em formulários;
-- Layout base com EJS e Bootstrap;
-- Banco de dados PostgreSQL com `schema.sql`, `seed.sql` e `setup.js`;
-- Documentação de uso de IA no arquivo `USO_IA.md`.
+- login e logout;
+- criação de sessão de usuário;
+- middleware de autenticação para rotas internas;
+- dashboard com indicadores dos módulos principais;
+- menu lateral de navegação;
+- tela de perfil do usuário;
+- CRUD de Unidades;
+- CRUD de Moradores;
+- CRUD de Funcionários;
+- CRUD de Reservas;
+- CRUD de Ocorrências;
+- validações básicas nos formulários;
+- máscaras em campos como CPF, telefone e horários, quando aplicável;
+- persistência dos dados em PostgreSQL;
+- scripts de criação e popularização inicial do banco;
+- documentação do uso de IA no arquivo `USO_IA.md`.
 
 ---
 
-## Estado atual dos módulos
+## Módulos e responsabilidades
 
-| Módulo | Situação atual na aplicação | Persistência observada na main analisada |
+| Integrante | Responsabilidade principal | CRUD/Área |
 |---|---|---|
-| Autenticação | Login, logout e sessão funcionando | Sessão com `express-session` |
-| Dashboard | Cards com contagem dos módulos | Usa `async/await` para suportar models assíncronos |
-| Unidades | Listar, cadastrar, editar e inativar | PostgreSQL |
-| Funcionários | Listar, cadastrar, editar, inativar e reativar | Atenção: na main pública analisada, o model ainda aparece em memória |
-| Moradores | Listar, cadastrar, editar, inativar e reativar | Em memória na main pública analisada |
-| Reservas | Listar, cadastrar, editar e excluir/cancelar | Em memória na main pública analisada |
-| Ocorrências | Listar, cadastrar e editar | Em memória na main pública analisada |
-| Usuários | Tela simples de perfil | Dados de sessão/model auxiliar |
+| Lucca Felipe | Documentação, integração e módulo de Funcionários | Funcionários |
+| Matheus Albertini | Banco de dados e módulo de Unidades | Unidades |
+| Abel Piassa | Autenticação e módulo de Moradores | Moradores |
+| Emanulle Silva | Front-end e módulo de Reservas | Reservas |
+| Adrian Felipe | Back-end e módulo de Ocorrências | Ocorrências |
+| IA | Apoio técnico e documental | Revisão, orientação, documentação e preparação para defesa |
 
-> **Observação importante:** caso a migração do módulo de Funcionários para PostgreSQL já tenha sido feita localmente, é necessário confirmar se o commit foi enviado para a `main` com `Push origin`. A documentação deve sempre refletir o código que está no GitHub no momento da entrega.
+Cada integrante deve dominar tecnicamente seu CRUD, incluindo **rotas**, **controller**, **model**, **view**, **tabela no banco** e **regras de negócio**.
 
 ---
 
@@ -95,28 +110,27 @@ O projeto segue o padrão **MVC**, separando responsabilidades em camadas:
 
 ```txt
 Routes       -> recebem as requisições e direcionam para os controllers
-Controllers  -> aplicam regras de aplicação e chamam os models
-Models       -> acessam ou manipulam os dados
-Views        -> telas EJS renderizadas no navegador
+Controllers  -> tratam regras de aplicação e coordenam as respostas
+Models       -> consultam e manipulam os dados no PostgreSQL
+Views        -> renderizam as telas EJS no navegador
+Middlewares  -> protegem rotas e validam acesso
 ```
 
-Exemplo de fluxo do módulo de Unidades:
+Fluxo geral de uma funcionalidade:
 
 ```txt
-GET /unidades
+Usuário acessa uma rota
         ↓
-unidadeRoutes.js
+Arquivo de rota direciona a requisição
         ↓
-unidadeController.js
+Controller trata a regra da aplicação
         ↓
-unidadeModel.js / unidadesDAO.js
+Model consulta ou altera o banco
         ↓
-PostgreSQL
-        ↓
-views/unidades/index.ejs
+View EJS exibe o resultado
 ```
 
-Exemplo de fluxo do módulo de Funcionários:
+Exemplo do fluxo de Funcionários:
 
 ```txt
 GET /funcionarios
@@ -127,12 +141,14 @@ funcionarioController.js
         ↓
 funcionarioModel.js
         ↓
+PostgreSQL
+        ↓
 views/funcionarios/index.ejs
 ```
 
 ---
 
-## Estrutura do projeto
+## Estrutura de pastas
 
 ```txt
 CondoSys/
@@ -152,14 +168,13 @@ CondoSys/
     │   ├── reservaController.js
     │   ├── unidadeController.js
     │   └── usuarioController.js
-    ├── DAO/
-    │   └── unidadesDAO.js
     ├── database/
     │   ├── connection.js
     │   ├── setup.js
     │   ├── schema.sql
     │   └── seed.sql
     ├── middlewares/
+    │   ├── adminMiddleware.js
     │   └── authMiddleware.js
     ├── models/
     │   ├── funcionarioModel.js
@@ -191,6 +206,8 @@ CondoSys/
         ├── usuarios/
         └── partials/
 ```
+
+> Observação: caso ainda exista uma pasta `DAO` antiga no projeto, ela deve ser removida ou desconsiderada se não fizer mais parte do padrão atual. O padrão adotado na entrega é **Routes -> Controllers -> Models -> Database**.
 
 ---
 
@@ -226,16 +243,6 @@ POST /unidades/editar/:id
 POST /unidades/excluir/:id
 ```
 
-### Funcionários
-
-```txt
-GET  /funcionarios
-POST /funcionarios
-POST /funcionarios/:id/editar
-POST /funcionarios/:id/inativar
-POST /funcionarios/:id/reativar
-```
-
 ### Moradores
 
 ```txt
@@ -244,6 +251,16 @@ POST /moradores/novo
 POST /moradores/:id/editar
 POST /moradores/:id/inativar
 POST /moradores/:id/reativar
+```
+
+### Funcionários
+
+```txt
+GET  /funcionarios
+POST /funcionarios
+POST /funcionarios/:id/editar
+POST /funcionarios/:id/inativar
+POST /funcionarios/:id/reativar
 ```
 
 ### Reservas
@@ -263,24 +280,35 @@ POST /reservas/:id/excluir
 GET  /ocorrencias
 POST /ocorrencias
 POST /ocorrencias/:id/editar
+POST /ocorrencias/:id/excluir
 ```
 
 ---
 
-## Autenticação
+## Autenticação e rotas protegidas
 
-O sistema possui login com sessão utilizando `express-session`.
+O sistema utiliza autenticação com sessão por meio do `express-session`.
 
-Credenciais temporárias para teste local:
+Credenciais de teste local:
 
 ```txt
 E-mail: admin@condosys.com
 Senha: 12345
 ```
 
-Após login válido, o sistema salva um usuário na sessão e redireciona para o Dashboard.
+Após login válido, o sistema salva o usuário autenticado na sessão e redireciona para o dashboard. As rotas internas utilizam middleware de autenticação. Caso não exista usuário na sessão, o acesso é redirecionado para `/login`.
 
-As rotas internas usam middleware de autenticação. Se não existir `req.session.usuario`, o usuário é redirecionado para `/login`.
+Fluxo simplificado:
+
+```txt
+/login
+  ↓
+authController valida usuário
+  ↓
+req.session.usuario recebe os dados do usuário
+  ↓
+middleware libera acesso às rotas internas
+```
 
 ---
 
@@ -297,7 +325,7 @@ src/database/schema.sql
 src/database/seed.sql
 ```
 
-### Configuração local usada no projeto
+Configuração local usada no desenvolvimento:
 
 ```txt
 Host: localhost
@@ -307,41 +335,31 @@ Banco: condoServer
 Porta: 5432
 ```
 
-> A senha `1234` foi usada para facilitar a validação local durante o desenvolvimento. Em um ambiente real, o ideal seria configurar esses dados por variáveis de ambiente e não deixar senha fixa no código.
-
-### Inicialização do banco
-
-Depois de instalar as dependências, rode uma vez:
-
-```bash
-npm run setup
-```
-
-Esse comando cria o banco `condoServer`, executa o `schema.sql` e insere dados iniciais do `seed.sql`.
+> A senha `1234` foi usada para facilitar a execução local no contexto acadêmico. Em um ambiente real, o recomendado seria configurar credenciais por variáveis de ambiente em `.env`.
 
 ---
 
 ## Modelo de dados e relacionamentos
 
-O banco possui as seguintes tabelas principais:
+Tabelas principais:
 
 | Tabela | Finalidade |
 |---|---|
-| `usuarios` | Usuários do sistema e dados para autenticação |
+| `usuarios` | Usuários do sistema e dados de autenticação |
 | `unidades` | Apartamentos ou unidades do condomínio |
-| `funcionarios` | Funcionários do condomínio |
 | `moradores` | Moradores vinculados às unidades |
+| `funcionarios` | Funcionários do condomínio |
 | `reservas` | Reservas de áreas comuns feitas por moradores |
-| `ocorrencias` | Ocorrências registradas no condomínio |
+| `ocorrencias` | Ocorrências registradas por moradores |
 
 Relacionamentos principais:
 
-- Uma unidade pode possuir vários moradores;
-- Um morador pertence a uma unidade;
-- Um morador pode realizar várias reservas;
-- Um morador pode abrir várias ocorrências;
-- Um funcionário pode ser vinculado a um usuário do sistema;
-- As tabelas utilizam chaves primárias e estrangeiras para representar dependências.
+- uma unidade pode possuir vários moradores;
+- um morador pertence a uma unidade;
+- um morador pode realizar várias reservas;
+- um morador pode registrar várias ocorrências;
+- um funcionário pode estar vinculado a um usuário do sistema;
+- as tabelas usam chaves primárias e estrangeiras para representar dependências.
 
 Resumo das dependências:
 
@@ -365,17 +383,17 @@ git clone https://github.com/LuccaFelipeR/CondoSys.git
 cd CondoSys
 ```
 
-### 2. Instalar dependências
+### 2. Instalar as dependências
 
 ```bash
 npm install
 ```
 
-### 3. Instalar e configurar o PostgreSQL
+### 3. Configurar o PostgreSQL
 
-Instale o PostgreSQL e o pgAdmin.
+Instale o PostgreSQL e deixe o serviço ativo.
 
-Configuração local usada durante o desenvolvimento:
+Configuração esperada:
 
 ```txt
 Usuário: postgres
@@ -390,7 +408,9 @@ Banco: condoServer
 npm run setup
 ```
 
-### 5. Rodar em desenvolvimento
+Esse comando executa `src/database/setup.js`, cria ou prepara o banco `condoServer`, executa o `schema.sql` e insere dados iniciais do `seed.sql`.
+
+### 5. Rodar em modo desenvolvimento
 
 ```bash
 npm run dev
@@ -421,7 +441,7 @@ http://localhost:3000/login
 }
 ```
 
-Uso principal:
+Fluxo principal para execução local:
 
 ```bash
 npm install
@@ -431,130 +451,104 @@ npm run dev
 
 ---
 
-## Equipe e responsabilidades
-
-| Integrante | Responsabilidade principal | CRUD/Área |
-|---|---|---|
-| Lucca Felipe | Documentação, apoio de integração e módulo de Funcionários | Funcionários |
-| Matheus Albertini | Banco de dados e módulo de Unidades | Unidades |
-| Abel Piassa | Autenticação e módulo de Moradores | Moradores |
-| Emanulle Silva | Front-end e módulo de Reservas | Reservas |
-| Adrian Felipe | Back-end e módulo de Ocorrências | Ocorrências |
-
----
-
-## Testes manuais sugeridos
+## Testes manuais recomendados
 
 Antes da apresentação, validar:
 
 ```txt
-☐ npm install
-☐ npm run setup
-☐ npm run dev
-☐ /login
-☐ /dashboard
-☐ /unidades
-☐ /funcionarios
-☐ /moradores
-☐ /reservas
-☐ /ocorrencias
-☐ /usuarios
-☐ logout
-```
-
-Testes de banco:
-
-```sql
-SELECT COUNT(*) FROM unidades;
-SELECT COUNT(*) FROM funcionarios;
-SELECT COUNT(*) FROM moradores;
-SELECT COUNT(*) FROM reservas;
-SELECT COUNT(*) FROM ocorrencias;
+[ ] npm install
+[ ] npm run setup
+[ ] npm run dev
+[ ] /login
+[ ] /dashboard
+[ ] /usuarios
+[ ] /unidades
+[ ] /moradores
+[ ] /funcionarios
+[ ] /reservas
+[ ] /ocorrencias
+[ ] logout
 ```
 
 Testes funcionais mínimos:
 
 ```txt
-☐ Login com admin@condosys.com / 12345
-☐ Dashboard abre após login
-☐ Rotas internas redirecionam para /login quando usuário não está autenticado
-☐ Cadastro de unidade salva no banco
-☐ Edição de unidade altera o registro
-☐ Inativação de unidade altera o status
-☐ Cadastro de funcionário funciona
-☐ Edição de funcionário funciona
-☐ Inativação/reativação de funcionário funciona
-☐ Dashboard contabiliza os módulos sem erro
+[ ] Login com admin@condosys.com / 12345
+[ ] Dashboard abre após login
+[ ] Rotas internas redirecionam para /login sem sessão
+[ ] Cadastro de unidade salva no banco
+[ ] Edição/inativação de unidade funciona
+[ ] Cadastro, edição, inativação e reativação de morador funcionam
+[ ] Cadastro, edição, inativação e reativação de funcionário funcionam
+[ ] Cadastro, edição e cancelamento/exclusão de reserva funcionam
+[ ] Bloqueio de reserva conflitante funciona
+[ ] Cadastro, edição e exclusão/finalização de ocorrência funcionam
+[ ] Dashboard contabiliza os módulos sem erro
+```
+
+Consultas úteis para validação no PostgreSQL:
+
+```sql
+SELECT COUNT(*) FROM unidades;
+SELECT COUNT(*) FROM moradores;
+SELECT COUNT(*) FROM funcionarios;
+SELECT COUNT(*) FROM reservas;
+SELECT COUNT(*) FROM ocorrencias;
+
+SELECT * FROM unidades;
+SELECT * FROM moradores;
+SELECT * FROM funcionarios;
+SELECT * FROM reservas;
+SELECT * FROM ocorrencias;
 ```
 
 ---
 
 ## Uso de Inteligência Artificial
 
-O uso de IA está documentado no arquivo:
+O uso de Inteligência Artificial está documentado no arquivo:
 
 ```txt
 USO_IA.md
 ```
 
-Esse arquivo registra:
+A IA foi utilizada como apoio para:
 
-- ferramenta utilizada;
-- finalidades de uso;
-- exemplos de prompts;
-- sugestões aceitas, adaptadas ou recusadas;
-- reflexão crítica;
-- cuidados adotados para evitar cópia sem compreensão técnica.
+- interpretação de requisitos acadêmicos;
+- organização do escopo do MVP;
+- revisão de arquitetura MVC;
+- explicação de rotas, controllers, models e views;
+- análise de erros de terminal;
+- revisão de branches e merges;
+- apoio em PostgreSQL, schema, seed e setup;
+- revisão de documentação;
+- preparação para defesa técnica.
+
+As decisões finais, alterações no código, testes locais e validações permaneceram sob responsabilidade da equipe.
 
 ---
 
-## Situação atual do projeto
+## Pontos de atenção antes da apresentação
+
+Antes da entrega final, a equipe deve conferir:
 
 ```txt
-[x] Aplicação Node.js com Express
-[x] Views EJS configuradas
-[x] Layout com Bootstrap
-[x] Arquitetura MVC organizada
-[x] Login e logout
-[x] Sessão de usuário
-[x] Middleware de autenticação
-[x] Rotas internas protegidas
-[x] Dashboard com contagem assíncrona
-[x] Banco PostgreSQL configurado
-[x] Script npm run setup
-[x] Schema e seed do banco
-[x] CRUD de Unidades integrado ao PostgreSQL
-[x] Tela de perfil do usuário
-[x] README.md atualizado
-[x] USO_IA.md atualizado
-[ ] Confirmar se a migração de Funcionários para PostgreSQL já foi enviada para a main
-[ ] Migrar Moradores para PostgreSQL
-[ ] Migrar Reservas para PostgreSQL
-[ ] Migrar Ocorrências para PostgreSQL
-[ ] Remover logs temporários de desenvolvimento
-[ ] Substituir senha fixa do banco por variáveis de ambiente
+[ ] O repositório remoto está atualizado com os últimos commits locais
+[ ] npm run setup executa sem erro
+[ ] npm run dev sobe o servidor sem crash
+[ ] Não existem arquivos quebrados por merge
+[ ] Não existem imports para arquivos removidos, como DAO antigo
+[ ] Todos os CRUDs estão acessíveis após login
+[ ] README.md e USO_IA.md estão na raiz do projeto
+[ ] O arquivo .env, se existir, não foi enviado ao GitHub
+[ ] node_modules não foi enviado ao GitHub
+[ ] Cada integrante sabe explicar sua parte
 ```
-
----
-
-## Pontos de atenção
-
-1. **Funcionários na main pública analisada**  
-   O módulo de Funcionários aparece funcional, mas o `funcionarioModel.js` da main pública ainda contém array em memória. Se a migração para PostgreSQL já foi feita localmente, é necessário enviar o commit para o GitHub antes da entrega.
-
-2. **Credenciais do banco fixas no código**  
-   A conexão atual usa senha `1234` diretamente em `connection.js` e `setup.js`. Para fins acadêmicos locais funciona, mas o ideal é migrar para `.env`.
-
-3. **Reservas, Moradores e Ocorrências**  
-   Esses módulos possuem telas e fluxos funcionais, mas na main pública analisada ainda usam dados em memória.
-
-4. **Critério acadêmico**  
-   Cada integrante deve dominar tecnicamente seu CRUD, principalmente rotas, controller, model, view e relação com banco de dados.
 
 ---
 
 ## Observações finais
 
-O CondoSys é um MVP acadêmico. O foco do projeto é demonstrar organização MVC, CRUDs funcionais, autenticação, rotas protegidas, banco de dados, GitHub, documentação e uso responsável de Inteligência Artificial.
+O **CondoSys** é um MVP acadêmico. O foco do projeto é demonstrar organização MVC, CRUDs funcionais, autenticação, rotas protegidas, banco de dados persistente, documentação técnica, GitHub, Kanban e uso responsável de Inteligência Artificial.
 
-As funcionalidades foram mantidas simples para facilitar a entrega local e a defesa técnica individual.
+As funcionalidades foram mantidas simples e objetivas para facilitar a execução local, a apresentação e a defesa técnica individual.

@@ -1,10 +1,14 @@
 # Uso de Inteligência Artificial no Projeto CondoSys
 
-Este documento registra como a Inteligência Artificial foi utilizada como apoio técnico e documental no desenvolvimento do **CondoSys**, sistema web fullstack de gestão condominial.
+> **Status:** documento de transparência para entrega acadêmica.  
+> **Projeto:** CondoSys - Sistema Web Fullstack de Gestão Condominial  
+> **Ferramenta:** ChatGPT
 
-A IA foi usada como ferramenta auxiliar para explicação de conceitos, revisão de código, interpretação de erros, organização de tarefas, documentação e preparação para defesa técnica.
+Este documento registra como a Inteligência Artificial foi utilizada como apoio técnico, documental e organizacional no desenvolvimento do **CondoSys**.
 
-As decisões finais, alterações no código, testes e validações foram realizadas pela equipe.
+A IA foi usada como ferramenta auxiliar para interpretação de requisitos, revisão de arquitetura MVC, explicação de erros, organização de tarefas, revisão de branches, apoio em documentação e preparação para defesa técnica.
+
+As decisões finais, alterações no código, testes locais, commits e validações permaneceram sob responsabilidade da equipe.
 
 ---
 
@@ -16,26 +20,29 @@ A ferramenta utilizada foi:
 ChatGPT
 ```
 
+A IA atuou como apoio de estudo, revisão e orientação. Ela não substituiu a autoria dos integrantes e não foi tratada como responsável final pelo código entregue.
+
 ---
 
-## 2. Principais finalidades de uso
+## 2. Finalidades de uso
 
 A IA foi utilizada para apoiar:
 
 - interpretação dos requisitos acadêmicos do projeto;
 - definição e controle do escopo do MVP;
-- explicação da arquitetura MVC;
-- revisão do fluxo entre rotas, controllers, models e views;
-- apoio na organização dos módulos do sistema;
-- revisão de erros no terminal;
-- orientação sobre Git e GitHub;
-- revisão de mensagens de commit;
-- apoio na instalação e validação do PostgreSQL;
-- explicação de comandos SQL para conferência de dados;
-- validação do Dashboard após integração com banco;
-- apoio no módulo de Funcionários;
-- revisão da documentação do projeto;
-- preparação de perguntas e respostas para defesa técnica.
+- organização da arquitetura MVC;
+- explicação do fluxo entre routes, controllers, models, views e banco;
+- revisão de erros exibidos no terminal;
+- apoio em Git, commits e merges;
+- análise de Pull Requests e branches;
+- apoio na configuração e validação do PostgreSQL;
+- revisão de `schema.sql`, `seed.sql` e `setup.js`;
+- validação do dashboard e das contagens dos módulos;
+- revisão de CRUDs específicos;
+- melhoria de mensagens para comunicação entre equipe;
+- revisão do `README.md`;
+- criação e atualização deste `USO_IA.md`;
+- preparação para defesa técnica individual.
 
 ---
 
@@ -43,15 +50,16 @@ A IA foi utilizada para apoiar:
 
 | Situação | Prompt aproximado | Resultado obtido |
 |---|---|---|
-| Organização inicial | "Como estruturar o projeto em MVC com Node, Express e EJS?" | Separação em routes, controllers, models, views, middlewares e database |
-| Rota com erro | "Está dando erro ao acessar /moradores, o que verifico?" | Revisão de app.js, routes e controller |
-| Login | "A topbar está mostrando usuário errado" | Padronização do usuário logado na sessão |
-| Banco de dados | "Como vejo no PostgreSQL se está salvando?" | Uso de `SELECT *` e `SELECT COUNT(*)` no pgAdmin |
-| Dashboard | "O dashboard não contabiliza unidades do banco" | Identificação da necessidade de `async/await` |
-| PostgreSQL | "O psql não é reconhecido no Windows" | Orientação para configurar o PATH |
-| Funcionários | "Preciso tirar os pré-cadastrados e usar banco" | Orientação para migrar o model de array para PostgreSQL |
-| GitHub | "Preciso de título e descrição para commit" | Sugestão de mensagens claras de commit |
-| Documentação | "Revise README e USO_IA conforme o projeto" | Atualização dos documentos com o estado atual e uso responsável da IA |
+| Organização inicial | "Como estruturar um projeto Node.js com Express, EJS e MVC para gestão condominial?" | Separação em `routes`, `controllers`, `models`, `views`, `middlewares` e `database` |
+| Requisitos acadêmicos | "O que o projeto precisa ter para atender a disciplina?" | Checklist de MVC, banco, CRUDs, autenticação, README, DER e uso de IA |
+| GitHub e merges | "Analise as branches de Ocorrências e Reservas antes do merge" | Lista de riscos, ordem de merge e pontos de correção |
+| Erro no setup | "npm run setup deu erro de sintaxe próximo de ')'" | Identificação de fechamento duplicado no `schema.sql` |
+| Dependência faltando | "npm run dev informa Cannot find module jsonwebtoken" | Orientação para instalar dependências com `npm install` e validar pacote |
+| Unidades | "Erro Cannot find module '../DAO/unidadesDAO'" | Padronização do controller para usar `unidadeModel.js` em vez de DAO antigo |
+| Reservas | "Compare o reservaModel da responsável com o arquivo da main" | Preservação da lógica da integrante e remoção de código quebrado por merge |
+| Funcionários | "A tela de Funcionários juntou tabela e formulário" | Identificação de tabela duplicada dentro do modal de cadastro |
+| Ocorrências | "Identifier OcorrenciaController has already been declared" | Identificação de controller duplicado após merge |
+| Documentação | "Atualize README e USO_IA conforme as instruções do projeto" | Geração de documentação alinhada ao escopo acadêmico |
 
 ---
 
@@ -59,7 +67,7 @@ A IA foi utilizada para apoiar:
 
 ### 4.1 Arquitetura MVC
 
-A IA auxiliou na explicação do fluxo MVC usado no projeto:
+A IA ajudou a equipe a compreender e explicar o fluxo MVC:
 
 ```txt
 Rota
@@ -68,241 +76,289 @@ Controller
 ↓
 Model
 ↓
-Banco de dados ou dados temporários
+Banco de dados
 ↓
 View EJS
 ```
 
-Esse apoio ajudou a equipe a entender a responsabilidade de cada camada e a preparar explicações para a defesa técnica.
+Esse apoio foi usado para organizar os módulos e preparar a defesa técnica, principalmente para explicar como uma requisição sai da tela, passa pelo controller, chega ao model e retorna com dados do banco.
 
 ---
 
 ### 4.2 Autenticação e rotas protegidas
 
-A IA apoiou a revisão do fluxo de login e logout, além da proteção das rotas internas com middleware.
+A IA apoiou a revisão do fluxo de login, logout e sessão.
 
-Foi reforçado que o sistema deve verificar a existência de:
+Foi reforçado que as rotas internas devem verificar a existência de usuário autenticado na sessão:
 
 ```txt
 req.session.usuario
 ```
 
-Caso não exista usuário na sessão, o middleware redireciona para `/login`.
+Caso não exista sessão válida, o middleware redireciona o usuário para `/login`.
 
 ---
 
-### 4.3 Dashboard
+### 4.3 Banco de dados PostgreSQL
 
-Após a integração do módulo de Unidades com PostgreSQL, o Dashboard deixou de contar corretamente os registros.
+A IA apoiou a configuração e validação do PostgreSQL, incluindo:
 
-A IA ajudou a identificar que o problema ocorria porque alguns models passaram a retornar dados de forma assíncrona. A correção aplicada foi usar:
-
-```js
-async
-await
-```
-
-no `dashboardController.js`.
-
----
-
-### 4.4 PostgreSQL e pgAdmin
-
-A IA orientou a instalação e validação do PostgreSQL e pgAdmin no ambiente local.
-
-Foram explicados:
-
-- senha do usuário `postgres`;
-- porta `5432`;
 - banco `condoServer`;
-- função do pgAdmin;
-- erro de `psql` não reconhecido no Windows;
-- validação com consultas SQL.
+- porta `5432`;
+- execução de `npm run setup`;
+- função do `schema.sql`;
+- função do `seed.sql`;
+- diferença entre erro de conexão e erro de sintaxe SQL;
+- validação de dados por consultas no pgAdmin.
 
 Consultas usadas nos testes:
 
 ```sql
-SELECT * FROM unidades;
 SELECT COUNT(*) FROM unidades;
-SELECT * FROM funcionarios;
+SELECT COUNT(*) FROM moradores;
 SELECT COUNT(*) FROM funcionarios;
+SELECT COUNT(*) FROM reservas;
+SELECT COUNT(*) FROM ocorrencias;
 ```
 
 ---
 
-### 4.5 Validação de Pull Requests
+### 4.4 Revisão de branches e merges
 
-A IA foi usada para apoiar a análise de alterações antes e depois dos merges.
+A IA foi utilizada para apoiar a análise de branches e Pull Requests, principalmente nos módulos de **Ocorrências** e **Reservas**.
 
-Foram avaliados pontos como:
+Foram avaliados:
 
-- impacto no Dashboard;
-- conexão com banco;
-- scripts de setup;
-- rotas afetadas;
-- possíveis conflitos entre arquivos;
-- necessidade de testar em branch separada;
-- necessidade de conferir se o merge alterou arquivos já corrigidos.
+- arquivos alterados;
+- impacto no banco de dados;
+- conflitos em `schema.sql` e `seed.sql`;
+- uso correto de PostgreSQL;
+- proteção de rotas;
+- duplicidade de código após merge;
+- risco de sobrescrever arquivos da `main`;
+- ordem mais segura de integração;
+- necessidade de testes após cada merge.
+
+A equipe decidiu aceitar os merges e depois realizou auditoria pós-merge com apoio da IA.
 
 ---
 
-### 4.6 Módulo de Funcionários
+### 4.5 Correções pós-merge
 
-A IA apoiou o módulo de Funcionários em várias etapas:
+Após os merges, a IA apoiou a interpretação de erros e a organização das correções.
 
-- criação e revisão das rotas;
-- organização do controller;
-- validação dos dados de formulário;
-- cadastro por modal;
-- edição por modal;
-- inativação;
-- reativação;
-- bloqueio de CPF duplicado;
-- formatação de CPF e telefone;
-- explicação sobre IDs automáticos no PostgreSQL;
-- orientação para substituir dados pré-cadastrados em array por consulta ao banco.
+Principais situações analisadas:
 
-Também foi reforçado que o aluno responsável pelo módulo deve saber explicar:
+- erro de sintaxe no `schema.sql`;
+- dependência `jsonwebtoken` não encontrada;
+- controller de Unidades chamando um DAO inexistente;
+- `reservaModel.js` com código antigo e novo misturados;
+- `ocorrenciaController.js` com declaração duplicada da classe;
+- tela de Funcionários com tabela duplicada dentro do modal de cadastro.
+
+A equipe aplicou as correções manualmente, testando os arquivos e executando o projeto localmente.
+
+---
+
+## 5. Apoios por módulo
+
+### 5.1 Unidades
+
+Responsável: **Matheus Albertini**.
+
+A IA apoiou:
+
+- revisão do fluxo entre rota, controller e model;
+- correção de importação indevida para `../DAO/unidadesDAO`;
+- padronização do controller para usar `unidadeModel.js`;
+- explicação de por que o projeto deveria seguir o padrão MVC sem misturar DAO isolado;
+- preparação de mensagem para comunicar a alteração ao responsável.
+
+---
+
+### 5.2 Moradores
+
+Responsável: **Abel Piassa**.
+
+A IA apoiou:
+
+- revisão da relação entre morador e unidade;
+- identificação da necessidade de selecionar unidade existente;
+- análise de erro relacionado à coluna `status`;
+- sugestão de validações e melhorias em máscara de campos;
+- orientação sobre defesa do relacionamento `moradores -> unidades`.
+
+---
+
+### 5.3 Funcionários
+
+Responsável: **Lucca Felipe**.
+
+A IA apoiou:
+
+- revisão do CRUD de Funcionários;
+- explicação do fluxo entre `funcionarioRoutes.js`, `funcionarioController.js`, `funcionarioModel.js` e `views/funcionarios/index.ejs`;
+- validação de CPF duplicado;
+- uso de máscara para CPF e telefone;
+- inativação e reativação por status;
+- correção visual da tela, removendo tabela duplicada dentro do modal de cadastro;
+- explicação do que foi corrigido para comunicação com a equipe.
+
+Arquivos que o responsável deve saber explicar:
 
 ```txt
-funcionarioRoutes.js
-funcionarioController.js
-funcionarioModel.js
-views/funcionarios/index.ejs
+src/routes/funcionarioRoutes.js
+src/controllers/funcionarioController.js
+src/models/funcionarioModel.js
+src/views/funcionarios/index.ejs
+src/database/schema.sql
 ```
 
 ---
 
-### 4.7 Documentação
+### 5.4 Reservas
 
-A IA apoiou a revisão do `README.md` e deste `USO_IA.md`, buscando alinhar os documentos aos critérios do projeto:
+Responsável: **Emanulle Silva**.
 
-- visão geral do sistema;
-- tecnologias utilizadas;
-- instruções de execução;
-- banco de dados;
-- DER e relacionamentos;
-- integrantes e responsabilidades;
-- registro do uso de IA;
-- cuidados adotados;
-- estado atual do projeto.
+A IA apoiou:
+
+- comparação do `reservaModel.js` original da responsável com o arquivo quebrado na `main`;
+- preservação da lógica de banco em PostgreSQL;
+- validação de área comum, data, horário e status;
+- análise da regra de conflito de horário;
+- sugestão para trocar exclusão física por cancelamento lógico;
+- orientação para melhorar mensagens de erro e máscaras de horário.
 
 ---
 
-## 5. O que foi aceito pela equipe
+### 5.5 Ocorrências
+
+Responsável: **Adrian Felipe**.
+
+A IA apoiou:
+
+- revisão do controller quebrado por merge;
+- identificação de classe `OcorrenciaController` duplicada;
+- orientação para manter uma única classe com os métodos esperados pela rota;
+- análise da relação entre ocorrência e morador;
+- sugestão de validação para impedir cadastro sem morador/unidade válida;
+- explicação do fluxo de defesa técnica.
+
+---
+
+## 6. O que foi aceito pela equipe
 
 A equipe aceitou orientações relacionadas a:
 
-- manter o projeto em arquitetura MVC;
-- usar `app.js` na raiz como arquivo principal;
-- proteger rotas internas com middleware;
-- usar sessão para autenticação;
-- padronizar o usuário logado como "Administrador Geral";
-- usar Bootstrap e partials EJS para layout;
-- usar inativação em vez de exclusão definitiva em módulos administrativos;
-- validar campos obrigatórios nos formulários;
+- manter arquitetura MVC simples e explicável;
+- usar `app.js` como arquivo principal;
+- proteger rotas internas com middleware de autenticação;
+- utilizar sessão para login;
 - usar PostgreSQL como banco persistente;
-- criar script `npm run setup`;
+- manter `schema.sql`, `seed.sql` e `setup.js`;
 - validar dados pelo pgAdmin;
-- corrigir o Dashboard com `async/await`;
-- organizar commits com mensagens claras;
-- documentar o uso de IA de forma transparente.
+- usar inativação ou cancelamento lógico quando fizer sentido;
+- usar Bootstrap e EJS para interface;
+- corrigir arquivos quebrados por merge em vez de apenas esconder erros;
+- usar commits com mensagens claras;
+- atualizar README e USO_IA de forma transparente.
 
 ---
 
-## 6. O que foi adaptado pela equipe
+## 7. O que foi adaptado pela equipe
 
-Algumas sugestões da IA foram adaptadas para manter o projeto simples e coerente com o prazo acadêmico:
+Algumas sugestões da IA foram adaptadas para manter o projeto viável no prazo:
 
-- o login foi mantido temporariamente com credenciais fixas para testes;
-- o Dashboard foi mantido simples, com cards de totais;
-- alguns módulos usam modais para cadastro e edição;
-- algumas funcionalidades avançadas foram deixadas para versões futuras;
-- a equipe priorizou um MVP funcional em vez de um sistema grande demais;
-- parte da integração com banco foi feita por etapas para reduzir risco de quebrar o projeto.
+- o login foi mantido com usuário administrador de teste;
+- o dashboard foi mantido simples, com cards e indicadores básicos;
+- os formulários foram mantidos objetivos;
+- algumas ações usam modal para facilitar a navegação;
+- algumas validações são simples, adequadas ao MVP acadêmico;
+- funcionalidades complexas foram deixadas para versões futuras;
+- correções foram feitas uma por vez para reduzir risco de quebrar o projeto.
 
 ---
 
-## 7. O que foi recusado ou deixado para depois
+## 8. O que foi recusado ou deixado para versões futuras
 
-Foram deixados para versões futuras:
+Foram deixados para possíveis versões futuras:
 
 - recuperação de senha;
 - envio de e-mails;
 - notificações automáticas;
-- permissões complexas por perfil;
-- dashboard com gráficos avançados;
+- permissões avançadas por perfil;
+- dashboard com gráficos mais completos;
 - deploy em nuvem;
-- testes automatizados completos;
+- testes automatizados;
 - logs avançados de auditoria;
-- exclusão física definitiva de registros;
-- migração completa de todos os módulos para PostgreSQL em uma única etapa.
+- auditoria de alterações por usuário;
+- uso completo de variáveis de ambiente para credenciais locais;
+- validações mais rígidas de CPF e telefone;
+- seleção avançada por filtros e paginação.
 
 ---
 
-## 8. Cuidados adotados para evitar cópia sem compreensão
+## 9. Cuidados adotados para evitar cópia sem compreensão
 
-Durante o uso da IA, a equipe adotou os seguintes cuidados:
+A equipe adotou os seguintes cuidados:
 
-- testar localmente cada alteração;
 - revisar o código antes de aplicar;
-- adaptar sugestões ao projeto real;
-- não usar comandos Git perigosos sem entender;
+- testar localmente cada alteração;
+- aplicar correções em etapas pequenas;
+- comparar arquivos antes de substituir código de outro integrante;
+- evitar copiar sem entender;
 - não usar `git push --force`;
 - não enviar `node_modules`;
-- não enviar `.env`;
-- conferir dados no PostgreSQL com consultas SQL;
-- registrar commits com mensagens compreensíveis;
-- discutir problemas antes de aprovar merges;
-- manter o escopo simples;
-- garantir que cada integrante consiga explicar seu CRUD;
-- usar a IA como apoio, não como substituição da autoria.
+- não enviar arquivos `.env`;
+- conferir dados no PostgreSQL;
+- usar commits com mensagens compreensíveis;
+- registrar o uso de IA no repositório;
+- manter o escopo do MVP simples;
+- garantir que cada integrante consiga explicar seu próprio CRUD.
 
 ---
 
-## 9. Reflexão crítica da equipe
+## 10. Reflexão crítica
 
-A IA ajudou a acelerar a resolução de problemas e a organizar melhor o raciocínio técnico. Ela foi útil principalmente para explicar erros, revisar fluxos MVC, orientar testes no banco e preparar documentação.
+A IA ajudou principalmente na organização do raciocínio técnico, interpretação de erros e revisão de documentação. Ela foi útil para explicar mensagens de terminal, sugerir caminhos de correção e transformar problemas em tarefas menores.
 
-Mesmo assim, nem toda sugestão foi aplicada diretamente. Algumas respostas precisaram ser adaptadas porque o projeto já tinha arquivos criados por integrantes diferentes, padrões diferentes de rotas e etapas em andamento.
+Mesmo assim, as respostas não foram aplicadas automaticamente. A equipe precisou testar, adaptar e validar cada sugestão no projeto real, considerando os arquivos existentes, o estado da `main`, as branches aceitas e as responsabilidades individuais.
 
-O maior cuidado foi não copiar sem entender. A equipe precisou testar o código, comparar com o comportamento real do sistema e validar se a solução atendia aos critérios acadêmicos.
-
-A IA contribuiu como apoio ao aprendizado, mas a responsabilidade técnica do projeto permaneceu com os integrantes da equipe.
+O maior cuidado foi manter a compreensão técnica. Como a apresentação exige defesa individual, cada responsável precisa entender seu módulo, principalmente rotas, controllers, models, views, banco de dados e regras de negócio.
 
 ---
 
-## 10. Estado atual registrado
+## 11. Estado de uso da IA registrado
 
-No momento desta atualização, a IA foi utilizada para apoiar:
+A IA foi utilizada para apoiar:
 
 ```txt
+[x] Interpretação dos requisitos acadêmicos
 [x] Organização MVC
 [x] Login e sessão
 [x] Middleware de autenticação
 [x] Dashboard
 [x] PostgreSQL e pgAdmin
 [x] Setup do banco
-[x] Validação de Unidades no banco
-[x] Correção assíncrona do Dashboard
-[x] Apoio ao módulo de Funcionários
-[x] GitHub, commits e merges
+[x] Revisão de branches e merges
+[x] Correção de erros pós-merge
+[x] CRUD de Unidades
+[x] CRUD de Moradores
+[x] CRUD de Funcionários
+[x] CRUD de Reservas
+[x] CRUD de Ocorrências
+[x] GitHub e mensagens de commit
 [x] Atualização do README.md
 [x] Atualização do USO_IA.md
-```
-
-Ponto de atenção:
-
-```txt
-[ ] Confirmar se a migração do módulo de Funcionários para PostgreSQL já foi enviada para a main pública do GitHub
+[x] Preparação para defesa técnica
 ```
 
 ---
 
-## 11. Conclusão
+## 12. Conclusão
 
-O uso de IA foi importante para apoiar o desenvolvimento, mas não substituiu a compreensão técnica da equipe.
+A Inteligência Artificial foi utilizada como ferramenta de apoio ao aprendizado, à organização e à documentação do projeto.
 
-O projeto foi validado por meio de execução local, testes pelas telas, consultas no PostgreSQL, revisão de código e controle de versão no GitHub.
+O uso da IA não substituiu a responsabilidade técnica da equipe. As decisões finais, testes, commits, validações e apresentação permaneceram com os integrantes.
 
-Este documento deve continuar sendo atualizado se a IA for usada em novas etapas relevantes do projeto.
+Este documento deve ser mantido no repositório como evidência de uso responsável, transparente e crítico de Inteligência Artificial.
