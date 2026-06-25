@@ -1,0 +1,34 @@
+{
+  "name": "condosys",
+  "version": "1.0.0",
+  "description": "Sistema de gestão de condomínio",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup": "node src/database/setup.js"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "ejs",
+    "postgresql",
+    "mvc",
+    "condominio"
+  ],
+  "author": "Equipe CondoSys",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.4.2",
+    "ejs": "^3.1.10",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.21.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

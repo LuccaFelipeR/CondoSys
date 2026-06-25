@@ -25,13 +25,13 @@ function validarCampos(dados) {
     throw new Error(`Status inválido. Opções: ${STATUS_VALIDOS.join(', ')}`);
   }
 
-  // Valida formato de data (YYYY-MM-DD)
+
   const regexData = /^\d{4}-\d{2}-\d{2}$/;
   if (!regexData.test(data)) {
     throw new Error('Data inválida. Use o formato YYYY-MM-DD');
   }
 
-  // Valida formato do horário (HH:MM–HH:MM)
+
   const partesHorario = horario.split(/[–-]/);
   if (partesHorario.length !== 2) {
     throw new Error('Horário inválido. Use o formato HH:MM–HH:MM');

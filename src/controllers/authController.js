@@ -18,9 +18,9 @@ class AuthController {
         cadastradoEm: '01/01/2024'
       };
 
-      // Gera o token JWT e salva na sessão
+     
       const token = criaToken(usuario);
-      //console.log('Token gerado:', token); testando o token
+      console.log('Token gerado:', token); //testando o token
       req.session.token = token;
       req.session.usuario = usuario;
 
