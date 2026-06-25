@@ -552,3 +552,45 @@ Antes da entrega final, a equipe deve conferir:
 O **CondoSys** é um MVP acadêmico. O foco do projeto é demonstrar organização MVC, CRUDs funcionais, autenticação, rotas protegidas, banco de dados persistente, documentação técnica, GitHub, Kanban e uso responsável de Inteligência Artificial.
 
 As funcionalidades foram mantidas simples e objetivas para facilitar a execução local, a apresentação e a defesa técnica individual.
+
+=====================================================================================================
+
+---
+
+# 🎯 Resultados Obtidos
+
+O desenvolvimento do CondoSys permitiu a aplicação prática dos conhecimentos adquiridos ao longo do curso de Análise e Desenvolvimento de Sistemas, abrangendo conceitos de desenvolvimento web fullstack, modelagem de banco de dados, arquitetura MVC, autenticação de usuários, versionamento de código e trabalho colaborativo.
+
+Durante a execução do projeto foram implementadas as principais funcionalidades planejadas para o sistema, incluindo o gerenciamento de moradores, unidades, reservas, ocorrências, funcionários e usuários, utilizando um banco de dados relacional para garantir a persistência e integridade das informações.
+
+A equipe utilizou metodologias de organização e acompanhamento das atividades por meio de Kanban, além do uso de Git e GitHub para controle de versões e colaboração entre os integrantes.
+
+O projeto também proporcionou experiência prática na aplicação de boas práticas de desenvolvimento de software, documentação técnica e utilização responsável de ferramentas de Inteligência Artificial como apoio ao aprendizado e à produtividade da equipe.
+
+---
+
+# 🚀 Conclusão
+
+O CondoSys foi concluído com sucesso como um MVP (Produto Mínimo Viável) de Gestão Condominial, atendendo aos requisitos definidos para a disciplina de Tópicos Especiais.
+
+Além de entregar um sistema funcional, a equipe desenvolveu competências relacionadas à análise de requisitos, modelagem de dados, implementação de regras de negócio, desenvolvimento web fullstack e trabalho em equipe.
+
+O resultado final demonstra a integração entre teoria e prática, consolidando conhecimentos fundamentais para a formação profissional dos integrantes e servindo como base para futuras evoluções e melhorias do sistema.
+
+---
+
+# ✅ Status do Projeto
+
+**Projeto Finalizado e Entregue**
+
+Versão apresentada: **CondoSys v1.0**
+
+Última atualização: Junho de 2026
+
+---
+
+# 👨‍💻 Agradecimentos
+
+Agradecemos aos professores, orientadores e colegas que contribuíram direta ou indiretamente para o desenvolvimento deste projeto acadêmico.
+
+O CondoSys representa não apenas a entrega de um sistema, mas também o aprendizado adquirido durante todo o processo de planejamento, desenvolvimento, testes, documentação e apresentação.
